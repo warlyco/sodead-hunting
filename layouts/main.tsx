@@ -1,14 +1,13 @@
 import classnames from "classnames";
-import { ClassNames } from "@emotion/react";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
 import { Toaster } from "react-hot-toast";
 
 type Props = {
   children: any;
+  centered?: boolean;
 };
 
-export default function MainLayout({ children }: Props) {
+export default function MainLayout({ children, centered }: Props) {
   const Navbar = dynamic(() => import("@/features/navbar/navbar"), {
     ssr: false,
   });
@@ -22,7 +21,12 @@ export default function MainLayout({ children }: Props) {
           "-mt-28": typeof window,
         })}
       >
-        <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-stone-900 via-black to-black">
+        <main
+          className={classnames([
+            "min-h-screen bg-gradient-to-b from-stone-900 via-black to-black",
+            centered && "flex flex-col items-center justify-center",
+          ])}
+        >
           {children}
         </main>
       </div>

@@ -2,12 +2,9 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useQuery } from "@apollo/client";
-import { GET_PROVIDERS } from "@/graphql/queries/get-providers";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();
-  const { data: providers } = useQuery(GET_PROVIDERS);
 
   return (
     <>
@@ -36,7 +33,7 @@ const Home: NextPage = () => {
         <meta name="msapplication-TileColor" content="#b90811" />
         <meta name="theme-color" content="#000" />
       </Head>
-      <div className="container flex flex-col items-center justify-center gap-6 px-4 py-16 text-white">
+      <div className="container flex flex-col items-center justify-center gap-6 text-stone-300">
         <Image
           src="/images/sodead-logo.png"
           alt="SoDead Logo"

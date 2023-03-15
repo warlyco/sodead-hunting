@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-export const FocuGuard = () => {
+export const FoucGuard = () => {
   const [allowTransitions, setAllowTransitions] = useState(false);
 
   // Run this once during render.

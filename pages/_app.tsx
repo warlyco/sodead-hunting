@@ -6,9 +6,12 @@ import localFont from "next/font/local";
 import "@/styles/globals.css";
 import MainLayout from "@/layouts/main";
 import { ContextProvider } from "@/providers/context-provider";
-import { FocuGuard } from "@/features/focu-guard";
+import { FoucGuard } from "@/features/fouc-guard";
+import { AdminProvider } from "@/hooks/admin";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
-const strangeDreams = localFont({
+const strangeDream = localFont({
   src: "../fonts/strange-dreams.ttf",
   variable: "--font-strange-dreams",
 });
@@ -17,15 +20,30 @@ const App: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const router = useRouter();
+  const [isCentered, setIsCentered] = useState(false);
   return (
-    <SessionProvider session={session}>
-      <ContextProvider>
-        <FocuGuard />
-        <MainLayout>
-          <Component {...pageProps} />
-        </MainLayout>
-      </ContextProvider>
-    </SessionProvider>
+    useEffect(() => {
+      console.log("router", router);
+      debugger;
+      if (router.pathname === "/") {
+        setIsCentered(true);
+      } else {
+        setIsCentered(false);
+      }
+    }, [router, router.pathname, setIsCentered]),
+    (
+      <SessionProvider session={session}>
+        <ContextProvider>
+          <AdminProvider>
+            <FoucGuard />
+            <MainLayout centered={isCentered}>
+              <Component {...pageProps} />
+            </MainLayout>
+          </AdminProvider>
+        </ContextProvider>
+      </SessionProvider>
+    )
   );
 };
 
