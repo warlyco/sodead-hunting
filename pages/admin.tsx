@@ -14,8 +14,8 @@ const Admin: NextPage = () => {
   }
 
   return (
-    <ContentWrapper>
-      <div>Admin</div>
+    <ContentWrapper className="flex justify-center text-stone-300">
+      <div className="text-3xl">Admin</div>
     </ContentWrapper>
   );
 };
