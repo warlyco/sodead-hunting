@@ -2,9 +2,12 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { useQuery } from "@apollo/client";
+import { GET_PROVIDERS } from "@/graphql/queries/get-providers";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();
+  const { data: providers } = useQuery(GET_PROVIDERS);
 
   return (
     <>

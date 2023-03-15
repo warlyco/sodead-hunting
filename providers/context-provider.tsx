@@ -4,12 +4,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import { deepPurple, pink } from "@mui/material/colors";
-import {
-  createDefaultAddressSelector,
-  createDefaultAuthorizationResultCache,
-  createDefaultWalletNotFoundHandler,
-  SolanaMobileWalletAdapter,
-} from "@solana-mobile/wallet-adapter-mobile";
+
 import { WalletModalProvider as AntDesignWalletModalProvider } from "@solana/wallet-adapter-ant-design";
 import { WalletAdapterNetwork, WalletError } from "@solana/wallet-adapter-base";
 import { WalletDialogProvider as MaterialUIWalletDialogProvider } from "@solana/wallet-adapter-material-ui";
@@ -26,12 +21,14 @@ import {
   TorusWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
 import { CLUSTER, RPC_ENDPOINT } from "@/constants/constants";
-import { SnackbarProvider } from "notistack";
+import { SnackbarProvider, useSnackbar } from "notistack";
 import { FC, ReactNode, useCallback, useMemo } from "react";
 import {
   AutoConnectProvider,
   useAutoConnect,
 } from "@/providers/auto-connect-provider";
+import { ApolloProvider } from "@apollo/client";
+import client from "@/graphql/apollo/client";
 import showToast from "@/features/toasts/show-toast";
 require("@solana/wallet-adapter-react-ui/styles.css");
 
@@ -87,17 +84,6 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   // of wallets that your users connect to will be loaded
   const wallets = useMemo(
     () => [
-      new SolanaMobileWalletAdapter({
-        addressSelector: createDefaultAddressSelector(),
-        authorizationResultCache: createDefaultAuthorizationResultCache(),
-        cluster: WalletAdapterNetwork.Mainnet,
-        appIdentity: {
-          name: "SoDead Hunting",
-          uri: "https://www.sodead.xyz/",
-          icon: "https://www.sodead.xyz/assets/icons/Logo.png",
-        },
-        onWalletNotFound: createDefaultWalletNotFoundHandler(),
-      }),
       new PhantomWalletAdapter(),
       new GlowWalletAdapter(),
       new SlopeWalletAdapter(),
@@ -107,6 +93,7 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [network]
   );
 
+  const { enqueueSnackbar } = useSnackbar();
   const onError = useCallback((error: WalletError) => {
     showToast({
       primaryMessage: error.name,
@@ -134,14 +121,18 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 export const ContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
-    <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={theme}>
-        <SnackbarProvider>
-          <AutoConnectProvider>
-            <WalletContextProvider>{children}</WalletContextProvider>
-          </AutoConnectProvider>
-        </SnackbarProvider>
-      </ThemeProvider>
-    </StyledEngineProvider>
+    <ApolloProvider client={client}>
+      {/* <Provider store={store}> */}
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <SnackbarProvider>
+            <AutoConnectProvider>
+              <WalletContextProvider>{children}</WalletContextProvider>
+            </AutoConnectProvider>
+          </SnackbarProvider>
+        </ThemeProvider>
+      </StyledEngineProvider>
+      {/* </Provider> */}
+    </ApolloProvider>
   );
 };
