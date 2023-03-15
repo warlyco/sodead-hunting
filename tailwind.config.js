@@ -6,9 +6,16 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
     "./utils/**/*.{js,ts,jsx,tsx}",
     "./features/**/*.{js,ts,jsx,tsx}",
+    "./layouts/**/*.{js,ts,jsx,tsx}",
+    "./hooks/**/*.{js,ts,jsx,tsx}",
+    "./providers/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        "strange-dreams": ["var(--font-strange-dreams)", ...fontFamily.sans],
+      },
+    },
   },
   plugins: [],
 };

@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.wallet-adapter-button.wallet-adapter-button-trigger {
+  @apply bg-red-500 whitespace-nowrap text-stone-900 font-bold uppercase hover:bg-red-900 hover:text-stone-300 p-2 h-10 rounded-2xl px-3 !important;
+}
