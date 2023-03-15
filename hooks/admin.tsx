@@ -1,4 +1,4 @@
-import { ADMIN_WALLETS } from "@/constants/constants";
+import { ADMIN_WALLETS, ENV } from "@/constants/constants";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/router";
 import React, { ReactNode, useContext, useEffect, useState } from "react";
@@ -16,19 +16,21 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const handleRouteChange = (url: string) => {
-      if (url.startsWith("/admin")) {
-        if (!isAdmin) {
-          router.push("/");
+    if (ENV === "production") {
+      const handleRouteChange = (url: string) => {
+        if (url.startsWith("/admin")) {
+          if (!isAdmin) {
+            router.push("/");
+          }
         }
-      }
-    };
+      };
 
-    router.events.on("routeChangeStart", handleRouteChange);
+      router.events.on("routeChangeStart", handleRouteChange);
 
-    return () => {
-      router.events.off("routeChangeStart", handleRouteChange);
-    };
+      return () => {
+        router.events.off("routeChangeStart", handleRouteChange);
+      };
+    }
   }, [isAdmin, router]);
 
   useEffect(() => {
