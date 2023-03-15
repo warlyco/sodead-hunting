@@ -6,6 +6,7 @@ import localFont from "next/font/local";
 import "@/styles/globals.css";
 import MainLayout from "@/layouts/main";
 import { ContextProvider } from "@/providers/context-provider";
+import { FocuGuard } from "@/features/focu-guard";
 
 const strangeDreams = localFont({
   src: "../fonts/strange-dreams.ttf",
@@ -19,6 +20,7 @@ const App: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <ContextProvider>
+        <FocuGuard />
         <MainLayout>
           <Component {...pageProps} />
         </MainLayout>
