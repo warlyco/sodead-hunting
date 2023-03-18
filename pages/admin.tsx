@@ -4,6 +4,8 @@ import { NextPage } from "next";
 import { ITab, Tabs } from "@/features/UI/tabs/tabs";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { Panel } from "@/features/UI/panel";
+import SharedHead from "@/features/UI/head";
 
 const tabs: ITab[] = [
   {
@@ -11,8 +13,42 @@ const tabs: ITab[] = [
     value: "hunting",
   },
   {
+    name: "Items",
+    value: "items",
+  },
+  {
     name: "Communities & NFTs",
     value: "communities",
+  },
+];
+
+const creaturesTabs: ITab[] = [
+  {
+    name: "Vampires",
+    value: "vampires",
+  },
+  {
+    name: "Mounts",
+    value: "mounts",
+  },
+  {
+    name: "Pets",
+    value: "pets",
+  },
+];
+
+const itemsTabs: ITab[] = [
+  {
+    name: "Items",
+    value: "items",
+  },
+  {
+    name: "Tokens",
+    value: "tokens",
+  },
+  {
+    name: "Traits",
+    value: "traits",
   },
 ];
 
@@ -22,8 +58,20 @@ const huntTabs: ITab[] = [
     value: "hunts",
   },
   {
-    name: "Rewrads",
+    name: "Rewards",
     value: "rewards",
+  },
+  {
+    name: "Reward Collections",
+    value: "reward-collections",
+  },
+  {
+    name: "Loot Boxes",
+    value: "loot-boxes",
+  },
+  {
+    name: "Keys",
+    value: "keys",
   },
 ];
 
@@ -88,6 +136,7 @@ const Admin: NextPage = () => {
   if (!isAdmin) {
     return (
       <ContentWrapper>
+        <SharedHead />
         <div>Not Admin</div>
       </ContentWrapper>
     );
@@ -95,8 +144,9 @@ const Admin: NextPage = () => {
 
   return (
     <ContentWrapper className="flex flex-col items-center justify-center text-stone-300">
+      <SharedHead title="SoDead Admin" />
       <div className="text-3xl mb-4">Admin</div>
-      <div className="px-2 lg:px-0 pb-4">
+      <div className="px-2 lg:px-0 pb-4 w-full">
         <Tabs
           tabs={tabs}
           activeTab={activeTab}
@@ -109,6 +159,13 @@ const Admin: NextPage = () => {
             handleSetTab={(tab) => handleSetSubTab(tab)}
           />
         )}
+        {activeTab.value === "items" && (
+          <Tabs
+            tabs={itemsTabs}
+            activeTab={activeSubTab}
+            handleSetTab={(tab) => handleSetSubTab(tab)}
+          />
+        )}
         {activeTab.value === "communities" && (
           <Tabs
             tabs={communityTabs}
@@ -117,6 +174,15 @@ const Admin: NextPage = () => {
           />
         )}
       </div>
+      <Panel className="text-stone-900 justify-center text-2xl">
+        {/* Hunting */}
+        {activeSubTab.value === "hunts" && <div>Hunts</div>}
+        {activeSubTab.value === "rewards" && <div>Rewards</div>}
+
+        {/* Communities */}
+        {activeSubTab.value === "communities" && <div>Communities</div>}
+        {activeSubTab.value === "nfts" && <div>NFTs</div>}
+      </Panel>
     </ContentWrapper>
   );
 };
