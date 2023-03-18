@@ -8,6 +8,7 @@ import { Panel } from "@/features/UI/panel";
 import SharedHead from "@/features/UI/head";
 import { TokensList } from "@/features/admin/tokens/tokens-list";
 import { ItemsList } from "@/features/admin/items/items-list";
+import { TraitsList } from "@/features/admin/traits/traits-list";
 
 const tabs: ITab[] = [
   {
@@ -213,7 +214,7 @@ const Admin: NextPage = () => {
       {/* Items */}
       {activeSubTab.value === "tokens" && <TokensList />}
       {activeSubTab.value === "items" && <ItemsList />}
-      {activeSubTab.value === "traits" && <div>Traits</div>}
+      {activeSubTab.value === "traits" && <TraitsList />}
 
       {/* Communities */}
       {activeSubTab.value === "communities" && <div>Communities</div>}
