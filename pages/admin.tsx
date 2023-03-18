@@ -17,6 +17,10 @@ const tabs: ITab[] = [
     value: "items",
   },
   {
+    name: "Creatures",
+    value: "creatures",
+  },
+  {
     name: "Communities & NFTs",
     value: "communities",
   },
@@ -39,12 +43,12 @@ const creaturesTabs: ITab[] = [
 
 const itemsTabs: ITab[] = [
   {
-    name: "Items",
-    value: "items",
-  },
-  {
     name: "Tokens",
     value: "tokens",
+  },
+  {
+    name: "Items",
+    value: "items",
   },
   {
     name: "Traits",
@@ -111,6 +115,14 @@ const Admin: NextPage = () => {
         setActiveSubTab(huntTabs[0]);
         updateUrl(huntTabs[0]);
         break;
+      case "creatures":
+        setActiveSubTab(creaturesTabs[0]);
+        updateUrl(creaturesTabs[0]);
+        break;
+      case "items":
+        setActiveSubTab(itemsTabs[0]);
+        updateUrl(itemsTabs[0]);
+        break;
       case "communities":
       default:
         setActiveSubTab(communityTabs[0]);
@@ -159,6 +171,13 @@ const Admin: NextPage = () => {
             handleSetTab={(tab) => handleSetSubTab(tab)}
           />
         )}
+        {activeTab.value === "creatures" && (
+          <Tabs
+            tabs={creaturesTabs}
+            activeTab={activeSubTab}
+            handleSetTab={(tab) => handleSetSubTab(tab)}
+          />
+        )}
         {activeTab.value === "items" && (
           <Tabs
             tabs={itemsTabs}
@@ -178,6 +197,21 @@ const Admin: NextPage = () => {
         {/* Hunting */}
         {activeSubTab.value === "hunts" && <div>Hunts</div>}
         {activeSubTab.value === "rewards" && <div>Rewards</div>}
+        {activeSubTab.value === "reward-collections" && (
+          <div>Reward Collections</div>
+        )}
+        {activeSubTab.value === "loot-boxes" && <div>Loot Boxes</div>}
+        {activeSubTab.value === "keys" && <div>Keys</div>}
+
+        {/* Creatures */}
+        {activeSubTab.value === "vampires" && <div>Vampires</div>}
+        {activeSubTab.value === "mounts" && <div>Mounts</div>}
+        {activeSubTab.value === "pets" && <div>Pets</div>}
+
+        {/* Items */}
+        {activeSubTab.value === "tokens" && <div>Tokens</div>}
+        {activeSubTab.value === "items" && <div>Items</div>}
+        {activeSubTab.value === "traits" && <div>Traits</div>}
 
         {/* Communities */}
         {activeSubTab.value === "communities" && <div>Communities</div>}

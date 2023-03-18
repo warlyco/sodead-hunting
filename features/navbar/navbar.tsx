@@ -12,10 +12,11 @@ const Navbar = () => {
       <div className="flex w-full items-center justify-between gap-4 rounded-full border border-stone-900 bg-black px-10 shadow-deep">
         <Link href="/" className="block">
           <Image
+            className="h-16"
             src="/images/sodead-long-logo.png"
             alt="SoDead Logo"
-            width={160}
-            height={120}
+            height={40}
+            width={110}
           />
         </Link>
         <div className="flex items-center space-x-6">
