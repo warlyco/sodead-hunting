@@ -2,9 +2,13 @@ import { gql } from "@apollo/client";
 
 export const GET_TOKENS = gql`
   query GET_TOKENS {
-    sodead_providers {
+    sodead_tokens {
       name
       id
+      mintAddress
+      imageUrl
+      decimals
+      symbol
     }
   }
 `;

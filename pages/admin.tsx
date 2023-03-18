@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Panel } from "@/features/UI/panel";
 import SharedHead from "@/features/UI/head";
+import { TokensList } from "@/features/admin/tokens/tokens-list";
 
 const tabs: ITab[] = [
   {
@@ -193,30 +194,29 @@ const Admin: NextPage = () => {
           />
         )}
       </div>
-      <Panel className="text-stone-900 justify-center text-2xl">
-        {/* Hunting */}
-        {activeSubTab.value === "hunts" && <div>Hunts</div>}
-        {activeSubTab.value === "rewards" && <div>Rewards</div>}
-        {activeSubTab.value === "reward-collections" && (
-          <div>Reward Collections</div>
-        )}
-        {activeSubTab.value === "loot-boxes" && <div>Loot Boxes</div>}
-        {activeSubTab.value === "keys" && <div>Keys</div>}
 
-        {/* Creatures */}
-        {activeSubTab.value === "vampires" && <div>Vampires</div>}
-        {activeSubTab.value === "mounts" && <div>Mounts</div>}
-        {activeSubTab.value === "pets" && <div>Pets</div>}
+      {/* Hunting */}
+      {activeSubTab.value === "hunts" && <div>Hunts</div>}
+      {activeSubTab.value === "rewards" && <div>Rewards</div>}
+      {activeSubTab.value === "reward-collections" && (
+        <div>Reward Collections</div>
+      )}
+      {activeSubTab.value === "loot-boxes" && <div>Loot Boxes</div>}
+      {activeSubTab.value === "keys" && <div>Keys</div>}
 
-        {/* Items */}
-        {activeSubTab.value === "tokens" && <div>Tokens</div>}
-        {activeSubTab.value === "items" && <div>Items</div>}
-        {activeSubTab.value === "traits" && <div>Traits</div>}
+      {/* Creatures */}
+      {activeSubTab.value === "vampires" && <div>Vampires</div>}
+      {activeSubTab.value === "mounts" && <div>Mounts</div>}
+      {activeSubTab.value === "pets" && <div>Pets</div>}
 
-        {/* Communities */}
-        {activeSubTab.value === "communities" && <div>Communities</div>}
-        {activeSubTab.value === "nfts" && <div>NFTs</div>}
-      </Panel>
+      {/* Items */}
+      {activeSubTab.value === "tokens" && <TokensList />}
+      {activeSubTab.value === "items" && <div>Items</div>}
+      {activeSubTab.value === "traits" && <div>Traits</div>}
+
+      {/* Communities */}
+      {activeSubTab.value === "communities" && <div>Communities</div>}
+      {activeSubTab.value === "nfts" && <div>NFTs</div>}
     </ContentWrapper>
   );
 };
