@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { Panel } from "@/features/UI/panel";
 import SharedHead from "@/features/UI/head";
 import { TokensList } from "@/features/admin/tokens/tokens-list";
+import { ItemsList } from "@/features/admin/items/items-list";
 
 const tabs: ITab[] = [
   {
@@ -211,7 +212,7 @@ const Admin: NextPage = () => {
 
       {/* Items */}
       {activeSubTab.value === "tokens" && <TokensList />}
-      {activeSubTab.value === "items" && <div>Items</div>}
+      {activeSubTab.value === "items" && <ItemsList />}
       {activeSubTab.value === "traits" && <div>Traits</div>}
 
       {/* Communities */}
