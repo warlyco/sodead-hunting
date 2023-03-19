@@ -11,6 +11,18 @@ export const GET_USERS = gql`
         id
         address
       }
+      accounts {
+        id
+        provider {
+          id
+          name
+        }
+        createdAt
+        imageUrl
+        username
+        email
+      }
+      imageUrl
     }
   }
 `;

@@ -9,6 +9,8 @@ import { TokensList } from "@/features/admin/tokens/tokens-list";
 import { ItemsList } from "@/features/admin/items/items-list";
 import { TraitsList } from "@/features/admin/traits/traits-list";
 import { HuntsList } from "@/features/admin/hunts/hunts-list";
+import { UsersListItem } from "@/features/admin/users/users-list-item";
+import { UsersList } from "@/features/admin/users/users-list";
 
 const primaryTabs: ITab[] = [
   {
@@ -24,8 +26,8 @@ const primaryTabs: ITab[] = [
     value: "creatures",
   },
   {
-    name: "Communities & NFTs",
-    value: "communities",
+    name: "Users & NFTs",
+    value: "users-nfts",
   },
 ];
 
@@ -95,14 +97,18 @@ const huntTabs: ITab[] = [
 
 const communityTabs: ITab[] = [
   {
-    name: "Communities",
-    value: "communities",
-    parent: "communities",
+    name: "Users",
+    value: "users",
   },
   {
     name: "NFTs",
     value: "nfts",
-    parent: "communities",
+    parent: "users-nfts",
+  },
+  {
+    name: "Communities",
+    value: "communities",
+    parent: "users-nfts",
   },
 ];
 
@@ -137,10 +143,7 @@ const Admin: NextPage = () => {
   );
 
   const handleSetPrimaryTab = (tab: ITab) => {
-    // if (!primaryTabs.includes(tab)) return;
-
     setActiveTab(tab);
-    debugger;
     switch (tab.value) {
       case "hunting":
         handleSetSubTab(huntTabs[0]);
@@ -210,7 +213,7 @@ const Admin: NextPage = () => {
             handleSetTab={(tab) => handleSetSubTab(tab)}
           />
         )}
-        {activeTab.value === "communities" && (
+        {activeTab.value === "users-nfts" && (
           <Tabs
             tabs={communityTabs}
             activeTab={activeSubTab}
@@ -238,7 +241,8 @@ const Admin: NextPage = () => {
       {activeSubTab.value === "items" && <ItemsList />}
       {activeSubTab.value === "traits" && <TraitsList />}
 
-      {/* Communities */}
+      {/* Users/NFTs */}
+      {activeSubTab.value === "users" && <UsersList />}
       {activeSubTab.value === "communities" && <div>Communities</div>}
       {activeSubTab.value === "nfts" && <div>NFTs</div>}
     </ContentWrapper>
