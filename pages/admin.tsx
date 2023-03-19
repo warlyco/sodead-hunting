@@ -14,6 +14,7 @@ import { UsersList } from "@/features/admin/users/users-list";
 import { RewardsList } from "@/features/admin/rewards/rewards-list";
 import { LootBoxesList } from "@/features/admin/loot-boxes/loot-boxes-list";
 import { KeysList } from "@/features/admin/keys/keys-list";
+import { VampiresList } from "@/features/admin/vampires/vampires-list";
 
 const primaryTabs: ITab[] = [
   {
@@ -227,7 +228,7 @@ const Admin: NextPage = () => {
       {activeSubTab.value === "keys" && <KeysList />}
 
       {/* Creatures */}
-      {activeSubTab.value === "vampires" && <div>Vampires</div>}
+      {activeSubTab.value === "vampires" && <VampiresList />}
       {activeSubTab.value === "mounts" && <div>Mounts</div>}
       {activeSubTab.value === "pets" && <div>Pets</div>}
 
