@@ -1,3 +1,4 @@
+import { RarityBadge } from "@/features/UI/badges/rarity-badge";
 import { TableRow } from "@/features/UI/tables/table-row";
 import { getAbbreviatedAddress } from "@/utils/formatting";
 import Image from "next/image";
@@ -35,9 +36,7 @@ export const TraitsListItem = ({ trait }: { trait: Trait }) => {
         alt="Store image"
       />
       <div className="flex items-center space-x-12">
-        <div className="bg-stone-300 text-stone-900 p-1 rounded-lg uppercase text-sm">
-          <div>{trait?.rarity?.name}</div>
-        </div>
+        <RarityBadge rarity={trait.rarity} />
         <div>{trait.name}</div>
         <div>{trait?.traitCategory?.name}</div>
       </div>

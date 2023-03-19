@@ -1,10 +1,11 @@
 import { gql } from "@apollo/client";
 
 export const GET_LOOT_BOXES_WITH_REWARDS = gql`
-  query GET_LOOT_BOXES_WITH_REWARDS {
+  query GET_LOOT_BOXES {
     sodead_lootBoxes {
       id
       createdAt
+      name
       keys {
         key {
           id
@@ -17,7 +18,7 @@ export const GET_LOOT_BOXES_WITH_REWARDS = gql`
         name
         id
       }
-      rewardItems {
+      rewardCollectionItems {
         reward {
           amount
           id
@@ -44,6 +45,11 @@ export const GET_LOOT_BOXES_WITH_REWARDS = gql`
           }
         }
         payoutProbability
+      }
+      rewardCollectionItems_aggregate {
+        aggregate {
+          count
+        }
       }
     }
   }

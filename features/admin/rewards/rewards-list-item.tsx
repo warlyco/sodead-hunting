@@ -70,7 +70,7 @@ export const RewardsListItem = ({ reward }: { reward: Reward }) => {
       </div>
       <div className="flex flex-grow"></div>
       <Link
-        className="bg-stone-800 text-stone-300 px-4 py-2 rounded-lg uppercase text-sm"
+        className="bg-stone-800 text-stone-300 px-4 py-2 rounded-lg uppercase text-sm my-4"
         href={`/admin/reward/${reward.id}`}
       >
         Manage

@@ -4,6 +4,8 @@ export const GET_LOOT_BOXES = gql`
   query GET_LOOT_BOXES {
     sodead_lootBoxes {
       id
+      name
+      imageUrk
       createdAt
       keys {
         key {
@@ -16,34 +18,6 @@ export const GET_LOOT_BOXES = gql`
       rarity {
         name
         id
-      }
-      rewardItems {
-        reward {
-          amount
-          id
-          name
-          token {
-            mintAddress
-            name
-            id
-          }
-          wallet {
-            address
-            id
-          }
-        }
-        id
-        parentReward {
-          amount
-          id
-          imageUrl
-          name
-          token {
-            mintAddress
-            name
-          }
-        }
-        payoutProbability
       }
     }
   }
