@@ -1,6 +1,6 @@
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
+// import { SessionProvider } from "next-auth/react";
 import localFont from "next/font/local";
 
 import "@/styles/globals.css";
@@ -31,17 +31,17 @@ const App: AppType<{ session: Session | null }> = ({
       }
     }, [router, router.pathname, setIsCentered]),
     (
-      <SessionProvider session={session}>
-        <ContextProvider>
-          <AdminProvider>
-            <FoucGuard />
-            <MainLayout centered={isCentered}>
-              <Component {...pageProps} />
-            </MainLayout>
-          </AdminProvider>
-        </ContextProvider>
-      </SessionProvider>
+      // <SessionProvider session={session}>
+      <ContextProvider>
+        <AdminProvider>
+          <FoucGuard />
+          <MainLayout centered={isCentered}>
+            <Component {...pageProps} />
+          </MainLayout>
+        </AdminProvider>
+      </ContextProvider>
     )
+    // </SessionProvider>
   );
 };
 
