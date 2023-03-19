@@ -1,0 +1,50 @@
+import { gql } from "@apollo/client";
+
+export const GET_LOOT_BOXES = gql`
+  query GET_LOOT_BOXES {
+    sodead_lootBoxes {
+      id
+      createdAt
+      keys {
+        key {
+          id
+          name
+        }
+        id
+        keyAmount
+      }
+      rarity {
+        name
+        id
+      }
+      rewardItems {
+        reward {
+          amount
+          id
+          name
+          token {
+            mintAddress
+            name
+            id
+          }
+          wallet {
+            address
+            id
+          }
+        }
+        id
+        parentReward {
+          amount
+          id
+          imageUrl
+          name
+          token {
+            mintAddress
+            name
+          }
+        }
+        payoutProbability
+      }
+    }
+  }
+`;
