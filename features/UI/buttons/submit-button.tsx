@@ -1,6 +1,6 @@
 import classNames from "classnames";
-import { SecondaryButton } from "features/UI/buttons/secondary-button";
-import Spinner from "features/UI/spinner";
+import { SecondaryButton } from "@/features/UI/buttons/secondary-button";
+import Spinner from "@/features/UI/spinner";
 
 interface Props extends React.HTMLAttributes<HTMLButtonElement> {
   isSubmitting: boolean;

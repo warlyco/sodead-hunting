@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import Spinner from "features/UI/spinner";
 
 interface Props extends React.HTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode | string;
