@@ -9,12 +9,12 @@ import { TokensList } from "@/features/admin/tokens/tokens-list";
 import { ItemsList } from "@/features/admin/items/items-list";
 import { TraitsList } from "@/features/admin/traits/traits-list";
 import { HuntsList } from "@/features/admin/hunts/hunts-list";
-import { UsersListItem } from "@/features/admin/users/users-list-item";
 import { UsersList } from "@/features/admin/users/users-list";
 import { RewardsList } from "@/features/admin/rewards/rewards-list";
 import { LootBoxesList } from "@/features/admin/loot-boxes/loot-boxes-list";
 import { KeysList } from "@/features/admin/keys/keys-list";
 import { VampiresList } from "@/features/admin/vampires/vampires-list";
+import { NftsList } from "@/features/admin/nfts/mfts-list";
 
 const primaryTabs: ITab[] = [
   {
@@ -174,7 +174,7 @@ const Admin: NextPage = () => {
 
   if (!isAdmin) {
     return (
-      <ContentWrapper>
+      <ContentWrapper className="w-full text-center text-stone-300">
         <SharedHead />
         <div>Not Admin</div>
       </ContentWrapper>
@@ -239,8 +239,8 @@ const Admin: NextPage = () => {
 
       {/* Users/NFTs */}
       {activeSubTab.value === "users" && <UsersList />}
+      {activeSubTab.value === "nfts" && <NftsList />}
       {activeSubTab.value === "communities" && <div>Communities</div>}
-      {activeSubTab.value === "nfts" && <div>NFTs</div>}
     </ContentWrapper>
   );
 };
