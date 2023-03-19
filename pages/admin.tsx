@@ -4,13 +4,12 @@ import { NextPage } from "next";
 import { ITab, Tabs } from "@/features/UI/tabs/tabs";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Panel } from "@/features/UI/panel";
 import SharedHead from "@/features/UI/head";
 import { TokensList } from "@/features/admin/tokens/tokens-list";
 import { ItemsList } from "@/features/admin/items/items-list";
 import { TraitsList } from "@/features/admin/traits/traits-list";
 
-const tabs: ITab[] = [
+const primaryTabs: ITab[] = [
   {
     name: "Hunting",
     value: "hunting",
@@ -33,14 +32,17 @@ const creaturesTabs: ITab[] = [
   {
     name: "Vampires",
     value: "vampires",
+    parent: "creatures",
   },
   {
     name: "Mounts",
     value: "mounts",
+    parent: "creatures",
   },
   {
     name: "Pets",
     value: "pets",
+    parent: "creatures",
   },
 ];
 
@@ -48,14 +50,17 @@ const itemsTabs: ITab[] = [
   {
     name: "Tokens",
     value: "tokens",
+    parent: "items",
   },
   {
     name: "Items",
     value: "items",
+    parent: "items",
   },
   {
     name: "Traits",
     value: "traits",
+    parent: "items",
   },
 ];
 
@@ -63,22 +68,27 @@ const huntTabs: ITab[] = [
   {
     name: "Hunts",
     value: "hunts",
+    parent: "hunting",
   },
   {
     name: "Rewards",
     value: "rewards",
+    parent: "hunting",
   },
   {
     name: "Reward Collections",
     value: "reward-collections",
+    parent: "hunting",
   },
   {
     name: "Loot Boxes",
     value: "loot-boxes",
+    parent: "hunting",
   },
   {
     name: "Keys",
     value: "keys",
+    parent: "hunting",
   },
 ];
 
@@ -86,18 +96,22 @@ const communityTabs: ITab[] = [
   {
     name: "Communities",
     value: "communities",
+    parent: "communities",
   },
   {
     name: "NFTs",
     value: "nfts",
+    parent: "communities",
   },
 ];
+
+const subTabs = [...huntTabs, ...creaturesTabs, ...itemsTabs, ...communityTabs];
 
 const Admin: NextPage = () => {
   const { isAdmin } = useAdmin();
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState(tabs[0]);
+  const [activeTab, setActiveTab] = useState(primaryTabs[0]);
   const [activeSubTab, setActiveSubTab] = useState<ITab>(huntTabs[0]);
 
   const updateUrl = useCallback(
@@ -108,45 +122,53 @@ const Admin: NextPage = () => {
         query: { tab: tab.value },
       });
     },
-    [activeSubTab, router]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [activeSubTab]
+  );
+
+  const handleSetSubTab = useCallback(
+    (tab: ITab) => {
+      setActiveSubTab(tab);
+
+      updateUrl(tab);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [setActiveSubTab]
   );
 
   const handleSetPrimaryTab = (tab: ITab) => {
+    if (!primaryTabs.includes(tab)) return;
+
     setActiveTab(tab);
+    debugger;
     switch (tab.value) {
       case "hunting":
-        setActiveSubTab(huntTabs[0]);
-        updateUrl(huntTabs[0]);
+        handleSetSubTab(huntTabs[0]);
         break;
       case "creatures":
-        setActiveSubTab(creaturesTabs[0]);
-        updateUrl(creaturesTabs[0]);
+        handleSetSubTab(creaturesTabs[0]);
         break;
       case "items":
-        setActiveSubTab(itemsTabs[0]);
-        updateUrl(itemsTabs[0]);
+        handleSetSubTab(itemsTabs[0]);
         break;
       case "communities":
       default:
-        setActiveSubTab(communityTabs[0]);
-        updateUrl(communityTabs[0]);
+        handleSetSubTab(communityTabs[0]);
         break;
     }
   };
 
-  const handleSetSubTab = (tab: ITab) => {
-    setActiveSubTab(tab);
-    updateUrl(tab);
-  };
-
   useEffect(() => {
-    if (!router?.query?.tab) {
-      router.push({
-        pathname: "/admin",
-        query: { tab: huntTabs[0].value },
-      });
+    console.log("router.query.tab", router.query.tab);
+    if (router.query.tab) {
+      const subTab = subTabs.find((tab) => tab.value === router.query.tab);
+      const primaryTab = primaryTabs.find(
+        (tab) => subTab?.parent === tab.value
+      );
+      if (primaryTab) setActiveTab(primaryTab);
+      if (subTab) handleSetSubTab(subTab);
     }
-  }, [router]);
+  }, [handleSetSubTab, router.query.tab]);
 
   if (!isAdmin) {
     return (
@@ -163,7 +185,7 @@ const Admin: NextPage = () => {
       <div className="text-3xl mb-4">Admin</div>
       <div className="px-2 lg:px-0 pb-4 w-full">
         <Tabs
-          tabs={tabs}
+          tabs={primaryTabs}
           activeTab={activeTab}
           handleSetTab={(tab) => handleSetPrimaryTab(tab)}
         />

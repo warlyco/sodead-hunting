@@ -2,6 +2,7 @@ import { Tab } from "@/features/UI/tabs/tab";
 import { TabsWrapper } from "@/features/UI/tabs/tabs-wrapper";
 
 export interface ITab {
+  parent?: string;
   name: string;
   value: string;
 }
