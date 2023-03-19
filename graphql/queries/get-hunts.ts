@@ -8,6 +8,10 @@ export const GET_HUNTS = gql`
       name
       startTime
       endTime
+      durationInSeconds
+      imageUrl
+      bannerImageUrl
+      maxCapacity
     }
   }
 `;

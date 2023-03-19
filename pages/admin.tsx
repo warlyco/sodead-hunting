@@ -8,6 +8,7 @@ import SharedHead from "@/features/UI/head";
 import { TokensList } from "@/features/admin/tokens/tokens-list";
 import { ItemsList } from "@/features/admin/items/items-list";
 import { TraitsList } from "@/features/admin/traits/traits-list";
+import { HuntsList } from "@/features/admin/hunts/hunts-list";
 
 const primaryTabs: ITab[] = [
   {
@@ -116,7 +117,6 @@ const Admin: NextPage = () => {
 
   const updateUrl = useCallback(
     (tab: ITab) => {
-      if (tab.value === activeSubTab.value) return;
       router.push({
         pathname: "/admin",
         query: { tab: tab.value },
@@ -137,7 +137,7 @@ const Admin: NextPage = () => {
   );
 
   const handleSetPrimaryTab = (tab: ITab) => {
-    if (!primaryTabs.includes(tab)) return;
+    // if (!primaryTabs.includes(tab)) return;
 
     setActiveTab(tab);
     debugger;
@@ -220,7 +220,7 @@ const Admin: NextPage = () => {
       </div>
 
       {/* Hunting */}
-      {activeSubTab.value === "hunts" && <div>Hunts</div>}
+      {activeSubTab.value === "hunts" && <HuntsList />}
       {activeSubTab.value === "rewards" && <div>Rewards</div>}
       {activeSubTab.value === "reward-collections" && (
         <div>Reward Collections</div>
