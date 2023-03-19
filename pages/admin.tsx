@@ -11,6 +11,7 @@ import { TraitsList } from "@/features/admin/traits/traits-list";
 import { HuntsList } from "@/features/admin/hunts/hunts-list";
 import { UsersListItem } from "@/features/admin/users/users-list-item";
 import { UsersList } from "@/features/admin/users/users-list";
+import { RewardsList } from "@/features/admin/rewards/rewards-list";
 
 const primaryTabs: ITab[] = [
   {
@@ -224,7 +225,7 @@ const Admin: NextPage = () => {
 
       {/* Hunting */}
       {activeSubTab.value === "hunts" && <HuntsList />}
-      {activeSubTab.value === "rewards" && <div>Rewards</div>}
+      {activeSubTab.value === "rewards" && <RewardsList />}
       {activeSubTab.value === "reward-collections" && (
         <div>Reward Collections</div>
       )}
