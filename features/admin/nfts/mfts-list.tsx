@@ -10,7 +10,7 @@ export const NftsList = () => {
 
   return (
     <TableWrapper>
-      {data?.sodead_lootBoxes?.map((nft: Nft) => {
+      {data?.sodead_nfts?.map((nft: Nft) => {
         return <NftsListItem key={nft.id} nft={nft} />;
       })}
     </TableWrapper>

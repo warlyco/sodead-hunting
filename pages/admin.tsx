@@ -15,6 +15,7 @@ import { LootBoxesList } from "@/features/admin/loot-boxes/loot-boxes-list";
 import { KeysList } from "@/features/admin/keys/keys-list";
 import { VampiresList } from "@/features/admin/vampires/vampires-list";
 import { NftsList } from "@/features/admin/nfts/mfts-list";
+import { CommunitiesList } from "@/features/admin/communities/communities-list";
 
 const primaryTabs: ITab[] = [
   {
@@ -240,7 +241,7 @@ const Admin: NextPage = () => {
       {/* Users/NFTs */}
       {activeSubTab.value === "users" && <UsersList />}
       {activeSubTab.value === "nfts" && <NftsList />}
-      {activeSubTab.value === "communities" && <div>Communities</div>}
+      {activeSubTab.value === "communities" && <CommunitiesList />}
     </ContentWrapper>
   );
 };

@@ -7,6 +7,16 @@ export const GET_COMMUNITIES = gql`
       name
       createdAt
       id
+      nftCollections {
+        name
+        imageUrl
+        id
+      }
+      nftCollections_aggregate {
+        aggregate {
+          count
+        }
+      }
     }
   }
 `;
