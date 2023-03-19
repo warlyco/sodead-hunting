@@ -9,6 +9,7 @@ export const GET_NFT_COLLECTIONS = gql`
       firstVerifiedCreator
       createdAt
       associatedCommunity {
+        id
         name
         imageUrl
       }

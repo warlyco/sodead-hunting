@@ -14,8 +14,9 @@ import { RewardsList } from "@/features/admin/rewards/rewards-list";
 import { LootBoxesList } from "@/features/admin/loot-boxes/loot-boxes-list";
 import { KeysList } from "@/features/admin/keys/keys-list";
 import { VampiresList } from "@/features/admin/vampires/vampires-list";
-import { NftsList } from "@/features/admin/nfts/mfts-list";
+import { NftsList } from "@/features/admin/nfts/nfts-list";
 import { CommunitiesList } from "@/features/admin/communities/communities-list";
+import { NftCollectionssList } from "@/features/admin/nft-collections/nfts-collection-list";
 
 const primaryTabs: ITab[] = [
   {
@@ -108,6 +109,11 @@ const communityTabs: ITab[] = [
   {
     name: "Communities",
     value: "communities",
+    parent: "users-nfts",
+  },
+  {
+    name: "Nft Collections",
+    value: "nft-collections",
     parent: "users-nfts",
   },
 ];
@@ -242,6 +248,7 @@ const Admin: NextPage = () => {
       {activeSubTab.value === "users" && <UsersList />}
       {activeSubTab.value === "nfts" && <NftsList />}
       {activeSubTab.value === "communities" && <CommunitiesList />}
+      {activeSubTab.value === "nft-collections" && <NftCollectionssList />}
     </ContentWrapper>
   );
 };

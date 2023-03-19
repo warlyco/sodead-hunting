@@ -1,4 +1,5 @@
 import { TableRow } from "@/features/UI/tables/table-row";
+import { getAbbreviatedAddress } from "@/utils/formatting";
 import Image from "next/image";
 
 import Link from "next/link";
@@ -27,10 +28,7 @@ export const TokensListItem = ({ token }: { token: Token }) => {
         <div>(${token.symbol})</div>
       </div>
       <div className="my-4 w-1/4 flex items-center space-x-4">
-        <div>
-          {token.mintAddress.substring(0, 6)}...
-          {token.mintAddress.substring(token.mintAddress.length - 6)}
-        </div>
+        <div>{getAbbreviatedAddress(token.mintAddress)}</div>
       </div>
       <div className="flex flex-grow"></div>
       <Link
