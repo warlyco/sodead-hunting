@@ -1,1 +1,1 @@
-# SoDead Hunting
+# 🩸 SoDead Hunting 🩸
