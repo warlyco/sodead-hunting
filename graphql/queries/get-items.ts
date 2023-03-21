@@ -19,6 +19,10 @@ export const GET_ITEMS = gql`
         createdAt
         name
       }
+      itemCategory {
+        id
+        name
+      }
     }
   }
 `;

@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import axios from "axios";
 import request from "graphql-request";
-import { ADD_TOKEN } from "graphql/mutations/add-token";
+import { ADD_TOKEN } from "@/graphql/mutations/add-token";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type TokenMetadataFromHelius = {
@@ -70,24 +70,25 @@ export default async function handler(
 
     const { data } = await axios.get(uri);
 
-    const { insert_architects_tokens_one } = await request({
-      url: process.env.NEXT_PUBLIC_GRAPHQL_API_ENDPOINT!,
-      document: ADD_TOKEN,
-      variables: {
-        name,
-        decimals,
-        imageUrl: data?.image || "",
-        mintAddress,
-        symbol,
-      },
-      requestHeaders: {
-        "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
-      },
-    });
+    const { insert_sodead_tokens_one }: { insert_sodead_tokens_one: Data } =
+      await request({
+        url: process.env.NEXT_PUBLIC_GRAPHQL_API_ENDPOINT!,
+        document: ADD_TOKEN,
+        variables: {
+          name,
+          decimals,
+          imageUrl: data?.image || "",
+          mintAddress,
+          symbol,
+        },
+        requestHeaders: {
+          "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
+        },
+      });
 
-    console.log("insert_architects_tokens_one: ", insert_architects_tokens_one);
+    console.log("insert_sodead_tokens_one: ", insert_sodead_tokens_one);
 
-    res.status(200).json(insert_architects_tokens_one);
+    res.status(200).json(insert_sodead_tokens_one);
   } catch (error) {
     res.status(500).json({ error: "No metadata found" });
   }

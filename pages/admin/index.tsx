@@ -172,8 +172,10 @@ const Admin: NextPage = () => {
   const getCreateLink = () => {
     switch (activeSubTab.value) {
       case "tokens":
-      default:
         return "/admin/token/create";
+      case "items":
+      default:
+        return "/admin/item/create";
     }
   };
 
