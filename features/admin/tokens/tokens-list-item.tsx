@@ -11,6 +11,9 @@ export type Token = {
   decimals: number;
   mintAddress: string;
   imageUrl: string;
+  item: {
+    id: string;
+  };
 };
 
 export const TokensListItem = ({ token }: { token: Token }) => {

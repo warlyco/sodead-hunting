@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 
-const Spinner = ({ height = 26, width = 26, color = "currentColor" }) => (
+const Spinner = ({ height = 24, width = 24, color = "currentColor" }) => (
   <svg
     className="animate-spin"
     xmlns="http://www.w3.org/2000/svg"

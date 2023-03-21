@@ -1,5 +1,4 @@
 import { useQuery } from "@apollo/client";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { BackButton } from "@/features/UI/buttons/back-button";
@@ -9,15 +8,31 @@ import { useAdmin } from "@/hooks/admin";
 import { Item } from "@/pages/api/add-item";
 import { getAbbreviatedAddress } from "@/utils/formatting";
 import { ImageWithFallback } from "@/features/UI/image-with-fallback";
+import { Panel } from "@/features/UI/panel";
+import {
+  CheckCircleIcon,
+  MinusCircleIcon,
+  PlusCircleIcon,
+  TrashIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { PrimaryButton } from "@/features/UI/buttons/primary-button";
+import axios from "axios";
+import { useFormik } from "formik";
+import showToast from "@/features/toasts/show-toast";
+import { FormInputWithLabel } from "@/features/UI/forms/form-input-with-label";
+import { SubmitButton } from "@/features/UI/buttons/submit-button";
+import { SecondaryButton } from "@/features/UI/buttons/secondary-button";
 
 const ItemDetailPage = () => {
-  const router = useRouter();
-  const { id } = router.query;
+  const [showBindToTokenInput, setShowBindToTokenInput] = useState(false);
   const [hasBeenFetched, setHasBeenFetched] = useState(false);
   const [item, setItem] = useState<Item | null>(null);
+  const router = useRouter();
   const { isAdmin } = useAdmin();
+  const { id } = router.query;
 
-  const { data, loading, error } = useQuery(GET_ITEM_BY_ID, {
+  const { data, loading, error, refetch } = useQuery(GET_ITEM_BY_ID, {
     variables: { id },
     skip: !id,
     onCompleted: (data) => {
@@ -27,6 +42,51 @@ const ItemDetailPage = () => {
       setHasBeenFetched(true);
     },
   });
+
+  const formik = useFormik({
+    initialValues: {
+      mintAddress: "",
+    },
+    onSubmit: async ({ mintAddress }) => {
+      try {
+        await axios.post("/api/bind-item-to-token", {
+          mintAddress,
+          itemId: id,
+        });
+        showToast({
+          primaryMessage: "Item updated",
+        });
+        refetch();
+        formik.setValues({ mintAddress: "" });
+      } catch (error: any) {
+        console.log("error", error);
+        showToast({
+          primaryMessage: "Error adding token",
+          secondaryMessage: error?.response?.data?.error,
+        });
+      }
+    },
+  });
+
+  const handleUnbindToken = async (ev: any) => {
+    ev.preventDefault();
+    try {
+      await axios.post("/api/unbind-token", {
+        id: item?.tokens?.[0].id,
+      });
+      showToast({
+        primaryMessage: "Item updated",
+      });
+      refetch();
+      formik.setValues({ mintAddress: "" });
+    } catch (error: any) {
+      console.log("error", error);
+      showToast({
+        primaryMessage: "Error adding token",
+        secondaryMessage: error?.response?.data?.error,
+      });
+    }
+  };
 
   if (!isAdmin)
     return (
@@ -49,42 +109,110 @@ const ItemDetailPage = () => {
               <BackButton />
             </div>
             <div className="w-full flex flex-col items-center">
-              <div className="py-16">
+              <div className="mb-8 p-2 bg-stone-800 rounded-2xl">
                 <ImageWithFallback
                   src={item.imageUrl}
-                  height={60}
-                  width={60}
-                  className="w-12"
+                  height={120}
+                  width={120}
+                  className="w-36"
                   alt={item.name}
                 />
               </div>
-              <h1 className="text-3xl mb-2">{item.name}</h1>
-              {!!item.tokens?.[0] && (
-                <div className="text-xl mb-4">
-                  Bound to token:{" "}
-                  <a
-                    className="text-xl underline"
-                    href={`https://explorer.solana.com/address/${item.tokens?.[0].mintAddress}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {getAbbreviatedAddress(item.tokens?.[0].mintAddress)}
-                  </a>
+              <Panel className="flex flex-col items-center justify-center">
+                <h1 className="text-3xl mb-2">{item.name}</h1>
+                <h2 className="mb-4 uppercase">
+                  {item.itemCategory?.name || "No category"}
+                </h2>
+                <div className="flex space-x-6 mb-4">
+                  <div className="flex items-center space-x-2">
+                    {item.isConsumable ? (
+                      <CheckCircleIcon className="text-green-700 h-5 w-5" />
+                    ) : (
+                      <MinusCircleIcon className="text-red-700 h-5 w-5" />
+                    )}
+                    <div>Consumable</div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {item.isCraftable ? (
+                      <CheckCircleIcon className="text-green-700 h-5 w-5" />
+                    ) : (
+                      <MinusCircleIcon className="text-red-700 h-5 w-5" />
+                    )}
+                    <div>Craftable</div>
+                  </div>
                 </div>
-              )}
-              {!!item.tokens?.[0] && (
-                <div className="text-xl mb-4">
-                  Bound to NFT:{" "}
-                  <a
-                    className="text-xl underline"
-                    href={`https://explorer.solana.com/address/${item.nfts?.[0].mintAddress}`}
-                    target="_blank"
-                    rel="noreferrer"
+                {!!item.description && (
+                  <div className="mb-4 text-stone-700 italic text-lg">
+                    {item.description}
+                  </div>
+                )}
+                {!!item.tokens?.[0] && (
+                  <div className="text-xl mb-4 flex items-center space-x-4">
+                    <div>Bound to token:</div>
+                    <a
+                      className="text-xl underline"
+                      href={`https://explorer.solana.com/address/${item.tokens?.[0].mintAddress}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {getAbbreviatedAddress(item.tokens?.[0].mintAddress)}
+                    </a>
+                    <SecondaryButton
+                      className="bg-red-900"
+                      onClick={handleUnbindToken}
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </SecondaryButton>
+                  </div>
+                )}
+                {!!item.nfts?.[0] && (
+                  <div className="text-xl mb-4">
+                    Bound to NFT:{" "}
+                    <a
+                      className="text-xl underline"
+                      href={`https://explorer.solana.com/address/${item.nfts?.[0].mintAddress}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {getAbbreviatedAddress(item.nfts?.[0].mintAddress)}
+                    </a>
+                  </div>
+                )}
+                {!item.tokens?.[0] && (
+                  <form
+                    onSubmit={formik.handleSubmit}
+                    className="flex w-full justify-center"
                   >
-                    {getAbbreviatedAddress(item.nfts?.[0].mintAddress)}
-                  </a>
-                </div>
-              )}
+                    {showBindToTokenInput ? (
+                      <div className="flex items-end space-x-4 w-full">
+                        <FormInputWithLabel
+                          label="Token mint address"
+                          name="mintAddress"
+                          value={formik.values.mintAddress}
+                          onChange={formik.handleChange}
+                        />
+                        <div className="space-x-2 flex">
+                          <SubmitButton isSubmitting={formik.isSubmitting}>
+                            <PlusCircleIcon className="h-6 w-6" />
+                          </SubmitButton>
+                          <SecondaryButton
+                            className="bg-red-900"
+                            onClick={() => setShowBindToTokenInput(false)}
+                          >
+                            <XMarkIcon className="h-6 w-6" />
+                          </SecondaryButton>
+                        </div>
+                      </div>
+                    ) : (
+                      <PrimaryButton
+                        onClick={() => setShowBindToTokenInput(true)}
+                      >
+                        Bind to Token
+                      </PrimaryButton>
+                    )}
+                  </form>
+                )}
+              </Panel>
             </div>
           </ContentWrapper>
         </>

@@ -8,6 +8,7 @@ import showToast from "@/features/toasts/show-toast";
 import SharedHead from "@/features/UI/head";
 import { FormCheckboxWithLabel } from "@/features/UI/forms/form-checkbox-with-label";
 import { ItemCategoriesSelectInput } from "@/features/admin/items/item-categories-select-input";
+import { FormTextareaWithLabel } from "@/features/UI/forms/form-textarea-with-label";
 
 export const AddItemForm = () => {
   const router = useRouter();
@@ -15,6 +16,7 @@ export const AddItemForm = () => {
     initialValues: {
       name: "",
       imageUrl: "",
+      description: "",
       isConsumable: false,
       isCraftable: false,
       itemCategoryId: "",
@@ -33,6 +35,7 @@ export const AddItemForm = () => {
       }
     },
   });
+
   return (
     <FormWrapper onSubmit={formik.handleSubmit}>
       <SharedHead title="SoDead Admin" />
@@ -44,8 +47,14 @@ export const AddItemForm = () => {
       />
       <FormInputWithLabel
         label="Image url"
-        name="image"
+        name="imageUrl"
         value={formik.values.imageUrl}
+        onChange={formik.handleChange}
+      />
+      <FormTextareaWithLabel
+        label="Description"
+        name="description"
+        value={formik.values.description}
         onChange={formik.handleChange}
       />
       <ItemCategoriesSelectInput

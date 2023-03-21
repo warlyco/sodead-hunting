@@ -62,25 +62,38 @@ export default async function handler(
 
   const tokenMetadata: TokenMetadataFromHelius = data?.[0];
 
+  if (!tokenMetadata) {
+    res.status(500).json({ error: "Token not found" });
+    return;
+  }
+
   console.log("tokenMetadata: ", tokenMetadata);
   try {
-    const { name, symbol, uri } = tokenMetadata.onChainMetadata.metadata.data;
-    const { decimals } =
-      tokenMetadata.onChainAccountInfo.accountInfo.data.parsed.info;
+    const uri = tokenMetadata?.onChainMetadata?.metadata?.data?.uri;
 
-    const { data } = await axios.get(uri);
+    let offChainMetadata;
+    if (uri) {
+      const { data } = await axios.get(uri);
+      offChainMetadata = data;
+    }
+
+    const variables = {
+      name: tokenMetadata?.onChainMetadata?.metadata?.data?.name || "",
+      decimals:
+        tokenMetadata?.onChainAccountInfo?.accountInfo?.data?.parsed?.info
+          ?.decimals,
+      imageUrl: offChainMetadata?.image || "",
+      mintAddress,
+      symbol: tokenMetadata?.onChainMetadata?.metadata?.data?.symbol || "",
+    };
+
+    console.log("variables: ", { variables });
 
     const { insert_sodead_tokens_one }: { insert_sodead_tokens_one: Data } =
       await request({
         url: process.env.NEXT_PUBLIC_GRAPHQL_API_ENDPOINT!,
         document: ADD_TOKEN,
-        variables: {
-          name,
-          decimals,
-          imageUrl: data?.image || "",
-          mintAddress,
-          symbol,
-        },
+        variables,
         requestHeaders: {
           "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
         },
@@ -90,6 +103,6 @@ export default async function handler(
 
     res.status(200).json(insert_sodead_tokens_one);
   } catch (error) {
-    res.status(500).json({ error: "No metadata found" });
+    res.status(500).json({ error });
   }
 }

@@ -1,0 +1,14 @@
+import { gql } from "@apollo/client";
+
+export const GET_TOKEN_BY_MINT_ADDRESS = gql`
+  query GET_TOKEN_BY_MINT_ADDRESS($mintAddress: String!) {
+    sodead_tokens(where: { mintAddress: { _eq: $mintAddress } }) {
+      id
+      name
+      mintAddress
+      item {
+        id
+      }
+    }
+  }
+`;

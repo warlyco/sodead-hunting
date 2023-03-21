@@ -97,6 +97,6 @@ export default async function handler(
 
     res.status(200).json(insert_sodead_items_one);
   } catch (error) {
-    res.status(500).json({ error: "No metadata found" });
+    res.status(500).json({ error });
   }
 }
