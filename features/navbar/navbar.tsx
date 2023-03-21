@@ -8,8 +8,8 @@ const Navbar = () => {
   const { isAdmin } = useAdmin();
 
   return (
-    <div className="relative mx-auto -mb-28 h-28 max-w-5xl pt-12">
-      <div className="flex w-full items-center justify-between gap-4 rounded-full border border-stone-900 bg-black px-10 shadow-deep">
+    <div className="relative mx-auto -mb-28 h-28 max-w-5xl pt-8">
+      <div className="flex w-full items-center justify-between gap-4 rounded-full border border-stone-900 bg-black px-10 shadow-deep py-2">
         <Link href="/" className="block">
           <Image
             className="h-16"

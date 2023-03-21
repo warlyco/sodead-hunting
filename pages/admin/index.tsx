@@ -19,6 +19,7 @@ import { CommunitiesList } from "@/features/admin/communities/communities-list";
 import { NftCollectionssList } from "@/features/admin/nft-collections/nfts-collection-list";
 import Link from "next/link";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import { NotAdminBlocker } from "@/features/admin/not-admin-blocker";
 
 const primaryTabs: ITab[] = [
   {
@@ -190,14 +191,7 @@ const Admin: NextPage = () => {
     }
   }, [handleSetSubTab, router.query.tab]);
 
-  if (!isAdmin) {
-    return (
-      <ContentWrapper className="w-full text-center text-stone-300">
-        <SharedHead />
-        <div>Not Admin</div>
-      </ContentWrapper>
-    );
-  }
+  if (!isAdmin) return <NotAdminBlocker />;
 
   return (
     <ContentWrapper className="flex flex-col items-center justify-center text-stone-300">

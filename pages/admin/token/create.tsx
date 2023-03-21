@@ -1,3 +1,4 @@
+import { NotAdminBlocker } from "@/features/admin/not-admin-blocker";
 import { AddTokenForm } from "@/features/admin/tokens/add-token-form";
 import { BackButton } from "@/features/UI/buttons/back-button";
 import { ContentWrapper } from "@/features/UI/content-wrapper";
@@ -6,14 +7,7 @@ import { useAdmin } from "@/hooks/admin";
 export default function CreateTokenPage() {
   const { isAdmin } = useAdmin();
 
-  if (!isAdmin)
-    return (
-      <div className="w-full min-h-screen text-stone-300">
-        <div className="pt-72 text-center text-3xl">
-          You must be an admin to view this page
-        </div>
-      </div>
-    );
+  if (!isAdmin) return <NotAdminBlocker />;
 
   return (
     <ContentWrapper>
