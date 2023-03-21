@@ -2,6 +2,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { getAbbreviatedAddress } from "@/utils/formatting";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();
@@ -43,13 +44,10 @@ const Home: NextPage = () => {
         {!!publicKey && (
           <>
             <div className="text-center text-2xl">
-              Connected to wallet: <br /> {publicKey.toString().slice(0, 6)}
-              ... {publicKey.toString().slice(-6)}
+              🩸Connected to wallet: <br />{" "}
+              {getAbbreviatedAddress(publicKey.toString())}🩸
             </div>
-            <div>
-              🩸 <span className="italic">Let`s hunt </span>
-              🩸
-            </div>
+            <div></div>
           </>
         )}
       </div>

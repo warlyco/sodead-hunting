@@ -17,6 +17,8 @@ import { VampiresList } from "@/features/admin/vampires/vampires-list";
 import { NftsList } from "@/features/admin/nfts/nfts-list";
 import { CommunitiesList } from "@/features/admin/communities/communities-list";
 import { NftCollectionssList } from "@/features/admin/nft-collections/nfts-collection-list";
+import Link from "next/link";
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 
 const primaryTabs: ITab[] = [
   {
@@ -167,8 +169,15 @@ const Admin: NextPage = () => {
     }
   };
 
+  const getCreateLink = () => {
+    switch (activeSubTab.value) {
+      case "tokens":
+      default:
+        return "/admin/token/create";
+    }
+  };
+
   useEffect(() => {
-    console.log("router.query.tab", router.query.tab);
     if (router.query.tab) {
       const subTab = subTabs.find((tab) => tab.value === router.query.tab);
       const primaryTab = primaryTabs.find(
@@ -249,6 +258,11 @@ const Admin: NextPage = () => {
       {activeSubTab.value === "nfts" && <NftsList />}
       {activeSubTab.value === "communities" && <CommunitiesList />}
       {activeSubTab.value === "nft-collections" && <NftCollectionssList />}
+      <Link href={getCreateLink()}>
+        <button className="bottom-4 right-4">
+          <PlusCircleIcon className="w-12 h-12 absolute bottom-8 right-16 text-stone-300 hover:text-stone-900 hover:bg-stone-300 rounded-full bg-stone-900 shadow-deep hover:shadow-deep-float" />
+        </button>
+      </Link>
     </ContentWrapper>
   );
 };

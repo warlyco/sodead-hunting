@@ -10,7 +10,7 @@ export const SecondaryButton = ({ children, ...props }: Props) => {
     <button
       onClick={props?.onClick}
       className={classNames([
-        "bg-blue-800 hover:bg-blue-900 rounded-xl p-4 py-2 uppercase text-stone-300",
+        "bg-stone-800 hover:bg-stone-900 rounded-xl p-4 py-2 uppercase text-stone-300",
         props.className,
       ])}
       type={props.type}

@@ -10,6 +10,7 @@ import { TokenMetadata } from "@/pages/api/get-token-metadata-from-helius";
 import { SecondaryButton } from "@/features/UI/buttons/secondary-button";
 import Spinner from "@/features/UI/spinner";
 import Image from "next/image";
+import SharedHead from "@/features/UI/head";
 
 export const AddTokenForm = () => {
   const [tokenMetadata, setTokenMetadata] = useState<TokenMetadata | null>(
@@ -63,6 +64,8 @@ export const AddTokenForm = () => {
 
   return (
     <FormWrapper onSubmit={formik.handleSubmit}>
+      <SharedHead title="SoDead Admin" />
+
       {!tokenMetadata ? (
         <FormInputWithLabel
           label="Token Mint Address"
@@ -73,7 +76,7 @@ export const AddTokenForm = () => {
       ) : (
         <div className="flex flex-col text-stone-800 items-center w-full">
           {!!tokenMetadata.image && (
-            <div className="bg-blue-500 rounded-xl p-2 mb-4">
+            <div className="bg-stone-800 rounded-xl p-2 mb-4">
               <Image
                 src={tokenMetadata.image}
                 width={100}
