@@ -1,8 +1,7 @@
 import { RarityBadge } from "@/features/UI/badges/rarity-badge";
 import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
-import { GiftIcon, LinkIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
+import { GiftIcon } from "@heroicons/react/24/outline";
 
 import Link from "next/link";
 
@@ -14,8 +13,9 @@ export interface LootBox {
     name: string;
     id: string;
   };
-  itemRewardCollections: {
+  itemRewardCollections?: {
     id: string;
+    name: string;
     itemCollection: {
       id: string;
       amount: number;
@@ -30,9 +30,26 @@ export interface LootBox {
         };
       };
     };
-  };
+    childRewardCollections?: {
+      id: string;
+      name: string;
+      itemCollection: {
+        id: string;
+        amount: number;
+        name: string;
+        item: {
+          name: string;
+          id: string;
+          token: {
+            id: string;
+            mintAddress: string;
+          };
+        };
+      };
+    }[];
+  }[];
   imageUrl: string;
-  itemCostCollection: {
+  itemCostCollections?: {
     itemCollection: {
       amount: number;
       id: string;
@@ -47,8 +64,8 @@ export interface LootBox {
       };
     };
     id: string;
-  };
-  itemGateCollection: {
+  }[];
+  itemGateCollections?: {
     id: string;
     itemCollection: {
       amount: number;
@@ -61,7 +78,7 @@ export interface LootBox {
         };
       };
     };
-  };
+  }[];
   itemRewardCollections_aggregate: {
     aggregate: {
       count: number;

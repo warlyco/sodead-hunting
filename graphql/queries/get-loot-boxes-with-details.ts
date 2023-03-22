@@ -28,7 +28,7 @@ export const GET_LOOT_BOXES_WITH_DETAILS = gql`
         }
       }
       imageUrl
-      itemCostCollection {
+      itemCostCollections {
         itemCollection {
           amount
           id
@@ -49,7 +49,7 @@ export const GET_LOOT_BOXES_WITH_DETAILS = gql`
           count
         }
       }
-      itemGateCollection {
+      itemGateCollections {
         id
         itemCollection {
           amount

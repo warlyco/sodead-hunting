@@ -92,7 +92,9 @@ export default async function handler(
       tokenMetadata?.legacyMetadata?.symbol,
     decimals:
       tokenMetadata?.onChainAccountInfo?.accountInfo?.data?.parsed?.info
-        ?.decimals || tokenMetadata?.legacyMetadata?.decimals,
+        ?.decimals ||
+      tokenMetadata?.legacyMetadata?.decimals ||
+      0,
   };
 
   console.log("~~metadata: ", metadata);

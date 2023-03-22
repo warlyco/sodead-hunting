@@ -12,6 +12,7 @@ export const GET_LOOT_BOX_BY_ID = gql`
       }
       itemRewardCollections {
         id
+        name
         itemCollection {
           id
           amount
@@ -26,9 +27,26 @@ export const GET_LOOT_BOX_BY_ID = gql`
             }
           }
         }
+        childRewardCollections {
+          id
+          name
+          itemCollection {
+            id
+            amount
+            name
+            item {
+              name
+              id
+              token {
+                id
+                mintAddress
+              }
+            }
+          }
+        }
       }
       imageUrl
-      itemCostCollection {
+      itemCostCollections {
         itemCollection {
           amount
           id
@@ -44,7 +62,7 @@ export const GET_LOOT_BOX_BY_ID = gql`
         }
         id
       }
-      itemGateCollection {
+      itemGateCollections {
         id
         itemCollection {
           amount

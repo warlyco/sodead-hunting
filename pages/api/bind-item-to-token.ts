@@ -37,16 +37,26 @@ export default async function handler(
       id: itemId,
     });
 
-  const token = sodead_tokens?.[0];
+  let token = sodead_tokens?.[0];
 
   console.log({ sodead_tokens });
 
   if (!token) {
     console.log("Token not found, adding it to the database");
     try {
-      await axios.post(`${BASE_URL}/api/add-token`, { mintAddress });
-    } catch (error) {
-      console.error("!!!error", error);
+      const { data: newToken }: { data: Token } = await axios.post(
+        `${BASE_URL}/api/add-token`,
+        { mintAddress }
+      );
+      console.log("i am data", newToken);
+      token = newToken;
+    } catch (error: any) {
+      console.error(
+        "!!!error",
+        // Object.keys(error),
+        error.response.data.error.response
+        // error.message
+      );
       res
         .status(500)
         .json({ error: "There was an unexpected error adding the token" });
