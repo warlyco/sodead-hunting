@@ -1,4 +1,5 @@
 import { RarityBadge } from "@/features/UI/badges/rarity-badge";
+import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
 import { getAbbreviatedAddress } from "@/utils/formatting";
 import Image from "next/image";
@@ -28,7 +29,7 @@ export interface Trait {
 export const TraitsListItem = ({ trait }: { trait: Trait }) => {
   return (
     <TableRow keyId={trait.id}>
-      <Image
+      <ImageWithFallback
         className="rounded-2xl"
         src={trait?.imageUrl || ""}
         width={50}

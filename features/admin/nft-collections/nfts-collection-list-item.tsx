@@ -1,4 +1,5 @@
 import { RarityBadge } from "@/features/UI/badges/rarity-badge";
+import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
 import { getAbbreviatedAddress } from "@/utils/formatting";
 import { PhotoIcon } from "@heroicons/react/24/outline";
@@ -28,7 +29,7 @@ export const NftCollectionsListItem = ({
   return (
     <TableRow keyId={collection.id}>
       {!!collection?.imageUrl ? (
-        <Image
+        <ImageWithFallback
           className="rounded-2xl"
           src={collection.imageUrl || ""}
           width={50}

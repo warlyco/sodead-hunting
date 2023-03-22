@@ -1,4 +1,5 @@
 import { RarityBadge } from "@/features/UI/badges/rarity-badge";
+import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
 import { GiftIcon, LinkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
@@ -72,7 +73,7 @@ export const LootBoxesListItem = ({ lootBox }: { lootBox: LootBox }) => {
   return (
     <TableRow keyId={lootBox.id}>
       {!!lootBox?.imageUrl ? (
-        <Image
+        <ImageWithFallback
           className="rounded-2xl"
           src={lootBox.imageUrl || ""}
           width={50}

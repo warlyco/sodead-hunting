@@ -3,6 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { getAbbreviatedAddress } from "@/utils/formatting";
+import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();
@@ -35,7 +36,7 @@ const Home: NextPage = () => {
         <meta name="theme-color" content="#000" />
       </Head>
       <div className="container flex flex-col items-center justify-center gap-6 text-stone-300">
-        <Image
+        <ImageWithFallback
           src="/images/sodead-logo.png"
           alt="SoDead Logo"
           width={200}

@@ -1,3 +1,4 @@
+import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
 import { copyTextToClipboard } from "@/utils/clipboard";
 import { getAbbreviatedAddress } from "@/utils/formatting";
@@ -32,7 +33,7 @@ export type User = {
 export const UsersListItem = ({ user }: { user: User }) => {
   return (
     <TableRow keyId={user.id}>
-      <Image
+      <ImageWithFallback
         className="rounded-2xl"
         src={user.imageUrl || ""}
         width={60}

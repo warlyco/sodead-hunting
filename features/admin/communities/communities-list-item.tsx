@@ -1,3 +1,4 @@
+import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
 import { KeyIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
@@ -29,7 +30,7 @@ export const CommunitiesListItem = ({
   return (
     <TableRow keyId={community?.id}>
       {!!community.imageUrl ? (
-        <Image
+        <ImageWithFallback
           className="rounded-2xl"
           src={community.imageUrl || ""}
           width={80}

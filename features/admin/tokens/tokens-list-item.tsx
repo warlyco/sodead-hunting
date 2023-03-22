@@ -1,3 +1,4 @@
+import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
 import { getAbbreviatedAddress } from "@/utils/formatting";
 import Image from "next/image";
@@ -34,7 +35,7 @@ export type Token = {
 export const TokensListItem = ({ token }: { token: Token }) => {
   return (
     <TableRow keyId={token.id}>
-      <Image
+      <ImageWithFallback
         className="rounded-2xl"
         src={token.imageUrl || ""}
         width={60}

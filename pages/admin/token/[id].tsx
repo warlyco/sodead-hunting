@@ -10,6 +10,7 @@ import { ContentWrapper } from "@/features/UI/content-wrapper";
 import { GET_TOKEN_BY_ID } from "@/graphql/queries/get-token-by-id";
 import { useAdmin } from "@/hooks/admin";
 import { NotAdminBlocker } from "@/features/admin/not-admin-blocker";
+import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 
 export interface TokenClaimToken {
   id: string;
@@ -53,7 +54,7 @@ const TokenDetailPage = () => {
               <BackButton />
             </div>
             <div className="w-full flex flex-col items-center">
-              <Image
+              <ImageWithFallback
                 className="rounded-2xl shadow-xl border border-stone-800 w-12 h-12 object-contain object-center mb-4"
                 src={token.imageUrl || ""}
                 width={30}

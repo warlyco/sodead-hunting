@@ -1,3 +1,4 @@
+import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
 import { getAbbreviatedAddress } from "@/utils/formatting";
 import Image from "next/image";
@@ -41,7 +42,7 @@ export type Vampire = {
 export const VampiresListItem = ({ vampire }: { vampire: Vampire }) => {
   return (
     <TableRow keyId={vampire.id}>
-      <Image
+      <ImageWithFallback
         className="rounded-2xl"
         src={vampire?.imageUrl || ""}
         width={60}

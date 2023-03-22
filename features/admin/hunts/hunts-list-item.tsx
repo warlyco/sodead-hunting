@@ -1,4 +1,6 @@
+import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
+import { formatDateTime } from "@/utils/date-time";
 import { CalendarIcon, ClockIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 
@@ -33,7 +35,7 @@ export type Hunt = {
 export const HuntsListItem = ({ hunt }: { hunt: Hunt }) => {
   return (
     <TableRow keyId={hunt.id}>
-      <Image
+      <ImageWithFallback
         className="rounded-2xl"
         src={hunt.imageUrl || ""}
         width={60}
@@ -45,12 +47,10 @@ export const HuntsListItem = ({ hunt }: { hunt: Hunt }) => {
       </div>
       <div className="my-4 flex items-center space-x-4">
         <CalendarIcon className="h-5 w-5 text-stone-300" />
-        <div>Start:</div>
-        <div>{hunt.startTime}</div>
+        <div>{formatDateTime(hunt.startTime)}</div>
       </div>
       <div className="my-4 flex items-center space-x-4">
         <ClockIcon className="h-5 w-5 text-stone-300" />
-        <div>Duration</div>
         <div>{Math.floor(hunt.durationInSeconds / 60 / 60)}h </div>
       </div>
       <div className="flex flex-grow"></div>

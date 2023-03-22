@@ -1,3 +1,4 @@
+import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
 import { formatNumberWithCommas } from "@/utils/formatting";
 import { KeyIcon } from "@heroicons/react/24/outline";
@@ -25,7 +26,7 @@ export const KeysListItem = ({ keyItem }: { keyItem: Key }) => {
   return (
     <TableRow keyId={keyItem.id}>
       {!!keyItem.imageUrl ? (
-        <Image
+        <ImageWithFallback
           className="rounded-2xl"
           src={keyItem.imageUrl || ""}
           width={80}
