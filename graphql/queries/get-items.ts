@@ -23,6 +23,11 @@ export const GET_ITEMS = gql`
         id
         name
       }
+      token {
+        id
+        name
+        mintAddress
+      }
     }
   }
 `;

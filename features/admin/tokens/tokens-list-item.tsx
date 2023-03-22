@@ -6,14 +6,29 @@ import Link from "next/link";
 
 export type Token = {
   id: string;
+  createdAt: string;
+  decimals: number;
+  imageUrl: string;
+  mintAddress: string;
   name: string;
   symbol: string;
-  decimals: number;
-  mintAddress: string;
-  imageUrl: string;
-  item: {
+  items: {
     id: string;
+    name: string;
   };
+  mounts: {
+    id: string;
+    name: string;
+  };
+  nftCollection: {
+    id: string;
+    name: string;
+  };
+  vampires: {
+    id: string;
+    name: string;
+  };
+  isFungible: boolean;
 };
 
 export const TokensListItem = ({ token }: { token: Token }) => {

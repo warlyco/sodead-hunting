@@ -6,26 +6,33 @@ export const GET_VAMPIRES = gql`
       createdAt
       id
       name
-      activeHunt {
+      huntInstances {
         id
-        name
+        startTime
+        endTime
+        hunt {
+          id
+          name
+        }
       }
-      nft {
+      imageUrl
+      rankInCollection
+      rarity {
         id
-        mintAddress
-        imageUrl
         name
       }
       stats {
         id
         value
         baseStat {
-          id
-          abbreviation
-          max
-          min
           name
+          id
         }
+      }
+      token {
+        id
+        mintAddress
+        name
       }
     }
   }

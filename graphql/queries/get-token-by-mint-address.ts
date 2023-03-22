@@ -4,11 +4,29 @@ export const GET_TOKEN_BY_MINT_ADDRESS = gql`
   query GET_TOKEN_BY_MINT_ADDRESS($mintAddress: String!) {
     sodead_tokens(where: { mintAddress: { _eq: $mintAddress } }) {
       id
-      name
+      createdAt
+      decimals
+      imageUrl
       mintAddress
-      item {
+      name
+      symbol
+      items {
         id
+        name
       }
+      mounts {
+        id
+        name
+      }
+      nftCollection {
+        id
+        name
+      }
+      vampires {
+        id
+        name
+      }
+      isFungible
     }
   }
 `;

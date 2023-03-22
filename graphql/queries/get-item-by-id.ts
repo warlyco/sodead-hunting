@@ -4,21 +4,6 @@ export const GET_ITEM_BY_ID = gql`
   query GET_ITEM_BY_ID($id: uuid!) {
     sodead_items_by_pk(id: $id) {
       description
-      costs {
-        amount
-        id
-        createdAt
-        token {
-          id
-          name
-          mintAddress
-        }
-        item {
-          id
-          name
-          imageUrl
-        }
-      }
       baseStatModifier {
         id
         name
@@ -38,12 +23,21 @@ export const GET_ITEM_BY_ID = gql`
       itemCategory {
         id
         name
+        parentCategory {
+          name
+          id
+        }
+        childCategories {
+          id
+          name
+        }
       }
-      nfts {
+      itemCollections {
+        name
         id
-        mintAddress
+        imageUrl
       }
-      tokens {
+      token {
         id
         mintAddress
       }

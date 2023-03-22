@@ -2,24 +2,32 @@ import { gql } from "@apollo/client";
 
 export const GET_TRAITS = gql`
   query GET_TRAITS {
-    sodead_traits {
-      id
-      name
-      token {
-        id
-        mintAddress
-        name
-        imageUrl
+    sodead_items(
+      where: {
+        itemCategory: { id: { _eq: "917e04f7-11fa-444c-8b9c-f34bf7d0db17" } }
       }
+    ) {
       rarity {
         id
         name
       }
-      traitCategory {
+      createdAt
+      description
+      id
+      imageUrl
+      itemCategory {
+        childCategories {
+          id
+          name
+        }
         id
         name
       }
-      createdAt
+      name
+      token {
+        id
+        mintAddress
+      }
     }
   }
 `;

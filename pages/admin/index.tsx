@@ -10,11 +10,9 @@ import { ItemsList } from "@/features/admin/items/items-list";
 import { TraitsList } from "@/features/admin/traits/traits-list";
 import { HuntsList } from "@/features/admin/hunts/hunts-list";
 import { UsersList } from "@/features/admin/users/users-list";
-import { RewardsList } from "@/features/admin/rewards/rewards-list";
 import { LootBoxesList } from "@/features/admin/loot-boxes/loot-boxes-list";
 import { KeysList } from "@/features/admin/keys/keys-list";
 import { VampiresList } from "@/features/admin/vampires/vampires-list";
-import { NftsList } from "@/features/admin/nfts/nfts-list";
 import { CommunitiesList } from "@/features/admin/communities/communities-list";
 import { NftCollectionssList } from "@/features/admin/nft-collections/nfts-collection-list";
 import Link from "next/link";
@@ -83,11 +81,6 @@ const huntTabs: ITab[] = [
     parent: "hunting",
   },
   {
-    name: "Rewards",
-    value: "rewards",
-    parent: "hunting",
-  },
-  {
     name: "Loot Boxes",
     value: "loot-boxes",
     parent: "hunting",
@@ -103,11 +96,6 @@ const communityTabs: ITab[] = [
   {
     name: "Users",
     value: "users",
-  },
-  {
-    name: "NFTs",
-    value: "nfts",
-    parent: "users-nfts",
   },
   {
     name: "Communities",
@@ -235,7 +223,6 @@ const Admin: NextPage = () => {
 
       {/* Hunting */}
       {activeSubTab.value === "hunts" && <HuntsList />}
-      {activeSubTab.value === "rewards" && <RewardsList />}
       {activeSubTab.value === "loot-boxes" && <LootBoxesList />}
       {activeSubTab.value === "keys" && <KeysList />}
 
@@ -251,7 +238,6 @@ const Admin: NextPage = () => {
 
       {/* Users/NFTs */}
       {activeSubTab.value === "users" && <UsersList />}
-      {activeSubTab.value === "nfts" && <NftsList />}
       {activeSubTab.value === "communities" && <CommunitiesList />}
       {activeSubTab.value === "nft-collections" && <NftCollectionssList />}
       <Link href={getCreateLink()}>

@@ -6,20 +6,24 @@ import Image from "next/image";
 import Link from "next/link";
 
 export interface Trait {
-  id: string;
   createdAt: string;
+  description?: string;
+  id: string;
+  imageUrl: string;
+  itemCategory: {
+    childCategories: {
+      id: string;
+      name: string;
+    }[];
+    id: string;
+    name: string;
+  };
   name: string;
   token: {
     id: string;
-    name: string;
     mintAddress: string;
-    imageUrl: string;
   };
   rarity: {
-    id: string;
-    name: string;
-  };
-  traitCategory: {
     id: string;
     name: string;
   };
@@ -30,7 +34,7 @@ export const TraitsListItem = ({ trait }: { trait: Trait }) => {
     <TableRow keyId={trait.id}>
       <Image
         className="rounded-2xl"
-        src={trait?.token?.imageUrl || ""}
+        src={trait?.imageUrl || ""}
         width={50}
         height={50}
         alt="Store image"
@@ -38,7 +42,7 @@ export const TraitsListItem = ({ trait }: { trait: Trait }) => {
       <div className="flex items-center space-x-12">
         <RarityBadge rarity={trait.rarity} />
         <div>{trait.name}</div>
-        <div>{trait?.traitCategory?.name}</div>
+        <div>{trait?.itemCategory?.childCategories?.[0]?.name}</div>
       </div>
       <div className="my-4 flex items-center space-x-4 px-8">
         {!!trait?.token?.mintAddress && (

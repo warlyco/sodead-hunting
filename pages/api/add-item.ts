@@ -36,19 +36,29 @@ export type Item = {
   isConsumable: boolean;
   isCraftable: boolean;
   name: string;
+
+  description: string;
   itemCategory: {
     id: string;
     name: string;
+    parentCategory: {
+      name: string;
+      id: string;
+    };
+    childCategories: {
+      id: string;
+      name: string;
+    };
   };
-  nfts: {
+  itemCollections: {
+    name: string;
+    id: string;
+    imageUrl: string;
+  };
+  token: {
     id: string;
     mintAddress: string;
-  }[];
-  tokens: {
-    id: string;
-    mintAddress: string;
-  }[];
-  description: string;
+  };
 };
 
 type Data =

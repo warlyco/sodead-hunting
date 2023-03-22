@@ -10,6 +10,23 @@ export const GET_TOKEN_BY_ID = gql`
       mintAddress
       name
       symbol
+      items {
+        id
+        name
+      }
+      mounts {
+        id
+        name
+      }
+      nftCollection {
+        id
+        name
+      }
+      vampires {
+        id
+        name
+      }
+      isFungible
     }
   }
 `;

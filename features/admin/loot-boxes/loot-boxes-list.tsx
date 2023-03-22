@@ -1,18 +1,13 @@
 import { useQuery } from "@apollo/client";
 import { TableWrapper } from "@/features/UI/tables/table-wrapper";
-import { GET_REWARDS } from "@/graphql/queries/get-rewards";
-import {
-  Reward,
-  RewardsListItem,
-} from "@/features/admin/rewards/rewards-list-item";
-import { GET_LOOT_BOXES_WITH_REWARDS } from "@/graphql/queries/get-loot-boxes-with-rewards";
+import { GET_LOOT_BOXES_WITH_DETAILS } from "@/graphql/queries/get-loot-boxes-with-details";
 import {
   LootBox,
   LootBoxesListItem,
 } from "@/features/admin/loot-boxes/loot-box-list-item";
 
 export const LootBoxesList = () => {
-  const { data } = useQuery(GET_LOOT_BOXES_WITH_REWARDS, {
+  const { data } = useQuery(GET_LOOT_BOXES_WITH_DETAILS, {
     fetchPolicy: "cache-and-network",
   });
 

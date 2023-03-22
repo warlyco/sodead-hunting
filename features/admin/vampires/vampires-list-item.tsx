@@ -1,7 +1,5 @@
 import { TableRow } from "@/features/UI/tables/table-row";
-import { copyTextToClipboard } from "@/utils/clipboard";
 import { getAbbreviatedAddress } from "@/utils/formatting";
-import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 
 import Link from "next/link";

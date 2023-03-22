@@ -1,6 +1,5 @@
 import { RarityBadge } from "@/features/UI/badges/rarity-badge";
 import { TableRow } from "@/features/UI/tables/table-row";
-import { getAbbreviatedAddress } from "@/utils/formatting";
 import { GiftIcon, LinkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 
@@ -10,20 +9,59 @@ export interface LootBox {
   id: string;
   createdAt: string;
   name: string;
-  keys: {
+  rarity: {
+    name: string;
     id: string;
-    keyAmount: number;
-    key: {
+  };
+  itemRewardCollections: {
+    id: string;
+    itemCollection: {
       id: string;
+      amount: number;
+      imageUrl: string;
       name: string;
+      item: {
+        id: string;
+        name: string;
+        token: {
+          id: string;
+          mintAddress: string;
+        };
+      };
     };
   };
-  rarity: {
-    id: string;
-    name: string;
-  };
   imageUrl: string;
-  rewardCollectionItems_aggregate: {
+  itemCostCollection: {
+    itemCollection: {
+      amount: number;
+      id: string;
+      name: string;
+      item: {
+        id: string;
+        name: string;
+        imageUrl: string;
+        token: {
+          mintAddress: string;
+        };
+      };
+    };
+    id: string;
+  };
+  itemGateCollection: {
+    id: string;
+    itemCollection: {
+      amount: number;
+      item: {
+        id: string;
+        name: string;
+        token: {
+          id: string;
+          mintAddress: string;
+        };
+      };
+    };
+  };
+  itemRewardCollections_aggregate: {
     aggregate: {
       count: number;
     };
@@ -51,7 +89,7 @@ export const LootBoxesListItem = ({ lootBox }: { lootBox: LootBox }) => {
         <RarityBadge rarity={lootBox.rarity} />
         <div className="flex items-center space-x-4">
           <div>Linked rewards:</div>
-          <div>{lootBox.rewardCollectionItems_aggregate?.aggregate?.count}</div>
+          <div>{lootBox.itemRewardCollections_aggregate?.aggregate?.count}</div>
         </div>
       </div>
       <div className="flex flex-grow"></div>
