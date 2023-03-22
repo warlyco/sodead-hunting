@@ -13,7 +13,7 @@ export const TraitsList = () => {
 
   return (
     <TableWrapper>
-      {data?.sodead_traits?.map((trait: Trait) => {
+      {data?.sodead_items?.map((trait: Trait) => {
         return <TraitsListItem key={trait.id} trait={trait} />;
       })}
     </TableWrapper>

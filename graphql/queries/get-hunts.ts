@@ -11,7 +11,15 @@ export const GET_HUNTS = gql`
       durationInSeconds
       imageUrl
       bannerImageUrl
-      maxCapacity
+      description
+      maxConcurrentHunters
+      maxTotalHunters
+      huntInstances {
+        vampire {
+          id
+        }
+        id
+      }
     }
   }
 `;

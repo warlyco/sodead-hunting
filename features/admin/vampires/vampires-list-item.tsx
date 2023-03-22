@@ -5,29 +5,36 @@ import Image from "next/image";
 import Link from "next/link";
 
 export type Vampire = {
+  createdAt: string;
   id: string;
   name: string;
-  createdAt: string;
-  activeHunt: {
+  huntInstances: {
     id: string;
-    name: string;
+    startTime: string;
+    endTime: string;
+    hunt: {
+      id: string;
+      name: string;
+    };
   };
-  nft: {
+  imageUrl: string;
+  rankInCollection: number;
+  rarity: {
     id: string;
     name: string;
-    mintAddress: string;
-    imageUrl: string;
   };
   stats: {
     id: string;
     value: number;
     baseStat: {
-      id: string;
       name: string;
-      abbreviation: string;
-      min: number;
-      max: number;
+      id: string;
     };
+  };
+  token: {
+    id: string;
+    mintAddress: string;
+    name: string;
   };
 };
 
@@ -36,14 +43,14 @@ export const VampiresListItem = ({ vampire }: { vampire: Vampire }) => {
     <TableRow keyId={vampire.id}>
       <Image
         className="rounded-2xl"
-        src={vampire?.nft?.imageUrl || ""}
+        src={vampire?.imageUrl || ""}
         width={60}
         height={60}
         alt="vampire image"
       />
       <div className="my-4 flex items-center space-x-10">
         <div>{vampire.name}</div>
-        <div>{getAbbreviatedAddress(vampire?.nft?.mintAddress)}</div>
+        <div>{getAbbreviatedAddress(vampire?.token?.mintAddress)}</div>
       </div>
       <div className="flex flex-grow"></div>
       <Link

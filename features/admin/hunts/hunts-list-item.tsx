@@ -5,15 +5,29 @@ import Image from "next/image";
 import Link from "next/link";
 
 export type Hunt = {
+  createdAt: string;
   id: string;
   name: string;
-  createdAt: string;
   startTime: string;
   endTime: string;
   durationInSeconds: number;
-  maxCapacity: number;
   imageUrl: string;
   bannerImageUrl: string;
+  description: string;
+  maxConcurrentHunters: number;
+  maxTotalHunters: number;
+  instances: {
+    vampire: {
+      id: string;
+      name: string;
+      imageUrl: string;
+      token: {
+        id: string;
+        mintAddress: string;
+      };
+    };
+    id: string;
+  };
 };
 
 export const HuntsListItem = ({ hunt }: { hunt: Hunt }) => {

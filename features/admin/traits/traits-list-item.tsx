@@ -6,15 +6,15 @@ import Image from "next/image";
 import Link from "next/link";
 
 export interface Trait {
+  rarity: {
+    id: string;
+    name: string;
+  };
   createdAt: string;
-  description?: string;
+  description: string;
   id: string;
   imageUrl: string;
   itemCategory: {
-    childCategories: {
-      id: string;
-      name: string;
-    }[];
     id: string;
     name: string;
   };
@@ -22,10 +22,6 @@ export interface Trait {
   token: {
     id: string;
     mintAddress: string;
-  };
-  rarity: {
-    id: string;
-    name: string;
   };
 }
 
@@ -40,9 +36,9 @@ export const TraitsListItem = ({ trait }: { trait: Trait }) => {
         alt="Store image"
       />
       <div className="flex items-center space-x-12">
-        <RarityBadge rarity={trait.rarity} />
+        {!!trait?.rarity && <RarityBadge rarity={trait?.rarity} />}
         <div>{trait.name}</div>
-        <div>{trait?.itemCategory?.childCategories?.[0]?.name}</div>
+        <div>{trait?.itemCategory?.name}</div>
       </div>
       <div className="my-4 flex items-center space-x-4 px-8">
         {!!trait?.token?.mintAddress && (
