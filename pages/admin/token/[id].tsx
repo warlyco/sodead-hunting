@@ -1,16 +1,13 @@
 import { useQuery } from "@apollo/client";
-import { useWallet } from "@solana/wallet-adapter-react";
-
-import { ADMIN_WALLETS } from "@/constants/constants";
-import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BackButton } from "@/features/UI/buttons/back-button";
 import { ContentWrapper } from "@/features/UI/content-wrapper";
 import { GET_TOKEN_BY_ID } from "@/graphql/queries/get-token-by-id";
 import { useAdmin } from "@/hooks/admin";
 import { NotAdminBlocker } from "@/features/admin/not-admin-blocker";
 import { ImageWithFallback } from "@/features/UI/image-with-fallback";
+import { getAbbreviatedAddress } from "@/utils/formatting";
 
 export interface TokenClaimToken {
   id: string;
@@ -69,8 +66,7 @@ const TokenDetailPage = () => {
                 target="_blank"
                 rel="noreferrer"
               >
-                {token.mintAddress.substring(0, 6)}...
-                {token.mintAddress.substring(token.mintAddress.length - 6)}
+                {getAbbreviatedAddress(token.mintAddress)}
               </a>
             </div>
           </ContentWrapper>

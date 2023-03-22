@@ -2,7 +2,6 @@ import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
 import { formatDateTime } from "@/utils/date-time";
 import { CalendarIcon, ClockIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
 
 import Link from "next/link";
 
