@@ -25,10 +25,17 @@ type TokenMetadataFromHelius = {
       };
     };
   };
+  legacyMetadata: {
+    name: string;
+    symbol: string;
+    decimals: number;
+    address: string;
+    logoURI: string;
+  };
 };
 
 export type TokenMetadata = {
-  image: string;
+  imageUrl: string;
   decimals: number;
   name: string;
   symbol: string;
@@ -44,9 +51,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { address } = req.body;
+  const { mintAddress } = req.body;
 
-  if (!address || !process.env.HELIUS_API_KEY) {
+  if (!mintAddress || !process.env.HELIUS_API_KEY) {
     res.status(500).json({ error: "Required fields not set" });
     return;
   }
@@ -54,27 +61,46 @@ export default async function handler(
   const { data } = await axios.post(
     `https://api.helius.xyz/v0/token-metadata?api-key=${process.env.HELIUS_API_KEY}`,
     {
-      mintAccounts: [address],
+      mintAccounts: [mintAddress],
     }
   );
 
   const tokenMetadata: TokenMetadataFromHelius = data?.[0];
 
   console.log("tokenMetadata: ", tokenMetadata);
+
+  let offChainMetadata;
+
+  if (tokenMetadata?.onChainMetadata?.metadata?.data?.uri) {
+    try {
+      const { data } = await axios.get(
+        tokenMetadata?.onChainMetadata?.metadata?.data?.uri
+      );
+      offChainMetadata = data;
+    } catch (error) {
+      console.log("Error fetching off-chain metadata: ", error);
+    }
+  }
+
+  const metadata = {
+    imageUrl: offChainMetadata?.image || tokenMetadata?.legacyMetadata?.logoURI,
+    name:
+      tokenMetadata?.onChainMetadata?.metadata?.data?.name ||
+      tokenMetadata?.legacyMetadata?.name,
+    symbol:
+      tokenMetadata?.onChainMetadata?.metadata?.data?.symbol ||
+      tokenMetadata?.legacyMetadata?.symbol,
+    decimals:
+      tokenMetadata?.onChainAccountInfo?.accountInfo?.data?.parsed?.info
+        ?.decimals || tokenMetadata?.legacyMetadata?.decimals,
+  };
+
+  console.log("~~metadata: ", metadata);
+
+  res.status(200).json(metadata);
   try {
-    const { name, symbol, uri } = tokenMetadata.onChainMetadata.metadata.data;
-    const { decimals } =
-      tokenMetadata.onChainAccountInfo.accountInfo.data.parsed.info;
-
-    const { data } = await axios.get(uri);
-
-    res.status(200).json({
-      image: data.image,
-      name,
-      symbol,
-      decimals,
-    });
   } catch (error) {
+    console.log("~~error: ", error);
     res.status(500).json({ error: "No metadata found" });
   }
 }

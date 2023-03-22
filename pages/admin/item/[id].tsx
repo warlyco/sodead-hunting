@@ -62,7 +62,7 @@ const ItemDetailPage = () => {
       } catch (error: any) {
         console.log("error", error);
         showToast({
-          primaryMessage: "Error adding token",
+          primaryMessage: "Error updating token",
           secondaryMessage: error?.response?.data?.error,
         });
       }
@@ -72,8 +72,8 @@ const ItemDetailPage = () => {
   const handleUnbindToken = async (ev: any) => {
     ev.preventDefault();
     try {
-      await axios.post("/api/unbind-token", {
-        id: item?.tokens?.[0].id,
+      await axios.post("/api/unbind-item-from-token", {
+        id: item?.id,
       });
       showToast({
         primaryMessage: "Item updated",
@@ -83,7 +83,7 @@ const ItemDetailPage = () => {
     } catch (error: any) {
       console.log("error", error);
       showToast({
-        primaryMessage: "Error adding token",
+        primaryMessage: "Error updating token",
         secondaryMessage: error?.response?.data?.error,
       });
     }
@@ -140,16 +140,16 @@ const ItemDetailPage = () => {
                     {item.description}
                   </div>
                 )}
-                {!!item.tokens?.[0] && (
+                {!!item.token && (
                   <div className="text-xl mb-4 flex items-center space-x-4">
                     <div>Bound to token:</div>
                     <a
                       className="text-xl underline"
-                      href={`https://explorer.solana.com/address/${item.tokens?.[0].mintAddress}`}
+                      href={`https://explorer.solana.com/address/${item.token.mintAddress}`}
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {getAbbreviatedAddress(item.tokens?.[0].mintAddress)}
+                      {getAbbreviatedAddress(item.token.mintAddress)}
                     </a>
                     <SecondaryButton
                       className="bg-red-900"
@@ -159,20 +159,7 @@ const ItemDetailPage = () => {
                     </SecondaryButton>
                   </div>
                 )}
-                {!!item.nfts?.[0] && (
-                  <div className="text-xl mb-4">
-                    Bound to NFT:{" "}
-                    <a
-                      className="text-xl underline"
-                      href={`https://explorer.solana.com/address/${item.nfts?.[0].mintAddress}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {getAbbreviatedAddress(item.nfts?.[0].mintAddress)}
-                    </a>
-                  </div>
-                )}
-                {!item.tokens?.[0] && (
+                {!item.token && (
                   <form
                     onSubmit={formik.handleSubmit}
                     className="flex w-full justify-center"

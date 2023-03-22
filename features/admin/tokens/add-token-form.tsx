@@ -11,6 +11,7 @@ import { SecondaryButton } from "@/features/UI/buttons/secondary-button";
 import Spinner from "@/features/UI/spinner";
 import Image from "next/image";
 import SharedHead from "@/features/UI/head";
+import { BASE_URL } from "@/constants/constants";
 
 export const AddTokenForm = () => {
   const [tokenMetadata, setTokenMetadata] = useState<TokenMetadata | null>(
@@ -43,9 +44,12 @@ export const AddTokenForm = () => {
     event.preventDefault();
     setFetchingTokenMetadata(true);
     try {
-      const { data } = await axios.post("/api/get-token-metadata-from-helius", {
-        address: formik.values.mintAddress,
-      });
+      const { data } = await axios.post(
+        `${BASE_URL}/api/get-token-metadata-from-helius`,
+        {
+          mintAddress: formik.values.mintAddress,
+        }
+      );
       setTokenMetadata(data);
     } catch (error) {
       console.log(error);
@@ -75,10 +79,10 @@ export const AddTokenForm = () => {
         />
       ) : (
         <div className="flex flex-col text-stone-800 items-center w-full">
-          {!!tokenMetadata.image && (
+          {!!tokenMetadata.imageUrl && (
             <div className="bg-stone-800 rounded-xl p-2 mb-4">
               <Image
-                src={tokenMetadata.image}
+                src={tokenMetadata.imageUrl}
                 width={100}
                 height={100}
                 alt={tokenMetadata.name}

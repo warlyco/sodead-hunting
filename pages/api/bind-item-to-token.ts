@@ -5,10 +5,8 @@ import { Token } from "@/features/admin/tokens/tokens-list-item";
 import { GET_TOKEN_BY_MINT_ADDRESS } from "@/graphql/queries/get-token-by-mint-address";
 import axios from "axios";
 import { BASE_URL } from "@/constants/constants";
-
-type TokenResponse = {
-  returning: Token[];
-};
+import { GET_ITEM_BY_ID } from "@/graphql/queries/get-item-by-id";
+import { Item } from "@/pages/api/add-item";
 
 type Data =
   | Token
@@ -34,14 +32,21 @@ export default async function handler(
     }
   );
 
+  const { sodead_items_by_pk: item }: { sodead_items_by_pk: Item } =
+    await client.request(GET_ITEM_BY_ID, {
+      id: itemId,
+    });
+
+  const token = sodead_tokens?.[0];
+
   console.log({ sodead_tokens });
 
-  if (!sodead_tokens?.[0]) {
+  if (!token) {
     console.log("Token not found, adding it to the database");
     try {
       await axios.post(`${BASE_URL}/api/add-token`, { mintAddress });
     } catch (error) {
-      console.error(error);
+      console.error("!!!error", error);
       res
         .status(500)
         .json({ error: "There was an unexpected error adding the token" });
@@ -49,20 +54,20 @@ export default async function handler(
     }
   }
 
-  if (sodead_tokens?.[0]?.item.id) {
+  if (item?.token?.id) {
     res.status(500).json({ error: "Token already bound to an item" });
     return;
   }
 
-  const { update_sodead_tokens }: { update_sodead_tokens: TokenResponse } =
-    await client.request(BIND_ITEM_TO_TOKEN, {
-      mintAddress,
+  const {
+    update_sodead_items_by_pk: updatedToken,
+  }: { update_sodead_items_by_pk: Data } = await client.request(
+    BIND_ITEM_TO_TOKEN,
+    {
+      tokenId: token?.id,
       itemId,
-    });
-
-  console.log({ update_sodead_tokens });
-
-  const updatedToken = update_sodead_tokens?.returning?.[0];
+    }
+  );
 
   if (!updatedToken) {
     res.status(500).json({ error: "There was an unexpected error" });
