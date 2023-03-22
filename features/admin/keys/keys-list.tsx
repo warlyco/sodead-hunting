@@ -10,7 +10,7 @@ export const KeysList = () => {
 
   return (
     <TableWrapper>
-      {data?.sodead_keys?.map((key: Key) => {
+      {data?.sodead_items?.map((key: Key) => {
         return <KeysListItem key={key.id} keyItem={key} />;
       })}
     </TableWrapper>
