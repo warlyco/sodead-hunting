@@ -51,15 +51,14 @@ export default async function handler(
       console.log("i am data", newToken);
       token = newToken;
     } catch (error: any) {
-      console.error(
-        "!!!error",
-        // Object.keys(error),
-        error.response.data.error.response
-        // error.message
-      );
+      console.error({ error: error?.response?.data?.error?.response });
       res
         .status(500)
-        .json({ error: "There was an unexpected error adding the token" });
+        .json({
+          error:
+            error?.response?.data?.error?.response ||
+            "There was an unexpected error adding the token",
+        });
       return;
     }
   }
