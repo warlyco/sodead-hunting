@@ -7,6 +7,7 @@ export const ADD_ACCOUNT = gql`
     $providerId: uuid!
     $providerAccountId: String!
     $username: String!
+    $userId: uuid = ""
   ) {
     insert_sodead_accounts_one(
       object: {
@@ -15,6 +16,7 @@ export const ADD_ACCOUNT = gql`
         providerId: $providerId
         providerAccountId: $providerAccountId
         username: $username
+        userId: $userId
       }
     ) {
       id

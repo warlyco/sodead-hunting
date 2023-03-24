@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-export const ADD_ACCOUNT = gql`
-  mutation MyMutation(
+export const ADD_USER = gql`
+  mutation ADD_USER(
     $accountId: uuid!
     $primaryWalletId: uuid!
     $email: String!
