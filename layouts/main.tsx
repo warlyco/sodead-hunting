@@ -16,11 +16,7 @@ export default function MainLayout({ children, centered }: Props) {
     <div className="bg-stone-900" suppressHydrationWarning={true}>
       <Navbar />
       <Toaster />
-      <div
-        className={classnames({
-          "-mt-32": typeof window,
-        })}
-      >
+      <div>
         <main
           className={classnames([
             "min-h-screen bg-gradient-to-b from-stone-900 via-black to-black",

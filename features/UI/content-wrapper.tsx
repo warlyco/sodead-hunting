@@ -7,7 +7,7 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 
 export const ContentWrapper = ({ children, className }: Props) => {
   return (
-    <div className={classNames([className, "pt-44 max-w-5xl mx-auto"])}>
+    <div className={classNames([className, "pt-40 max-w-5xl mx-auto"])}>
       {children}
     </div>
   );

@@ -5,6 +5,7 @@ export const GET_LOOT_BOX_BY_ID = gql`
     sodead_lootBoxes_by_pk(id: $id) {
       id
       createdAt
+      description
       name
       rarity {
         name

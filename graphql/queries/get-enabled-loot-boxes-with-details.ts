@@ -5,6 +5,7 @@ export const GET_ENABLED_LOOT_BOXES_WITH_DETAILS = gql`
     sodead_lootBoxes(where: { isEnabled: { _eq: true } }) {
       id
       createdAt
+      description
       name
       rarity {
         name

@@ -4,6 +4,7 @@ import Spinner from "@/features/UI/spinner";
 import { GET_ENABLED_LOOT_BOXES_WITH_DETAILS } from "@/graphql/queries/get-enabled-loot-boxes-with-details";
 import { useQuery } from "@apollo/client";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 export const ActiveLootboxes = () => {
@@ -28,11 +29,15 @@ export const ActiveLootboxes = () => {
       <div className="flex w-full max-w-5xl m-auto flex-wrap">
         {!!lootBoxes &&
           lootBoxes?.map((lootBox) => (
-            <div className="w-full md:w-1/3 p-4 flex" key={lootBox.id}>
-              <Card onClick={() => {}} imageUrl={lootBox.imageUrl}>
+            <Link
+              href={`/loot-box/${lootBox.id}`}
+              key={lootBox.id}
+              className="w-full md:w-1/3 p-4 flex"
+            >
+              <Card imageUrl={lootBox.imageUrl}>
                 <div className="text-2xl">{lootBox.name}</div>
               </Card>
-            </div>
+            </Link>
           ))}
       </div>
     </>

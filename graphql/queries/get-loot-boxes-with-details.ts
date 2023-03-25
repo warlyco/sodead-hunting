@@ -4,6 +4,7 @@ export const GET_LOOT_BOXES_WITH_DETAILS = gql`
   query GET_LOOT_BOXES_WITH_DETAILS {
     sodead_lootBoxes {
       id
+      description
       createdAt
       name
       rarity {

@@ -34,6 +34,7 @@ export type LootBox = {
   isEnabled: boolean;
   createdAt: string;
   name: string;
+  description: string;
   rarity: {
     name: string;
     id: string;
