@@ -10,8 +10,17 @@ export const GET_LOOT_BOXES_WITH_DETAILS = gql`
         name
         id
       }
-      itemRewardCollections {
+      rewardCollections {
         id
+        hashListCollection {
+          name
+          id
+          hashList {
+            id
+            name
+            rawHashList
+          }
+        }
         itemCollection {
           id
           amount
@@ -28,7 +37,16 @@ export const GET_LOOT_BOXES_WITH_DETAILS = gql`
         }
       }
       imageUrl
-      itemCostCollections {
+      costCollections {
+        hashListCollection {
+          name
+          id
+          hashList {
+            id
+            name
+            rawHashList
+          }
+        }
         itemCollection {
           amount
           id
@@ -44,13 +62,22 @@ export const GET_LOOT_BOXES_WITH_DETAILS = gql`
         }
         id
       }
-      itemRewardCollections_aggregate {
+      rewardCollections_aggregate {
         aggregate {
           count
         }
       }
-      itemGateCollections {
+      gateCollections {
         id
+        hashListCollection {
+          name
+          id
+          hashList {
+            id
+            name
+            rawHashList
+          }
+        }
         itemCollection {
           amount
           item {

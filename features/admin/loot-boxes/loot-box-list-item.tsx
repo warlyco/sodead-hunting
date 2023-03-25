@@ -5,6 +5,30 @@ import { GiftIcon } from "@heroicons/react/24/outline";
 
 import Link from "next/link";
 
+export type hashListCollection = {
+  id: string;
+  name: string;
+  hashList: {
+    id: string;
+    name: string;
+    rawHashList: string;
+  };
+};
+
+export type ItemCollection = {
+  amount: number;
+  id: string;
+  name: string;
+  item: {
+    id: string;
+    name: string;
+    imageUrl: string;
+    token: {
+      mintAddress: string;
+    };
+  };
+};
+
 export interface LootBox {
   id: string;
   createdAt: string;
@@ -13,73 +37,30 @@ export interface LootBox {
     name: string;
     id: string;
   };
-  itemRewardCollections?: {
+  rewardCollections?: {
     id: string;
     name: string;
-    itemCollection: {
-      id: string;
-      amount: number;
-      imageUrl: string;
-      name: string;
-      item: {
-        id: string;
-        name: string;
-        token: {
-          id: string;
-          mintAddress: string;
-        };
-      };
-    };
+    hashListCollection: hashListCollection;
+    itemCollection: ItemCollection;
     childRewardCollections?: {
       id: string;
       name: string;
-      itemCollection: {
-        id: string;
-        amount: number;
-        name: string;
-        item: {
-          name: string;
-          id: string;
-          token: {
-            id: string;
-            mintAddress: string;
-          };
-        };
-      };
+      hashListCollection: hashListCollection;
+      itemCollection: ItemCollection;
     }[];
   }[];
   imageUrl: string;
-  itemCostCollections?: {
-    itemCollection: {
-      amount: number;
-      id: string;
-      name: string;
-      item: {
-        id: string;
-        name: string;
-        imageUrl: string;
-        token: {
-          mintAddress: string;
-        };
-      };
-    };
+  costCollections?: {
+    hashListCollection: hashListCollection;
+    itemCollection: ItemCollection;
     id: string;
   }[];
-  itemGateCollections?: {
+  gateCollection?: {
     id: string;
-    itemCollection: {
-      amount: number;
-      item: {
-        id: string;
-        name: string;
-        token: {
-          id: string;
-          mintAddress: string;
-        };
-      };
-    };
+    hashListCollection: hashListCollection;
+    itemCollection: ItemCollection;
   }[];
-  itemRewardCollections_aggregate: {
+  rewardCollections_aggregate: {
     aggregate: {
       count: number;
     };
@@ -107,7 +88,7 @@ export const LootBoxesListItem = ({ lootBox }: { lootBox: LootBox }) => {
         <RarityBadge rarity={lootBox.rarity} />
         <div className="flex items-center space-x-4">
           <div>Linked rewards:</div>
-          <div>{lootBox.itemRewardCollections_aggregate?.aggregate?.count}</div>
+          <div>{lootBox.rewardCollections_aggregate?.aggregate?.count}</div>
         </div>
       </div>
       <div className="flex flex-grow"></div>

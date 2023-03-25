@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { BackButton } from "@/features/UI/buttons/back-button";
 import { ContentWrapper } from "@/features/UI/content-wrapper";
 import { useAdmin } from "@/hooks/admin";
@@ -62,54 +62,83 @@ const LootBoxDetailPage = () => {
 
                 <div className="mb-4 w-full">
                   <div className="text-center uppercase text-lg">Rewards</div>
-                  {!!lootBox?.itemRewardCollections &&
-                    lootBox.itemRewardCollections.map(
+                  {!!lootBox?.rewardCollections &&
+                    lootBox.rewardCollections.map(
                       ({
                         itemCollection,
+                        hashListCollection,
                         childRewardCollections,
                         name: parentName,
                       }) => (
-                        <div
-                          key={itemCollection?.id}
-                          className="flex justify-between items-center border border-stone-800 rounded-lg p-2 my-2"
-                        >
-                          {/* Top level name */}
-                          {!!itemCollection?.name && (
-                            <div>{itemCollection?.name}</div>
-                          )}
-                          {/* Parent name */}
-                          <div>{parentName}</div>
-                          <div>
-                            {!!childRewardCollections &&
-                              childRewardCollections.map(
-                                ({ itemCollection, name }) => (
-                                  <div
-                                    key={itemCollection?.id}
-                                    className="p-2 rounded-lg"
-                                  >
-                                    <div>{itemCollection?.name}</div>
-                                  </div>
-                                )
-                              )}
+                        <Fragment key={itemCollection?.id}>
+                          <div className="flex justify-between items-center border border-stone-800 rounded-lg p-2 my-2">
+                            {/* Top level name */}
+                            {!!itemCollection?.name && (
+                              <div>{itemCollection?.name}</div>
+                            )}
+                            {!!hashListCollection?.id && (
+                              <div>
+                                <div>{hashListCollection?.name}</div>
+                              </div>
+                            )}
+                            {/* Parent name */}
+                            <div>{parentName}</div>
+                            <div>
+                              {!!childRewardCollections &&
+                                childRewardCollections.map(
+                                  ({ itemCollection, hashListCollection }) => (
+                                    <>
+                                      {!!itemCollection?.id && (
+                                        <div
+                                          key={itemCollection?.id}
+                                          className="p-2 rounded-lg"
+                                        >
+                                          <div>{itemCollection?.name}</div>
+                                        </div>
+                                      )}
+                                      {JSON.stringify(hashListCollection)}
+                                      {!!hashListCollection?.id && (
+                                        <div
+                                          key={hashListCollection?.id}
+                                          className="p-2 rounded-lg"
+                                        >
+                                          <div>{hashListCollection?.name}</div>
+                                        </div>
+                                      )}
+                                    </>
+                                  )
+                                )}
+                            </div>
                           </div>
-                        </div>
+                        </Fragment>
                       )
                     )}
                 </div>
                 <div className="mb-4 w-full">
                   <div className="text-center uppercase text-lg">Costs</div>
-                  {!!lootBox?.itemCostCollections &&
-                    lootBox.itemCostCollections.map(({ itemCollection }) => (
-                      <div
-                        key={itemCollection?.id}
-                        className="flex justify-between items-center border border-stone-800 rounded-lg p-2 my-2"
-                      >
-                        {/* Top level name */}
-                        <div>{itemCollection?.name}</div>
-                        {/* Parent name */}
-                        <div className="">{}</div>
-                      </div>
-                    ))}
+                  {!!lootBox?.costCollections &&
+                    lootBox.costCollections.map(
+                      ({ itemCollection, hashListCollection }) => (
+                        <Fragment key={itemCollection?.id}>
+                          {!!itemCollection?.name && (
+                            <div className="flex justify-between items-center border border-stone-800 rounded-lg p-2 my-2">
+                              {/* Top level name */}
+                              <div>{itemCollection?.name}</div>
+                              {/* Parent name */}
+                              <div className="">{}</div>
+                            </div>
+                          )}
+                          {!!hashListCollection?.name && (
+                            <div className="flex justify-between items-center border border-stone-800 rounded-lg p-2 my-2">
+                              {/* Top level name */}
+                              <div>{hashListCollection?.name}</div>
+                              {/* Parent name */}
+                              <div className="">{}</div>
+                            </div>
+                          )}
+                        </Fragment>
+                      )
+                    )}
                 </div>
               </Panel>
             </div>
