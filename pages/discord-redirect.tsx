@@ -7,34 +7,35 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 
 export type DiscordUser = {
-  accent_color: string;
-  avatar: string;
-  avatar_decoration: string;
-  banner: string;
-  banner_color: string;
+  accent_color: number | null;
+  avatar: string | null;
+  avatar_decoration: string | null;
+  banner: string | null;
+  banner_color: string | null;
   discriminator: string;
+  display_name: string | null;
+  email: string | null;
   flags: number;
+  global_name: string | null;
   id: string;
   locale: string;
   mfa_enabled: boolean;
   premium_type: number;
   public_flags: number;
   username: string;
-};
-
-type Response = {
-  id: string;
+  verified: boolean;
 };
 
 const DiscordRedirect = () => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [discordUser, setDiscordUser] = useState<DiscordUser | null>(null);
+  const [tokenType, setTokenType] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { publicKey } = useWallet();
   const router = useRouter();
 
   const saveUser = useCallback(
-    async (user: any) => {
+    async (user: DiscordUser) => {
+      const savedUserId = localStorage.getItem("userId");
       if (!user) return;
 
       if (!publicKey) {
@@ -42,14 +43,22 @@ const DiscordRedirect = () => {
         return;
       }
 
+      console.log("saving user", { user });
+      debugger;
+
       try {
-        const res = await axios.post(`${BASE_URL}/api/update-user-discord`, {
-          walletAddress: publicKey,
-          discordId: user.id,
-          discordName: user.username,
-          discordAvatarUrl: user?.avatar
+        const res = await axios.post(`${BASE_URL}/api/add-account`, {
+          imageUrl: user?.avatar
             ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
             : null,
+          email: user.email,
+          providerId: "eea4c92e-4ac4-4203-8c19-cba7f7b8d4f6", // Discord
+          providerAccountId: user.id,
+          username: `${user.username}#${user.discriminator}`,
+          userId: savedUserId,
+          walletAddress: publicKey,
+          accessToken,
+          tokenType,
         });
 
         if (res.data) {
@@ -74,7 +83,7 @@ const DiscordRedirect = () => {
         }
       }
     },
-    [publicKey, router]
+    [accessToken, publicKey, router, tokenType]
   );
 
   const fetchDiscordUser = useCallback(
@@ -109,13 +118,15 @@ const DiscordRedirect = () => {
       fragment.get("access_token"),
       fragment.get("token_type"),
     ];
+    debugger;
     if (!accessToken || !tokenType) {
       router.push("/");
       return;
     }
     setAccessToken(accessToken);
+    setTokenType(tokenType);
     fetchDiscordUser({ accessToken, tokenType });
-  }, [discordUser, fetchDiscordUser, router]);
+  }, [fetchDiscordUser, router]);
 
   return (
     <div className="flex w-full h-full items-center justify-center">

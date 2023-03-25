@@ -8,6 +8,8 @@ export const ADD_ACCOUNT = gql`
     $providerAccountId: String!
     $username: String!
     $userId: uuid = ""
+    $tokenType: String = ""
+    $accessToken: String = ""
   ) {
     insert_sodead_accounts_one(
       object: {
@@ -17,6 +19,8 @@ export const ADD_ACCOUNT = gql`
         providerAccountId: $providerAccountId
         username: $username
         userId: $userId
+        tokenType: $tokenType
+        accessToken: $accessToken
       }
     ) {
       id

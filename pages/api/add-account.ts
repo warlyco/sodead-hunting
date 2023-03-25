@@ -40,6 +40,8 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const {
+    accessToken,
+    tokenType,
     imageUrl,
     email,
     providerId,
@@ -66,6 +68,8 @@ export default async function handler(
     providerAccountId,
     username,
     userId,
+    tokenType,
+    accessToken,
   };
 
   try {

@@ -4,9 +4,18 @@ import Image from "next/image";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { getAbbreviatedAddress } from "@/utils/formatting";
 import { ImageWithFallback } from "@/features/UI/image-with-fallback";
+import { useEffect } from "react";
+import { Router, useRouter } from "next/router";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!publicKey) return;
+
+    router.push("/me");
+  }, [publicKey, router]);
 
   return (
     <>
@@ -42,15 +51,6 @@ const Home: NextPage = () => {
           width={200}
           height={200}
         />
-        {!!publicKey && (
-          <>
-            <div className="text-center text-2xl">
-              🩸Connected to wallet: <br />{" "}
-              {getAbbreviatedAddress(publicKey.toString())}🩸
-            </div>
-            <div></div>
-          </>
-        )}
       </div>
     </>
   );

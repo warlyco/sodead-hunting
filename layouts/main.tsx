@@ -18,7 +18,7 @@ export default function MainLayout({ children, centered }: Props) {
       <Toaster />
       <div
         className={classnames({
-          "-mt-36": typeof window,
+          "-mt-28": typeof window,
         })}
       >
         <main
