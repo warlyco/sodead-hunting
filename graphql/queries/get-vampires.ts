@@ -2,15 +2,19 @@ import { gql } from "@apollo/client";
 
 export const GET_VAMPIRES = gql`
   query GET_VAMPIRES {
-    sodead_vampires {
+    sodead_creatures(
+      where: {
+        creatureCategoryId: { _eq: "28ea2cc8-7fbc-4599-a93d-73a34f00ddfe" }
+      }
+    ) {
       createdAt
       id
       name
-      huntInstances {
+      mainCharacterActivityInstances {
         id
         startTime
         endTime
-        hunt {
+        activity {
           id
           name
         }
@@ -21,12 +25,12 @@ export const GET_VAMPIRES = gql`
         id
         name
       }
-      stats {
+      statInstances {
         id
         value
         baseStat {
-          name
           id
+          name
         }
       }
       token {

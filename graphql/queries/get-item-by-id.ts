@@ -20,7 +20,7 @@ export const GET_ITEM_BY_ID = gql`
       isConsumable
       isCraftable
       name
-      itemCategory {
+      category {
         id
         name
         parentCategory {

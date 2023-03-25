@@ -2,12 +2,16 @@ import { gql } from "@apollo/client";
 
 export const GET_USERS = gql`
   query GET_USERS {
-    sodead_users {
+    sodead_users(order_by: { accounts_aggregate: { count: desc } }) {
       id
       name
       email
       createdAt
       wallets {
+        id
+        address
+      }
+      primaryWallet {
         id
         address
       }

@@ -58,11 +58,6 @@ const creaturesTabs: ITab[] = [
 
 const itemsTabs: ITab[] = [
   {
-    name: "Tokens",
-    value: "tokens",
-    parent: "items",
-  },
-  {
     name: "Items",
     value: "items",
     parent: "items",
@@ -70,6 +65,11 @@ const itemsTabs: ITab[] = [
   {
     name: "Traits",
     value: "traits",
+    parent: "items",
+  },
+  {
+    name: "Tokens",
+    value: "tokens",
     parent: "items",
   },
 ];

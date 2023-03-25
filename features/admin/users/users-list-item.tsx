@@ -1,8 +1,12 @@
 import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
 import { copyTextToClipboard } from "@/utils/clipboard";
+import { formatDateTime } from "@/utils/date-time";
 import { getAbbreviatedAddress } from "@/utils/formatting";
-import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
+import {
+  CheckCircleIcon,
+  ClipboardDocumentListIcon,
+} from "@heroicons/react/24/outline";
 import Image from "next/image";
 
 import Link from "next/link";
@@ -44,22 +48,28 @@ export const UsersListItem = ({ user }: { user: User }) => {
         height={60}
         alt="User image"
       />
-      <div className="my-4 flex items-center space-x-10">
-        <div>{user.createdAt}</div>
-        <div>{user.name}</div>
-        <div>{user.email}</div>
-        <div>
-          {!!user.wallets && user.wallets.length > 0 && (
-            <>
-              {getAbbreviatedAddress(user.wallets[0].address)}
-              <button
-                onClick={() => copyTextToClipboard(user.wallets[0].address)}
-              >
-                <ClipboardDocumentListIcon className="h-5 w-5 text-stone-300" />
-              </button>
-            </>
-          )}
-        </div>
+      <div className="w-1/5 truncate">{formatDateTime(user.createdAt)}</div>
+      <div className="w-1/5 truncate">{user.name}</div>
+      {!!user.email && <div className="w-1/5 truncate">{user.email}</div>}
+      <div className="w-1/4 truncate flex items-center space-x-2">
+        {!!user.primaryWallet && (
+          <>
+            <div>{getAbbreviatedAddress(user.primaryWallet.address)}</div>
+            <button
+              onClick={() => copyTextToClipboard(user.primaryWallet.address)}
+            >
+              <ClipboardDocumentListIcon className="h-5 w-5 text-stone-300" />
+            </button>
+          </>
+        )}
+      </div>
+      <div className="w-1/4 truncate flex items-center space-x-2">
+        {!!user.accounts?.[0] && (
+          <>
+            <CheckCircleIcon className="h-5 w-5 text-green-600" />
+            <div>{user.accounts[0]?.provider.name}</div>
+          </>
+        )}
       </div>
       <div className="flex flex-grow"></div>
       <Link

@@ -38,7 +38,7 @@ export type Item = {
   name: string;
 
   description: string;
-  itemCategory: {
+  category: {
     id: string;
     name: string;
     parentCategory: {

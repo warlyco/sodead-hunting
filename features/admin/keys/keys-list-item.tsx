@@ -46,12 +46,12 @@ export const KeysListItem = ({ keyItem }: { keyItem: Key }) => {
         </div>
       )}
       <div className="flex flex-grow"></div>
-      <Link
+      {/* <Link
         className="bg-stone-800 text-stone-300 px-4 py-2 rounded-lg uppercase text-sm"
         href={`/admin/keyItem/${keyItem.id}`}
       >
         Manage
-      </Link>
+      </Link> */}
     </TableRow>
   );
 };

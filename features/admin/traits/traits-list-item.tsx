@@ -15,7 +15,7 @@ export interface Trait {
   description: string;
   id: string;
   imageUrl: string;
-  itemCategory: {
+  category: {
     id: string;
     name: string;
   };
@@ -39,7 +39,7 @@ export const TraitsListItem = ({ trait }: { trait: Trait }) => {
       <div className="flex items-center space-x-12">
         {!!trait?.rarity && <RarityBadge rarity={trait?.rarity} />}
         <div>{trait.name}</div>
-        <div>{trait?.itemCategory?.name}</div>
+        <div>{trait?.category?.name}</div>
       </div>
       <div className="my-4 flex items-center space-x-4 px-8">
         {!!trait?.token?.mintAddress && (

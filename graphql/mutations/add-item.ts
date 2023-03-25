@@ -24,7 +24,7 @@ export const ADD_ITEM = gql`
       isConsumable
       isCraftable
       description
-      itemCategory {
+      category {
         id
         name
       }

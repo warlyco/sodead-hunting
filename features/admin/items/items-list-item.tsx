@@ -12,7 +12,7 @@ export interface Item {
   isConsumable: boolean;
   isCraftable: boolean;
   createdAt: string;
-  itemCategory: {
+  category: {
     id: string;
     name: string;
   };
@@ -58,9 +58,9 @@ export const ItemsListItem = ({ item }: { item: Item }) => {
           <div>Craftable</div>
         </div>
       </div>
-      {!!item?.itemCategory?.name && (
+      {!!item?.category?.name && (
         <div className="flex justify-center w-full italic">
-          {<div className="flex">{item.itemCategory.name}</div>}
+          {<div className="flex">{item.category.name}</div>}
         </div>
       )}
       {!!item.baseStatModifier && (

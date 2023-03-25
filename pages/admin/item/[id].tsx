@@ -115,7 +115,7 @@ const ItemDetailPage = () => {
               <Panel className="flex flex-col items-center justify-center">
                 <h1 className="text-3xl mb-2">{item.name}</h1>
                 <h2 className="mb-4 uppercase">
-                  {item.itemCategory?.name || "No category"}
+                  {item.category?.name || "No category"}
                 </h2>
                 <div className="flex space-x-6 mb-4">
                   <div className="flex items-center space-x-2">
