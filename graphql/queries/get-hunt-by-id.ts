@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_HUNT_BY_ID = gql`
-  query GET_HUNT_BY_ID($id: uuid!) {
-    sodead_hunts_by_pk(id: $id) {
+  query MyQuery($id: uuid!) {
+    sodead_activities_by_pk(id: $id) {
       createdAt
       id
       name
@@ -12,13 +12,22 @@ export const GET_HUNT_BY_ID = gql`
       imageUrl
       bannerImageUrl
       description
-      maxConcurrentHunters
-      maxTotalHunters
-      huntInstances {
-        vampire {
+      maxTotalParticipants
+      maxConcurrentParticipants
+      instances {
+        mainCharacter {
           id
+          name
         }
         id
+        mount {
+          id
+          name
+        }
+      }
+      lootBox {
+        id
+        name
       }
     }
   }

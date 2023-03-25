@@ -10,7 +10,7 @@ export const HuntsList = () => {
 
   return (
     <TableWrapper>
-      {data?.sodead_hunts?.map((hunt: Hunt) => {
+      {data?.sodead_activities?.map((hunt: Hunt) => {
         return <HuntsListItem key={hunt.id} hunt={hunt} />;
       })}
     </TableWrapper>

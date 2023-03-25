@@ -25,12 +25,12 @@ const LoginWithDiscord = ({ user }: { user: User }) => {
   switch (process.env.NEXT_PUBLIC_ENV) {
     case "production":
       href =
-        "https://discord.com/api/oauth2/authorize?client_id=1084345711786721300&redirect_uri=https%3A%2F%2Fsodead-hunting-three.vercel.app%2Fdiscord-redirect&response_type=code&scope=identify%20guilds%20email%20guilds.join&response_type=token";
+        "https://discord.com/api/oauth2/authorize?client_id=1084345711786721300&redirect_uri=https%3A%2F%2Fsodead-hunting-three.vercel.app%2Fdiscord-redirect&response_type=code&scope=identify%20guilds%20email&response_type=token";
       break;
     case "local":
     default:
       href =
-        "https://discord.com/api/oauth2/authorize?client_id=1084345711786721300&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fdiscord-redirect&response_type=code&scope=identify%20guilds%20email%20guilds.join&response_type=token";
+        "https://discord.com/api/oauth2/authorize?client_id=1084345711786721300&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fdiscord-redirect&response_type=code&scope=identify%20guilds%20email&response_type=token";
       break;
   }
 

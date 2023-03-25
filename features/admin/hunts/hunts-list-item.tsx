@@ -15,8 +15,8 @@ export type Hunt = {
   imageUrl: string;
   bannerImageUrl: string;
   description: string;
-  maxConcurrentHunters: number;
-  maxTotalHunters: number;
+  maxConcurrentParticipants: number;
+  maxTotalParticipants: number;
   instances: {
     vampire: {
       id: string;
@@ -55,7 +55,7 @@ export const HuntsListItem = ({ hunt }: { hunt: Hunt }) => {
       <div className="flex flex-grow"></div>
       <Link
         className="bg-stone-800 text-stone-300 px-4 py-2 rounded-lg uppercase text-sm"
-        href={`/admin/hunt/${hunt.id}`}
+        href={`/admin/activity/${hunt.id}`}
       >
         Manage
       </Link>

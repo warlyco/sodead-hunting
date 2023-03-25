@@ -77,7 +77,7 @@ const DiscordRedirect = () => {
         const { message } = error.response.data.error.response.errors[0];
         if (message.includes("Uniqueness violation")) {
           showToast({
-            primaryMessage: "This Discord account is linked to another wallet",
+            primaryMessage: "This Discord account is linked to another user",
           });
           router.push("/");
         }

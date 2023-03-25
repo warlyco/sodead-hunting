@@ -22,8 +22,8 @@ const HuntDetailPage = () => {
   const { loading, error } = useQuery(GET_HUNT_BY_ID, {
     variables: { id },
     skip: !id,
-    onCompleted: ({ sodead_hunts_by_pk }) => {
-      setHunt(sodead_hunts_by_pk);
+    onCompleted: ({ sodead_activities_by_pk }) => {
+      setHunt(sodead_activities_by_pk);
       setHasBeenFetched(true);
     },
   });
@@ -64,11 +64,13 @@ const HuntDetailPage = () => {
                 </div>
                 <div className="flex w-full justify-between mb-4">
                   <div>Maximum concurrent hunters:</div>
-                  <div>{formatNumberWithCommas(hunt.maxConcurrentHunters)}</div>
+                  <div>
+                    {formatNumberWithCommas(hunt.maxConcurrentParticipants)}
+                  </div>
                 </div>
                 <div className="flex w-full justify-between mb-4">
                   <div>Maximum total hunters:</div>
-                  <div>{formatNumberWithCommas(hunt.maxTotalHunters)}</div>
+                  <div>{formatNumberWithCommas(hunt.maxTotalParticipants)}</div>
                 </div>
               </Panel>
             </div>
