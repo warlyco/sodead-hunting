@@ -40,13 +40,16 @@ const Home: NextPage = () => {
         <meta name="theme-color" content="#000" />
       </Head>
       <div className="container flex flex-col items-center justify-center gap-6 text-stone-300">
-        <ImageWithFallback
-          src="/images/sodead-logo.png"
-          alt="SoDead Logo"
-          width={200}
-          height={200}
-        />
-        {!!user && <>{JSON.stringify(user)}</>}
+        {publicKey && user ? (
+          <div>HUNT</div>
+        ) : (
+          <ImageWithFallback
+            src="/images/sodead-logo.png"
+            alt="SoDead Logo"
+            width={200}
+            height={200}
+          />
+        )}
       </div>
     </>
   );
