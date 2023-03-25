@@ -61,14 +61,15 @@ export default async function handler(
 
   if (existingWallet) {
     const {
-      insert_sodead_users_one: updatedWallet,
-    }: { insert_sodead_users_one: User } = await client.request({
+      update_sodead_wallets_by_pk: updatedWallet,
+    }: { update_sodead_wallets_by_pk: Wallet } = await client.request({
       document: BIND_WALLET_TO_USER,
       variables: {
         walletId: existingWallet.id,
         userId: newUser.id,
       },
     });
+    wallet = updatedWallet;
   } else {
     try {
       const { data: newWallet }: { data: Wallet } = await axios.post(
@@ -78,9 +79,19 @@ export default async function handler(
           userId: newUser.id,
         }
       );
-      wallet = newWallet;
-      console.log("newWallet", newWallet);
-      if (!newWallet) {
+      const {
+        update_sodead_wallets_by_pk: updatedWallet,
+      }: { update_sodead_wallets_by_pk: Wallet } = await client.request({
+        document: BIND_WALLET_TO_USER,
+        variables: {
+          walletId: newWallet.id,
+          userId: newUser.id,
+        },
+      });
+      wallet = updatedWallet;
+      console.log("updatedWallet", updatedWallet);
+
+      if (!updatedWallet) {
         res.status(500).json({ error: "Error creating wallet" });
         return;
       }
@@ -101,6 +112,9 @@ export default async function handler(
   // console.log("insert_sodead_users_one", insert_sodead_users_one);
   res.status(200).json({
     wallet,
-    user: newUser,
+    user: {
+      ...newUser,
+      wallets: [wallet],
+    },
   });
 }

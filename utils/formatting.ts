@@ -2,6 +2,7 @@ export const getAbbreviatedAddress = (
   address: string,
   identifierLength: number = 4
 ) => {
+  if (!address) return "";
   return `${address.slice(0, identifierLength)}...${address.slice(
     address.length - identifierLength
   )}`;

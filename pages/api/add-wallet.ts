@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 import { User } from "@/features/admin/users/users-list-item";
+import { client } from "@/graphql/backend-client";
 import { ADD_WALLET } from "@/graphql/mutations/add-wallet";
 import request from "graphql-request";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -26,13 +27,9 @@ export default async function handler(
 
   try {
     const { insert_sodead_wallets_one }: { insert_sodead_wallets_one: Data } =
-      await request({
-        url: process.env.NEXT_PUBLIC_GRAPHQL_API_ENDPOINT!,
+      await client.request({
         document: ADD_WALLET,
         variables: { address },
-        requestHeaders: {
-          "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
-        },
       });
 
     console.log("insert_sodead_wallets_one: ", insert_sodead_wallets_one);

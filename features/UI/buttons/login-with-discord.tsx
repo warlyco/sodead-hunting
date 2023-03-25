@@ -51,7 +51,7 @@ const LoginWithDiscord = ({ user }: { user: User }) => {
     <div>
       {!!discordAccount ? (
         <div>
-          <div className="font-bold text-base mb-2 bg-purple-700 rounded-lg px-4 py-3 flex items-center space-x-3 text-amber-200 max-w-64">
+          <div className="font-bold text-base mb-2 bg-purple-700 rounded-lg px-4 py-3 flex items-center space-x-3 text-stone-300 max-w-64">
             <Image
               height={20}
               width={26}
@@ -64,18 +64,16 @@ const LoginWithDiscord = ({ user }: { user: User }) => {
         </div>
       ) : (
         <button
-          className="text-base bg-purple-700 text-amber-200 rounded-md px-4 py-2 inline-flex items-center justify-center uppercase space-x-3"
+          className="text-base bg-purple-700 text-stone-300 rounded-md px-4 py-2 inline-flex items-center justify-center uppercase space-x-3"
           onClick={handleConnectWithDiscord}
         >
-          <div className="mt-2">
-            <Image
-              height={20}
-              width={26}
-              src="/images/discord.svg"
-              alt="Discord"
-              className="block"
-            />
-          </div>
+          <Image
+            height={20}
+            width={26}
+            src="/images/discord.svg"
+            alt="Discord"
+            className="block text-stone-300"
+          />
           <div className="mr-2">Connect with Discord</div>
         </button>
       )}

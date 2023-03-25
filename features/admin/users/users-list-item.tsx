@@ -16,6 +16,10 @@ export type User = {
     id: string;
     address: string;
   }[];
+  primaryWallet: {
+    id: string;
+    address: string;
+  };
   accounts: {
     id: string;
     provider: {

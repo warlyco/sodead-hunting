@@ -11,6 +11,10 @@ export const GET_USER_BY_WALLET_ADDRESS = gql`
         address
         id
       }
+      wallets {
+        id
+        address
+      }
       accounts {
         id
         email
