@@ -13,6 +13,7 @@ import { getUserDiscordAccount } from "@/utils/user";
 import dynamic from "next/dynamic";
 import axios from "axios";
 import { useLazyQuery } from "@apollo/client";
+import { useUser } from "@/hooks/user";
 
 export type Wallet = {
   address: string;
@@ -32,9 +33,9 @@ const Home: NextPage = () => {
       ssr: false,
     }
   );
+  const { user, setUser } = useUser();
   const { publicKey } = useWallet();
   const [userFetched, setUserFetched] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
   const [discordAccount, setDiscordAccount] = useState<Account | null>(null);
 
   const [fetchUser, { refetch }] = useLazyQuery(GET_USER_BY_WALLET_ADDRESS, {

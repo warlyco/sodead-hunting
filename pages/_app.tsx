@@ -10,6 +10,7 @@ import { FoucGuard } from "@/features/fouc-guard";
 import { AdminProvider } from "@/hooks/admin";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { UserProvider } from "@/hooks/user";
 
 const strangeDream = localFont({
   src: "../fonts/strange-dreams.ttf",
@@ -34,10 +35,12 @@ const App: AppType<{ session: Session | null }> = ({
       // <SessionProvider session={session}>
       <ContextProvider>
         <AdminProvider>
-          <FoucGuard />
-          <MainLayout centered={isCentered}>
-            <Component {...pageProps} />
-          </MainLayout>
+          <UserProvider>
+            <FoucGuard />
+            <MainLayout centered={isCentered}>
+              <Component {...pageProps} />
+            </MainLayout>
+          </UserProvider>
         </AdminProvider>
       </ContextProvider>
     )

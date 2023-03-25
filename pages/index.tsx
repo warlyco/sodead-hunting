@@ -5,16 +5,12 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { useEffect } from "react";
 import { Router, useRouter } from "next/router";
+import { useUser } from "@/hooks/user";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();
   const router = useRouter();
-
-  useEffect(() => {
-    if (!publicKey) return;
-
-    router.push("/me");
-  }, [publicKey, router]);
+  const { user } = useUser();
 
   return (
     <>
@@ -50,6 +46,7 @@ const Home: NextPage = () => {
           width={200}
           height={200}
         />
+        {!!user && <>{JSON.stringify(user)}</>}
       </div>
     </>
   );
