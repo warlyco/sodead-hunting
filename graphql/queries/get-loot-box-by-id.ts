@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_LOOT_BOX_BY_ID = gql`
-  query MyQuery($id: uuid!) {
+  query GET_LOOT_BOX_BY_ID($id: uuid!) {
     sodead_lootBoxes_by_pk(id: $id) {
       id
       createdAt

@@ -24,7 +24,7 @@ const App: AppType<{ session: Session | null }> = ({
   const [isCentered, setIsCentered] = useState(false);
   return (
     useEffect(() => {
-      if (router.pathname === "/") {
+      if (router.pathname === "/" || router.pathname === "/me") {
         setIsCentered(true);
       } else {
         setIsCentered(false);

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_USER_BY_WALLET_ADDRESS = gql`
-  query MyQuery($address: String!) {
+  query GET_USER_BY_WALLET_ADDRESS($address: String!) {
     sodead_users(where: { wallets: { address: { _eq: $address } } }) {
       email
       id
