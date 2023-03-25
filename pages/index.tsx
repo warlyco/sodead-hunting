@@ -1,15 +1,12 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { ImageWithFallback } from "@/features/UI/image-with-fallback";
-import { useEffect } from "react";
-import { Router, useRouter } from "next/router";
 import { useUser } from "@/hooks/user";
+import { ActiveLootboxes } from "@/features/lootboxes/active-lootboxes";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();
-  const router = useRouter();
   const { user } = useUser();
 
   return (
@@ -41,7 +38,9 @@ const Home: NextPage = () => {
       </Head>
       <div className="container flex flex-col items-center justify-center gap-6 text-stone-300">
         {publicKey && user ? (
-          <div>HUNT</div>
+          <div className="overflow-y-scroll pt-48 mb-16">
+            <ActiveLootboxes />
+          </div>
         ) : (
           <ImageWithFallback
             src="/images/sodead-logo.png"

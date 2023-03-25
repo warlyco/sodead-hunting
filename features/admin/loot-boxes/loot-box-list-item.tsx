@@ -29,8 +29,9 @@ export type ItemCollection = {
   };
 };
 
-export interface LootBox {
+export type LootBox = {
   id: string;
+  isEnabled: boolean;
   createdAt: string;
   name: string;
   rarity: {
@@ -65,7 +66,7 @@ export interface LootBox {
       count: number;
     };
   };
-}
+};
 
 export const LootBoxesListItem = ({ lootBox }: { lootBox: LootBox }) => {
   return (

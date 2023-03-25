@@ -15,6 +15,11 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        purple: {
+          500: "#9564f7",
+        },
+      },
       fontFamily: {
         "strange-dreams": ["var(--font-strange-dreams)", ...fontFamily.sans],
       },
