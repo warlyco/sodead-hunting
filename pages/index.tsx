@@ -38,7 +38,7 @@ const Home: NextPage = () => {
       </Head>
       <div className="container flex flex-col items-center justify-center gap-6 text-stone-300">
         {publicKey && user ? (
-          <div className="overflow-y-scroll pt-48 mb-16">
+          <div className="overflow-y-auto pt-48 mb-16">
             <ActiveLootboxes />
           </div>
         ) : (

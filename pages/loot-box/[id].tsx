@@ -1,4 +1,5 @@
 import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
+import { PrimaryButton } from "@/features/UI/buttons/primary-button";
 import { ContentWrapper } from "@/features/UI/content-wrapper";
 import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
@@ -29,8 +30,11 @@ const LootBoxDetailPage: NextPage = () => {
         height={350}
         alt="Lootbox image"
       />
-      <h1 className="text-3xl mb-6">{lootBox?.name}</h1>
-      <div className="italic text-lg">{lootBox?.description}</div>
+      <h1 className="text-3xl mb-8">{lootBox?.name}</h1>
+      <div className="italic text-2xl max-w-sm text-center mb-8">
+        {lootBox?.description}
+      </div>
+      <PrimaryButton>Claim</PrimaryButton>
     </ContentWrapper>
   );
 };
