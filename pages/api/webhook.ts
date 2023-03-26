@@ -9,8 +9,6 @@ import {
 import {
   BASE_URL,
   COLLECTION_WALLET_ADDRESS,
-  PLATFORM_TOKEN_MINT_ADDRESS,
-  REWARD_TOKEN_MINT_ADDRESS,
   RPC_ENDPOINT,
 } from "@/constants/constants";
 import * as base58 from "bs58";
@@ -37,7 +35,11 @@ export default async function handler(
 ) {
   console.log("webhook called");
 
-  if (req.method !== "POST" || REWARD_TOKEN_MINT_ADDRESS) {
+  if (
+    req.method !== "POST" ||
+    !process.env.NEXT_PUBLIC_PLATFORM_TOKEN_MINT_ADDRESS ||
+    !process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT_ADDRESS
+  ) {
     res.status(405).json({ success: false });
     return;
   }
@@ -144,7 +146,9 @@ export default async function handler(
       // console.log("burned", { burnTxAddress });
 
       // Send reward
-      const rewardMintAddress = new PublicKey(REWARD_TOKEN_MINT_ADDRESS);
+      const rewardMintAddress = new PublicKey(
+        process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT_ADDRESS
+      );
 
       console.log("webhook 4", rewardMintAddress);
 
@@ -223,7 +227,7 @@ export default async function handler(
 
       // Send platform reward
       const platformTokenMintAddress = new PublicKey(
-        PLATFORM_TOKEN_MINT_ADDRESS
+        process.env.NEXT_PUBLIC_PLATFORM_TOKEN_MINT_ADDRESS
       );
 
       console.log("webhook 13", {
