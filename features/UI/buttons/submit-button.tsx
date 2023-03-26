@@ -8,6 +8,7 @@ interface Props extends React.HTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode | string;
   disabled?: boolean;
   className?: string;
+  onClick?: () => void;
 }
 
 export const SubmitButton = ({
@@ -16,9 +17,11 @@ export const SubmitButton = ({
   children,
   disabled,
   className,
+  onClick,
 }: Props) => {
   return (
     <SecondaryButton
+      onClick={onClick}
       disabled={isSubmitting || disabled}
       className={classNames([
         isSubmitting

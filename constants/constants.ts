@@ -6,6 +6,8 @@ export const GRAPHQL_API_ENDPOINT: string =
 export const ADMIN_WALLETS = process.env.NEXT_PUBLIC_ADMIN_WALLETS || "[]";
 export const ENV = process.env.NEXT_PUBLIC_ENV || "";
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
+export const BURNING_WALLET_ADDRESS =
+  process.env.NEXT_PUBLIC_BURNING_WALLET_ADDRESS || "";
 
 export const HASH_LISTS = {
   "Lady Vampires": "51777308-8f32-4af5-aead-835862f066ce",

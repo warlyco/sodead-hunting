@@ -1,25 +1,37 @@
+import { BURNING_WALLET_ADDRESS } from "@/constants/constants";
 import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
-import { NftCollectionsListItem } from "@/features/admin/nft-collections/nfts-collection-list-item";
-import { PrimaryButton } from "@/features/UI/buttons/primary-button";
+import showToast from "@/features/toasts/show-toast";
 import { SubmitButton } from "@/features/UI/buttons/submit-button";
-import { Card } from "@/features/UI/card";
 import { ContentWrapper } from "@/features/UI/content-wrapper";
 import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import Spinner from "@/features/UI/spinner";
 import { UserWithoutAccountBlocker } from "@/features/UI/user-without-account-blocker";
+import { ADD_BURN_ATTEMPT } from "@/graphql/mutations/add-burn-attempt";
 import { GET_HASH_LIST_BY_ID } from "@/graphql/queries/get-hash-list-by-id";
 import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
 import { useUser } from "@/hooks/user";
 import { fetchNftsByHashList } from "@/utils/nfts/fetch-nfts-by-hash-list";
-import { useQuery } from "@apollo/client";
+import { asWallet } from "@/utils/transactions/as-wallet";
+import { executeTransaction } from "@/utils/transactions/execute-transaction";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  createAssociatedTokenAccountInstruction,
+  createCloseAccountInstruction,
+  createTransferInstruction,
+  getAssociatedTokenAddress,
+} from "@solana/spl-token";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import {
+  PublicKey,
+  Transaction,
+  TransactionInstructionCtorFields,
+} from "@solana/web3.js";
 import { NextPage } from "next";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 
 const LootBoxDetailPage: NextPage = () => {
-  const { publicKey } = useWallet();
+  const wallet = useWallet();
   const { connection } = useConnection();
   const { user, loadingUser } = useUser();
   const router = useRouter();
@@ -39,9 +51,12 @@ const LootBoxDetailPage: NextPage = () => {
   const [userHeldCostTokens, setUserHeldCostTokens] = useState<string[]>([]);
   const [hasFetchUserHeldCostTokens, setHasFetchUserHeldCostTokens] =
     useState<boolean>(false);
-  const [isEnabledClaimButton, setIsEnabledClaimButton] =
-    useState<boolean>(false);
   const [costAmount, setCostAmount] = useState<number>(0);
+  const [nftMintAddressesToBurn, setNftMintAddressesToBurn] = useState<
+    string[]
+  >([]);
+  const [transferInProgress, setTransferInProgress] = useState<boolean>(false);
+  const [addBurnAttempt, { data, error }] = useMutation(ADD_BURN_ATTEMPT);
 
   const { loading: loadingRewardHashList } = useQuery(GET_HASH_LIST_BY_ID, {
     variables: {
@@ -88,16 +103,119 @@ const LootBoxDetailPage: NextPage = () => {
     },
   });
 
+  const handleTransferNfts = useCallback(async () => {
+    console.log("handleTransferNfts", nftMintAddressesToBurn);
+
+    if (!wallet?.publicKey || !wallet?.signTransaction) return;
+    setTransferInProgress(true);
+    showToast({
+      primaryMessage: "Sending NFTs to the furnace",
+    });
+
+    const instructions: TransactionInstructionCtorFields[] = [];
+
+    for (const address of nftMintAddressesToBurn) {
+      const fromTokenAccountAddress = await getAssociatedTokenAddress(
+        new PublicKey(address),
+        wallet.publicKey
+      );
+
+      const toTokenAccountAddress = await getAssociatedTokenAddress(
+        new PublicKey(address),
+        new PublicKey(BURNING_WALLET_ADDRESS)
+      );
+
+      const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
+        new PublicKey(address),
+        new PublicKey(BURNING_WALLET_ADDRESS)
+      );
+
+      const receiverAccount = await connection.getAccountInfo(
+        associatedDestinationTokenAddr
+      );
+
+      if (!receiverAccount) {
+        instructions.push(
+          createAssociatedTokenAccountInstruction(
+            wallet.publicKey,
+            associatedDestinationTokenAddr,
+            new PublicKey(BURNING_WALLET_ADDRESS),
+            new PublicKey(address)
+          )
+        );
+      }
+
+      instructions.push(
+        createTransferInstruction(
+          fromTokenAccountAddress,
+          toTokenAccountAddress,
+          wallet.publicKey,
+          1
+        )
+      );
+
+      instructions.push(
+        createCloseAccountInstruction(
+          fromTokenAccountAddress,
+          wallet.publicKey,
+          wallet.publicKey
+        )
+      );
+    }
+
+    const latestBlockhash = await connection.getLatestBlockhash();
+    const transaction = new Transaction({ ...latestBlockhash });
+    transaction.add(...instructions);
+
+    executeTransaction(
+      connection,
+      transaction,
+      {
+        callback: () => setTransferInProgress(false),
+        successCallback: () => {
+          showToast({
+            primaryMessage: "Success, your claim will be in your wallet soon",
+          });
+          setNftMintAddressesToBurn([]);
+        },
+      },
+      wallet,
+      addBurnAttempt,
+      nftMintAddressesToBurn
+    );
+  }, [wallet, connection, addBurnAttempt, nftMintAddressesToBurn]);
+
   const fetchUserHeldCostTokens = useCallback(async () => {
-    if (!publicKey || !user || !connection || !costHashList.length) return;
+    if (
+      !wallet?.publicKey ||
+      !user ||
+      !connection ||
+      !costHashList.length ||
+      hasFetchUserHeldCostTokens
+    )
+      return;
     const costTokens = await fetchNftsByHashList({
       hashList: costHashList,
-      publicKey,
+      publicKey: wallet.publicKey,
       connection,
     });
     setUserHeldCostTokens(costTokens);
     setHasFetchUserHeldCostTokens(true);
-  }, [publicKey, user, connection, costHashList]);
+
+    if (costTokens.length >= costAmount) {
+      const addresses = costTokens.slice(0, costAmount);
+      console.log("addresses", addresses);
+      setNftMintAddressesToBurn(addresses.map((token) => token.mintAddress));
+      return;
+    }
+  }, [
+    wallet.publicKey,
+    user,
+    connection,
+    costHashList,
+    hasFetchUserHeldCostTokens,
+    costAmount,
+  ]);
 
   useEffect(() => {
     console.log({
@@ -105,7 +223,7 @@ const LootBoxDetailPage: NextPage = () => {
       costAmount,
     });
     if (
-      !publicKey ||
+      !wallet?.publicKey ||
       !user ||
       !connection ||
       !hashListCostCollectionId ||
@@ -118,7 +236,7 @@ const LootBoxDetailPage: NextPage = () => {
   }, [
     rewardHashList,
     costHashList,
-    publicKey,
+    wallet,
     user,
     connection,
     fetchUserHeldCostTokens,
@@ -177,7 +295,7 @@ const LootBoxDetailPage: NextPage = () => {
               alt="Cost token image"
               className="border-2 border-purple-500 rounded-2xl h-48 w-48 mb-6"
             />
-            <div className="flex">
+            <div className="flex items-center space-x-3">
               <div className="uppercase">Cost:</div>
               <div>{costAmount}</div>
             </div>
@@ -192,11 +310,11 @@ const LootBoxDetailPage: NextPage = () => {
           </div>
         </div>
       </div>
-      <div className="py-8 w-full justify-center flex">
+      <div className="pb-12 pt-4 md:py-16 w-full justify-center flex">
         <SubmitButton
           className="text-2xl"
           isSubmitting={false}
-          onClick={() => {}}
+          onClick={handleTransferNfts}
           disabled={!(userHeldCostTokens.length >= costAmount)}
         >
           Claim

@@ -8,8 +8,9 @@ export const UserWithoutAccountBlocker = () => {
   const { user } = useUser();
 
   return (
-    <>
+    <div className="flex flex-col items-center">
       <ImageWithFallback
+        className="mb-8"
         src="/images/sodead-logo.png"
         alt="SoDead Logo"
         width={200}
@@ -26,6 +27,6 @@ export const UserWithoutAccountBlocker = () => {
           <>Connect your wallet to continue</>
         )}
       </div>
-    </>
+    </div>
   );
 };
