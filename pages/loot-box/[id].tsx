@@ -176,6 +176,7 @@ const LootBoxDetailPage: NextPage = () => {
             primaryMessage: "Success, your claim will be in your wallet soon",
           });
           setNftMintAddressesToBurn([]);
+          setUserHeldCostTokens([]);
         },
       },
       wallet,
