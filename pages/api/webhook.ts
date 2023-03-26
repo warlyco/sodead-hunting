@@ -293,6 +293,8 @@ export default async function handler(
 
       rewardTransaction.add(...rewardInstructions);
 
+      console.log("webhook 20");
+
       rewardTxAddress = await sendAndConfirmTransaction(
         connection,
         rewardTransaction,
@@ -303,21 +305,21 @@ export default async function handler(
         }
       );
 
-      const payload = {
-        burnTxAddress,
-        rewardTxAddress,
-        userPublicKey: fromUserAccount,
-        mintIds: mints.map((mint: { mintAddress: string }) => mint.mintAddress),
-        burnRewardId: "8dca45c9-6d55-4cd6-8103-b24e25c8d335", // LUPERS Free mint
-        projectId: "d9423b5d-5a2b-418e-838e-1d65c9aabf57", // Narentines
-        transferTxAddress: signature,
-      };
-
       console.log("rewarded", { rewardTxAddress });
 
-      const res = await axios.post(`${BASE_URL}/api/add-burn`, payload);
+      // const payload = {
+      //   burnTxAddress,
+      //   rewardTxAddress,
+      //   userPublicKey: fromUserAccount,
+      //   mintIds: mints.map((mint: { mintAddress: string }) => mint.mintAddress),
+      //   burnRewardId: "8dca45c9-6d55-4cd6-8103-b24e25c8d335", // LUPERS Free mint
+      //   projectId: "d9423b5d-5a2b-418e-838e-1d65c9aabf57", // Narentines
+      //   transferTxAddress: signature,
+      // };
 
-      console.log(`posted to ${BASE_URL}/api/add-burn`, res);
+      // const res = await axios.post(`${BASE_URL}/api/add-burn`, payload);
+
+      // console.log(`posted to ${BASE_URL}/api/add-burn`, res);
     } catch (error) {
       console.log("error in webhook burning and sending reward", { error });
     }
