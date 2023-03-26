@@ -53,18 +53,25 @@ export default async function handler(
     res.status(400).json({ success: false });
     return;
   }
-
+  console.log("webhook 2a");
   const connection = new Connection(RPC_ENDPOINT);
+  console.log("webhook 2b");
   const fireKeypair = Keypair.fromSecretKey(
     base58.decode(process.env.FURNACE_KEY)
   );
+  console.log("webhook 2c");
   const rewardKeypair = Keypair.fromSecretKey(
     base58.decode(process.env.REWARD_PRIVATE_KEY)
   );
+  console.log("webhook 2d");
   const firePublicKey = new PublicKey(fireKeypair.publicKey.toString());
+  console.log("webhook 2e");
   const rewardPublicKey = new PublicKey(rewardKeypair.publicKey.toString());
+  console.log("webhook 2f");
   let burnTxAddress;
+  console.log("webhook 2g");
   let rewardTxAddress;
+  console.log("webhook 2h");
 
   console.log("webhook 3");
 
