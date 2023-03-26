@@ -152,6 +152,13 @@ export default async function handler(
 
       console.log("webhook 4", rewardMintAddress);
 
+      const { fromUserAccount } = tokenTransfers[0];
+      console.log("webhook 5", {
+        fromUserAccount,
+        tokenTransfer1: tokenTransfers?.[0],
+        tokenTransfer2: tokenTransfers?.[1],
+      });
+
       const fromTokenAccountAddress = await getAssociatedTokenAddress(
         rewardMintAddress,
         rewardPublicKey
@@ -159,12 +166,12 @@ export default async function handler(
 
       const toTokenAccountAddress = await getAssociatedTokenAddress(
         rewardMintAddress,
-        new PublicKey(tokenTransfers[0]?.fromUserAccount)
+        new PublicKey(fromUserAccount)
       );
 
       const associatedDestinationTokenAddress = await getAssociatedTokenAddress(
         rewardMintAddress,
-        new PublicKey(tokenTransfers[0]?.fromUserAccount)
+        new PublicKey(fromUserAccount)
       );
 
       const receiverAccount = await connection.getAccountInfo(
@@ -181,7 +188,7 @@ export default async function handler(
           createAssociatedTokenAccountInstruction(
             rewardPublicKey,
             associatedDestinationTokenAddress,
-            new PublicKey(tokenTransfers[0]?.fromUserAccount),
+            new PublicKey(fromUserAccount),
             rewardMintAddress
           )
         );
