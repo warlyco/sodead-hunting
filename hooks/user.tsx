@@ -23,6 +23,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [getUser, { loading }] = useLazyQuery(GET_USER_BY_WALLET_ADDRESS, {
     variables: {
       address: publicKey?.toString(),
+      skip: !publicKey,
     },
     fetchPolicy: "network-only",
     onCompleted: ({ sodead_users }) => {
@@ -32,16 +33,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   });
 
   useEffect(() => {
-    if (publicKey && !user) getUser();
+    if (publicKey && !user) {
+      getUser();
+      return;
+    }
     if (ENV === "production") {
       const handleRouteChange = (url: string) => {
-        if (!user) {
+        if (!user?.accounts?.length) {
           router.push("/me");
         }
       };
-
       router.events.on("routeChangeStart", handleRouteChange);
-
       return () => {
         router.events.off("routeChangeStart", handleRouteChange);
       };

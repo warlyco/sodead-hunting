@@ -4,6 +4,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { useUser } from "@/hooks/user";
 import { ActiveLootboxes } from "@/features/lootboxes/active-lootboxes";
+import Link from "next/link";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();
@@ -37,17 +38,30 @@ const Home: NextPage = () => {
         <meta name="theme-color" content="#000" />
       </Head>
       <div className="container flex flex-col items-center justify-center gap-6 text-stone-300">
-        {publicKey && user ? (
+        {publicKey && user?.accounts?.length ? (
           <div className="overflow-y-auto pt-48 mb-16">
             <ActiveLootboxes />
           </div>
         ) : (
-          <ImageWithFallback
-            src="/images/sodead-logo.png"
-            alt="SoDead Logo"
-            width={200}
-            height={200}
-          />
+          <>
+            <ImageWithFallback
+              src="/images/sodead-logo.png"
+              alt="SoDead Logo"
+              width={200}
+              height={200}
+            />
+            <div className="italic">
+              {publicKey ? (
+                <Link href="/me" className="underline text-red-500">
+                  Connect to{" "}
+                  <span className="text-purple-500 uppercase">Discord</span> to
+                  continue
+                </Link>
+              ) : (
+                <>Connect your wallet to continue</>
+              )}
+            </div>
+          </>
         )}
       </div>
     </>

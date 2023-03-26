@@ -6,3 +6,12 @@ export const GRAPHQL_API_ENDPOINT: string =
 export const ADMIN_WALLETS = process.env.NEXT_PUBLIC_ADMIN_WALLETS || "[]";
 export const ENV = process.env.NEXT_PUBLIC_ENV || "";
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
+
+export const HASH_LISTS = {
+  "Lady Vampires": "51777308-8f32-4af5-aead-835862f066ce",
+  "Lady Vampire Tribes": "f7accf17-1703-4a76-9798-6634a6774a5b",
+  "Rare Coffins": "475d8829-44d4-4c29-b788-804cc04c59f4",
+  "Epic Coffins": "6b7ba464-3c39-459b-a4ed-a06562a035f0",
+  "Uncommon Coffins": "1e4888e9-f0fe-430f-9982-702964736948",
+  "All Candies": "f2731e5d-4f3b-480c-8cdc-122f821ed200",
+};
