@@ -12,6 +12,8 @@ export const COLLECTION_WALLET_ADDRESS =
   process.env.NEXT_PUBLIC_COLLECTION_WALLET_ADDRESS || "";
 export const PLATFORM_TOKEN_MINT_ADDRESS =
   process.env.NEXT_PUBLIC_PLATFORM_TOKEN_MINT_ADDRESS || "";
+export const REWARD_TOKEN_MINT_ADDRESS =
+  process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT_ADDRESS || "";
 
 export const HASH_LISTS = {
   "Lady Vampires": "51777308-8f32-4af5-aead-835862f066ce",
