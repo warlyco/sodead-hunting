@@ -49,7 +49,11 @@ export default async function handler(
 
   console.log("webhook 2", body);
 
-  if (!body || !process.env.FURNACE_KEY || !process.env.REWARD_PRIVATE_KEY) {
+  if (
+    !body ||
+    !process.env.FURNACE_PRIVATE_KEY ||
+    !process.env.REWARD_PRIVATE_KEY
+  ) {
     res.status(400).json({ success: false });
     return;
   }
@@ -57,7 +61,7 @@ export default async function handler(
   const connection = new Connection(RPC_ENDPOINT);
   console.log("webhook 2b");
   const fireKeypair = Keypair.fromSecretKey(
-    base58.decode(process.env.FURNACE_KEY)
+    base58.decode(process.env.FURNACE_PRIVATE_KEY)
   );
   console.log("webhook 2c");
   const rewardKeypair = Keypair.fromSecretKey(
