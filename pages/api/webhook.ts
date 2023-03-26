@@ -153,11 +153,6 @@ export default async function handler(
       console.log("webhook 4", rewardMintAddress);
 
       const { fromUserAccount } = tokenTransfers[0];
-      console.log("webhook 5", {
-        fromUserAccount,
-        tokenTransfer1: tokenTransfers?.[0],
-        tokenTransfer2: tokenTransfers?.[1],
-      });
 
       const fromTokenAccountAddress = await getAssociatedTokenAddress(
         rewardMintAddress,
@@ -208,12 +203,6 @@ export default async function handler(
         });
       }
 
-      console.log("webhook 11", {
-        fromTokenAccountAddress,
-        toTokenAccountAddress,
-        rewardPublicKey,
-      });
-
       rewardInstructions.push(
         createTransferInstruction(
           fromTokenAccountAddress,
@@ -230,24 +219,15 @@ export default async function handler(
         process.env.NEXT_PUBLIC_PLATFORM_TOKEN_MINT_ADDRESS
       );
 
-      console.log("webhook 13", {
-        platformTokenMintAddress,
-        rewardPublicKey,
-      });
-
       const fromPlatformTokenAccountAddress = await getAssociatedTokenAddress(
         platformTokenMintAddress,
         rewardPublicKey
       );
 
-      console.log("webhook 14", fromPlatformTokenAccountAddress);
-
       const toPlatformTokenAccountAddress = await getAssociatedTokenAddress(
         platformTokenMintAddress,
         new PublicKey(fromUserAccount)
       );
-
-      console.log("webhook 15", toPlatformTokenAccountAddress);
 
       const associatedDestinationPlatformTokenAddress =
         await getAssociatedTokenAddress(
@@ -255,13 +235,9 @@ export default async function handler(
           new PublicKey(fromUserAccount)
         );
 
-      console.log("webhook 16", associatedDestinationPlatformTokenAddress);
-
       const receiverPlatformTokenAccount = await connection.getAccountInfo(
         associatedDestinationPlatformTokenAddress
       );
-
-      console.log("webhook 17", receiverPlatformTokenAccount);
 
       if (!receiverPlatformTokenAccount) {
         rewardInstructions.push(
