@@ -15,6 +15,7 @@ export const GET_LOOT_BOX_BY_ID = gql`
         id
         name
         hashListCollection {
+          amount
           name
           id
           hashList {
@@ -41,6 +42,7 @@ export const GET_LOOT_BOX_BY_ID = gql`
           id
           name
           hashListCollection {
+            amount
             name
             id
             hashList {
@@ -67,6 +69,7 @@ export const GET_LOOT_BOX_BY_ID = gql`
       imageUrl
       costCollections {
         hashListCollection {
+          amount
           name
           id
           imageUrl
@@ -94,6 +97,7 @@ export const GET_LOOT_BOX_BY_ID = gql`
       gateCollections {
         id
         hashListCollection {
+          amount
           name
           id
           hashList {

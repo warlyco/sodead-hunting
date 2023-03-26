@@ -1,6 +1,7 @@
 import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
 import { NftCollectionsListItem } from "@/features/admin/nft-collections/nfts-collection-list-item";
 import { PrimaryButton } from "@/features/UI/buttons/primary-button";
+import { SubmitButton } from "@/features/UI/buttons/submit-button";
 import { Card } from "@/features/UI/card";
 import { ContentWrapper } from "@/features/UI/content-wrapper";
 import { ImageWithFallback } from "@/features/UI/image-with-fallback";
@@ -38,6 +39,9 @@ const LootBoxDetailPage: NextPage = () => {
   const [userHeldCostTokens, setUserHeldCostTokens] = useState<string[]>([]);
   const [hasFetchUserHeldCostTokens, setHasFetchUserHeldCostTokens] =
     useState<boolean>(false);
+  const [isEnabledClaimButton, setIsEnabledClaimButton] =
+    useState<boolean>(false);
+  const [costAmount, setCostAmount] = useState<number>(0);
 
   const { loading: loadingRewardHashList } = useQuery(GET_HASH_LIST_BY_ID, {
     variables: {
@@ -74,6 +78,9 @@ const LootBoxDetailPage: NextPage = () => {
           ?.hashList?.id;
       setHashListRewardCollectionId(hashListRewardCollectionId);
       setHashListCostCollectionId(hashListCostCollectionId);
+      setCostAmount(
+        sodead_lootBoxes_by_pk?.costCollections?.[0]?.hashListCollection.amount
+      );
       setCostTokenImageUrl(
         sodead_lootBoxes_by_pk?.costCollections?.[0]?.hashListCollection
           ?.imageUrl
@@ -93,6 +100,10 @@ const LootBoxDetailPage: NextPage = () => {
   }, [publicKey, user, connection, costHashList]);
 
   useEffect(() => {
+    console.log({
+      userHeldCostTokens: userHeldCostTokens.length,
+      costAmount,
+    });
     if (
       !publicKey ||
       !user ||
@@ -102,6 +113,7 @@ const LootBoxDetailPage: NextPage = () => {
       !costHashList.length
     )
       return;
+
     fetchUserHeldCostTokens();
   }, [
     rewardHashList,
@@ -112,6 +124,8 @@ const LootBoxDetailPage: NextPage = () => {
     fetchUserHeldCostTokens,
     hashListCostCollectionId,
     hashListRewardCollectionId,
+    userHeldCostTokens.length,
+    costAmount,
   ]);
 
   if (
@@ -139,35 +153,54 @@ const LootBoxDetailPage: NextPage = () => {
     );
 
   return (
-    <ContentWrapper className="flex flex-col items-center">
-      <ImageWithFallback
-        className="rounded-2xl mb-12 border-2 border-purple-500 "
-        src={lootBox?.imageUrl || ""}
-        width={350}
-        height={350}
-        alt="Lootbox image"
-      />
-      <h1 className="text-3xl mb-8">{lootBox?.name}</h1>
-      <div className="italic text-2xl max-w-sm text-center mb-8">
-        {lootBox?.description}
+    <ContentWrapper>
+      <div className="flex items-center flex-wrap">
+        <div className="flex-col flex w-full justify-center md:w-1/2 items-center mb-16 md:mb-0">
+          <ImageWithFallback
+            className="rounded-2xl mb-12 border-2 border-purple-500 "
+            src={lootBox?.imageUrl || ""}
+            width={350}
+            height={350}
+            alt="Lootbox image"
+          />
+          <h1 className="text-3xl mb-8">{lootBox?.name}</h1>
+          <div className="italic text-2xl max-w-sm text-center">
+            {lootBox?.description}
+          </div>
+        </div>
+        <div className="flex-col md:flex-row flex w-full justify-center md:w-1/2 items-center">
+          <div className="flex items-center mb-8 text-3xl space-y-6 flex-col">
+            <ImageWithFallback
+              src={costTokenImageUrl || ""}
+              width={200}
+              height={200}
+              alt="Cost token image"
+              className="border-2 border-purple-500 rounded-2xl h-48 w-48 mb-6"
+            />
+            <div className="flex">
+              <div className="uppercase">Cost:</div>
+              <div>{costAmount}</div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="uppercase">You have:</div>
+              {hasFetchUserHeldCostTokens ? (
+                <div>{userHeldCostTokens.length}</div>
+              ) : (
+                <Spinner />
+              )}
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="flex items-center mb-8 text-2xl space-x-4">
-        <ImageWithFallback
-          src={costTokenImageUrl || ""}
-          width={50}
-          height={50}
-          alt="Cost token image"
-          className="border border-purple-500 rounded-xl p-1"
-        />
-        <div className="uppercase">You have:</div>
-        {hasFetchUserHeldCostTokens ? (
-          <div>{userHeldCostTokens.length}</div>
-        ) : (
-          <Spinner />
-        )}
-      </div>
-      <div className="py-8">
-        <PrimaryButton>Claim</PrimaryButton>
+      <div className="py-8 w-full justify-center flex">
+        <SubmitButton
+          className="text-2xl"
+          isSubmitting={false}
+          onClick={() => {}}
+          disabled={!(userHeldCostTokens.length >= costAmount)}
+        >
+          Claim
+        </SubmitButton>
       </div>
     </ContentWrapper>
   );

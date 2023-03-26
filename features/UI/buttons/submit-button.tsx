@@ -6,15 +6,28 @@ interface Props extends React.HTMLAttributes<HTMLButtonElement> {
   isSubmitting: boolean;
   buttonText?: string;
   children?: React.ReactNode | string;
+  disabled?: boolean;
+  className?: string;
 }
 
-export const SubmitButton = ({ isSubmitting, buttonText, children }: Props) => {
+export const SubmitButton = ({
+  isSubmitting,
+  buttonText,
+  children,
+  disabled,
+  className,
+}: Props) => {
   return (
     <SecondaryButton
+      disabled={isSubmitting || disabled}
       className={classNames([
         isSubmitting
           ? "opacity-50 cursor-not-allowed"
           : "opacity-100 cursor-pointer",
+        disabled
+          ? "opacity-50 cursor-not-allowed bg-stone-500 hover:bg-stone-500"
+          : "",
+        className,
       ])}
       type="submit"
     >

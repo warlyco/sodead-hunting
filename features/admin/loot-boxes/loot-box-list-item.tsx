@@ -8,6 +8,7 @@ import Link from "next/link";
 export type hashListCollection = {
   id: string;
   name: string;
+  amount: number;
   hashList: {
     id: string;
     name: string;
