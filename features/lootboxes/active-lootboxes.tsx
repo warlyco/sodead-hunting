@@ -26,13 +26,13 @@ export const ActiveLootboxes = () => {
   return (
     <>
       <h1 className="text-4xl mb-2 text-center">Active Loot Boxes</h1>
-      <div className="flex w-full max-w-5xl m-auto flex-wrap">
+      <div className="flex w-full max-w-5xl just m-auto flex-wrap">
         {!!lootBoxes &&
           lootBoxes?.map((lootBox) => (
             <Link
               href={`/loot-box/${lootBox.id}`}
               key={lootBox.id}
-              className="w-full md:w-1/3 p-4 flex"
+              className="w-full md:w-1/3 p-4 flex justify-center"
             >
               <Card imageUrl={lootBox.imageUrl}>
                 <div className="text-2xl">{lootBox.name}</div>
