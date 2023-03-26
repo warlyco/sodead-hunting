@@ -44,7 +44,10 @@ export default async function handler(
     return;
   }
 
+  console.log("webhook 1");
   const { body } = req;
+
+  console.log("webhook 2", body);
 
   if (
     !body ||
@@ -66,6 +69,8 @@ export default async function handler(
   const rewardPublicKey = new PublicKey(rewardKeypair.publicKey.toString());
   let burnTxAddress;
   let rewardTxAddress;
+
+  console.log("webhook 3");
 
   if (
     body[0]?.type === "TRANSFER" &&
@@ -137,6 +142,8 @@ export default async function handler(
       const rewardMintAddress = new PublicKey(
         process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT_ADDRESS
       );
+
+      console.log("webhook 4", rewardMintAddress);
 
       const fromTokenAccountAddress = await getAssociatedTokenAddress(
         rewardMintAddress,
@@ -223,7 +230,7 @@ export default async function handler(
           fromPlatformTokenAccountAddress,
           toPlatformTokenAccountAddress,
           rewardPublicKey,
-          1e9 * mints.length // 1e8 = 9 decimals
+          1
         )
       );
 
