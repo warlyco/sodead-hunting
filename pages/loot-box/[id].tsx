@@ -313,7 +313,7 @@ const LootBoxDetailPage: NextPage = () => {
       <div className="pb-12 pt-4 md:py-16 w-full justify-center flex">
         <SubmitButton
           className="text-2xl"
-          isSubmitting={false}
+          isSubmitting={transferInProgress}
           onClick={handleTransferNfts}
           disabled={!(userHeldCostTokens.length >= costAmount)}
         >
