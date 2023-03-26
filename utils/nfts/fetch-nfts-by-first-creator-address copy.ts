@@ -20,7 +20,7 @@ interface Props {
   firstCreatorAddress: string;
 }
 
-export const fetchNftsByFisrCreatorAddress = async ({
+export const fetchNftsByFisrtCreatorAddress = async ({
   publicKey,
   connection,
   setIsLoading,

@@ -17,15 +17,15 @@ interface Props {
   connection: any;
   setIsLoading?: (isLoading: boolean) => void;
   setHasBeenFetched?: (hasBeenFetched: boolean) => void;
-  firstCreatorAddress: string;
+  hashList: string[];
 }
 
-export const fetchNftsByFisrCreatorAddress = async ({
+export const fetchNftsByHashList = async ({
   publicKey,
   connection,
   setIsLoading,
   setHasBeenFetched,
-  firstCreatorAddress,
+  hashList,
 }: Props): Promise<any[]> => {
   setIsLoading && setIsLoading(true);
   return new Promise(async (resolve, reject) => {
@@ -37,10 +37,10 @@ export const fetchNftsByFisrCreatorAddress = async ({
         .findAllByOwner({ owner: publicKey });
 
       const nftCollection = nftMetasFromMetaplex.filter(
-        ({ creators }: { creators: any }) => {
-          return creators?.[0]?.address?.toString() === firstCreatorAddress;
-        }
+        (nft) => hashList.indexOf(nft.mintAddress.toString()) > -1
       );
+
+      console.log("nftCollection", nftCollection);
 
       if (!nftCollection.length) {
         setIsLoading && setIsLoading(false);

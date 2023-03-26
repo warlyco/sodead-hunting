@@ -69,6 +69,7 @@ export const GET_LOOT_BOX_BY_ID = gql`
         hashListCollection {
           name
           id
+          imageUrl
           hashList {
             id
             name

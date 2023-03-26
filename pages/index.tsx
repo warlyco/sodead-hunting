@@ -5,6 +5,7 @@ import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { useUser } from "@/hooks/user";
 import { ActiveLootboxes } from "@/features/lootboxes/active-lootboxes";
 import Link from "next/link";
+import { UserWithoutAccountBlocker } from "@/features/UI/user-without-account-blocker";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();
@@ -43,25 +44,7 @@ const Home: NextPage = () => {
             <ActiveLootboxes />
           </div>
         ) : (
-          <>
-            <ImageWithFallback
-              src="/images/sodead-logo.png"
-              alt="SoDead Logo"
-              width={200}
-              height={200}
-            />
-            <div className="italic">
-              {publicKey ? (
-                <Link href="/me" className="underline text-red-500">
-                  Connect to{" "}
-                  <span className="text-purple-500 uppercase">Discord</span> to
-                  continue
-                </Link>
-              ) : (
-                <>Connect your wallet to continue</>
-              )}
-            </div>
-          </>
+          <UserWithoutAccountBlocker />
         )}
       </div>
     </>

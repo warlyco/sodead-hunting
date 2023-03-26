@@ -10,6 +10,7 @@ import React, { ReactNode, useContext, useEffect, useState } from "react";
 type UserContextType = {
   user: User | null;
   setUser: (user: User | null) => void;
+  loadingUser: boolean;
 };
 
 const UserContext = React.createContext({} as UserContextType);
@@ -20,17 +21,20 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
-  const [getUser, { loading }] = useLazyQuery(GET_USER_BY_WALLET_ADDRESS, {
-    variables: {
-      address: publicKey?.toString(),
-      skip: !publicKey,
-    },
-    fetchPolicy: "network-only",
-    onCompleted: ({ sodead_users }) => {
-      const user = sodead_users?.[0];
-      if (user) setUser(user);
-    },
-  });
+  const [getUser, { loading: loadingUser }] = useLazyQuery(
+    GET_USER_BY_WALLET_ADDRESS,
+    {
+      variables: {
+        address: publicKey?.toString(),
+        skip: !publicKey,
+      },
+      fetchPolicy: "network-only",
+      onCompleted: ({ sodead_users }) => {
+        const user = sodead_users?.[0];
+        if (user) setUser(user);
+      },
+    }
+  );
 
   useEffect(() => {
     if (publicKey && !user) {
@@ -55,6 +59,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       value={{
         user,
         setUser,
+        loadingUser,
       }}
     >
       {children}
@@ -63,7 +68,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useUser = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser, loadingUser } = useContext(UserContext);
 
-  return { user, setUser };
+  return { user, setUser, loadingUser };
 };
