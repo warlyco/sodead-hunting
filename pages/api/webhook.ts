@@ -164,19 +164,27 @@ export default async function handler(
         rewardPublicKey
       );
 
+      console.log("webhook 6", fromTokenAccountAddress);
+
       const toTokenAccountAddress = await getAssociatedTokenAddress(
         rewardMintAddress,
         new PublicKey(fromUserAccount)
       );
+
+      console.log("webhook 7", toTokenAccountAddress);
 
       const associatedDestinationTokenAddress = await getAssociatedTokenAddress(
         rewardMintAddress,
         new PublicKey(fromUserAccount)
       );
 
+      console.log("webhook 8", associatedDestinationTokenAddress);
+
       const receiverAccount = await connection.getAccountInfo(
         associatedDestinationTokenAddress
       );
+
+      console.log("webhook 9", receiverAccount);
 
       const latestBlockhash2 = await connection.getLatestBlockhash();
       const rewardTransaction = new Transaction({ ...latestBlockhash2 });
@@ -192,7 +200,19 @@ export default async function handler(
             rewardMintAddress
           )
         );
+
+        console.log("webhook 10", {
+          rewardPublicKey,
+          associatedDestinationTokenAddress,
+          fromUserAccount,
+        });
       }
+
+      console.log("webhook 11", {
+        fromTokenAccountAddress,
+        toTokenAccountAddress,
+        rewardPublicKey,
+      });
 
       rewardInstructions.push(
         createTransferInstruction(
@@ -203,40 +223,61 @@ export default async function handler(
         )
       );
 
+      console.log("webhook 12", rewardInstructions);
+
       // Send platform reward
       const platformTokenMintAddress = new PublicKey(
         PLATFORM_TOKEN_MINT_ADDRESS
       );
+
+      console.log("webhook 13", {
+        platformTokenMintAddress,
+        rewardPublicKey,
+      });
 
       const fromPlatformTokenAccountAddress = await getAssociatedTokenAddress(
         platformTokenMintAddress,
         rewardPublicKey
       );
 
+      console.log("webhook 14", fromPlatformTokenAccountAddress);
+
       const toPlatformTokenAccountAddress = await getAssociatedTokenAddress(
         platformTokenMintAddress,
-        new PublicKey(tokenTransfers[0]?.fromUserAccount)
+        new PublicKey(fromUserAccount)
       );
+
+      console.log("webhook 15", toPlatformTokenAccountAddress);
 
       const associatedDestinationPlatformTokenAddress =
         await getAssociatedTokenAddress(
           platformTokenMintAddress,
-          new PublicKey(tokenTransfers[0]?.fromUserAccount)
+          new PublicKey(fromUserAccount)
         );
+
+      console.log("webhook 16", associatedDestinationPlatformTokenAddress);
 
       const receiverPlatformTokenAccount = await connection.getAccountInfo(
         associatedDestinationPlatformTokenAddress
       );
+
+      console.log("webhook 17", receiverPlatformTokenAccount);
 
       if (!receiverPlatformTokenAccount) {
         rewardInstructions.push(
           createAssociatedTokenAccountInstruction(
             rewardPublicKey,
             associatedDestinationPlatformTokenAddress,
-            new PublicKey(tokenTransfers[0]?.fromUserAccount),
+            new PublicKey(fromUserAccount),
             platformTokenMintAddress
           )
         );
+
+        console.log("webhook 18", {
+          rewardPublicKey,
+          associatedDestinationPlatformTokenAddress,
+          fromUserAccount,
+        });
       }
 
       rewardInstructions.push(
@@ -247,6 +288,8 @@ export default async function handler(
           1
         )
       );
+
+      console.log("webhook 19", rewardInstructions);
 
       rewardTransaction.add(...rewardInstructions);
 
@@ -263,7 +306,7 @@ export default async function handler(
       const payload = {
         burnTxAddress,
         rewardTxAddress,
-        userPublicKey: tokenTransfers[0]?.fromUserAccount,
+        userPublicKey: fromUserAccount,
         mintIds: mints.map((mint: { mintAddress: string }) => mint.mintAddress),
         burnRewardId: "8dca45c9-6d55-4cd6-8103-b24e25c8d335", // LUPERS Free mint
         projectId: "d9423b5d-5a2b-418e-838e-1d65c9aabf57", // Narentines
