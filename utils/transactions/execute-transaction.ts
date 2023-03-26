@@ -1,4 +1,3 @@
-import type { Wallet } from "@saberhq/solana-contrib";
 import type {
   BlockheightBasedTransactionConfirmationStrategy,
   ConfirmOptions,

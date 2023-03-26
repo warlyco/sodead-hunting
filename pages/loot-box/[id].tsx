@@ -11,7 +11,6 @@ import { GET_HASH_LIST_BY_ID } from "@/graphql/queries/get-hash-list-by-id";
 import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
 import { useUser } from "@/hooks/user";
 import { fetchNftsByHashList } from "@/utils/nfts/fetch-nfts-by-hash-list";
-import { asWallet } from "@/utils/transactions/as-wallet";
 import { executeTransaction } from "@/utils/transactions/execute-transaction";
 import { useMutation, useQuery } from "@apollo/client";
 import {
