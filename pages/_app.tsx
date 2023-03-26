@@ -11,6 +11,7 @@ import { AdminProvider } from "@/hooks/admin";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { UserProvider } from "@/hooks/user";
+import SharedHead from "@/features/UI/head";
 
 const strangeDream = localFont({
   src: "../fonts/strange-dreams.ttf",
@@ -38,6 +39,7 @@ const App: AppType<{ session: Session | null }> = ({
           <UserProvider>
             <FoucGuard />
             <MainLayout centered={isCentered}>
+              <SharedHead />
               <Component {...pageProps} />
             </MainLayout>
           </UserProvider>
