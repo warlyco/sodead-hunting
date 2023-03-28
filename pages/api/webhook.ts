@@ -6,28 +6,36 @@ import {
   Transaction,
   TransactionInstructionCtorFields,
 } from "@solana/web3.js";
-import {
-  BASE_URL,
-  COLLECTION_WALLET_ADDRESS,
-  RPC_ENDPOINT,
-} from "@/constants/constants";
+import { RPC_ENDPOINT } from "@/constants/constants";
 import * as base58 from "bs58";
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
   createAssociatedTokenAccountInstruction,
-  createBurnCheckedInstruction,
-  createCloseAccountInstruction,
   createTransferInstruction,
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
+
+export type BurnCount = {
+  id: string;
+  currentCount: number;
+};
 
 type Data = {
   success: boolean;
   burnTxAddress?: string;
   rewardTxAddress?: string;
+  updatedBurnCount?: number;
+  lootBoxId?: string;
 };
 
 import axios from "axios";
+import { client } from "@/graphql/backend-client";
+import { GET_LOOT_BOX_BY_TOKEN_MINT_ADDRESS_IN_HASH_LIST } from "@/graphql/queries/get-loot-box-by-token-mint-address-in-hash-list";
+import { INCREMENT_BURN_COUNT } from "@/graphql/mutations/increment-burn-count";
+import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
+import { GET_WALLET_BY_ADDRESS } from "@/graphql/queries/get-wallet-by-address";
+import { GET_BURN_COUNT } from "@/graphql/queries/get-burn-count";
+import { Wallet } from "@/pages/me";
 
 export default async function handler(
   req: NextApiRequest,
@@ -98,6 +106,68 @@ export default async function handler(
     }
     console.log("burning mints and closing ATAs:", { mints });
 
+    // get loot box by token mint address in hash list
+    const { sodead_lootBoxes }: { sodead_lootBoxes: LootBox[] } =
+      await client.request(GET_LOOT_BOX_BY_TOKEN_MINT_ADDRESS_IN_HASH_LIST, {
+        mintAddress: mints[0].mintAddress,
+      });
+
+    const lootBox = sodead_lootBoxes?.[0];
+
+    if (!lootBox?.id) {
+      res.status(400).json({ success: false });
+      return;
+    }
+
+    const costs = lootBox?.costCollections?.map((costCollection) => {
+      return {
+        rawHashList: costCollection.hashListCollection.hashList.rawHashList,
+        amount: costCollection.hashListCollection.amount,
+      };
+    });
+
+    const paymentAmount = costs?.[0]?.amount;
+
+    // add burn count per user to db
+    const { fromUserAccount } = tokenTransfers[0];
+
+    const { sodead_wallets }: { sodead_wallets: Wallet[] } =
+      await client.request(GET_WALLET_BY_ADDRESS, { address: fromUserAccount });
+
+    const walletId = sodead_wallets?.[0]?.id;
+
+    if (!walletId || !paymentAmount) {
+      res.status(400).json({ success: false });
+      return;
+    }
+
+    const { sodead_burnCounts }: { sodead_burnCounts: BurnCount[] } =
+      await client.request(GET_BURN_COUNT, {
+        walletId,
+      });
+
+    const currentCount = sodead_burnCounts?.[0]?.currentCount || 0;
+
+    let updatedBurnCount = 0;
+
+    if (currentCount + 1 < paymentAmount) {
+      const {
+        update_sodead_burnCounts,
+      }: { update_sodead_burnCounts: BurnCount[] } = await client.request(
+        INCREMENT_BURN_COUNT
+      );
+      updatedBurnCount = update_sodead_burnCounts?.[0]?.currentCount || 0;
+      res
+        .status(400)
+        .json({ success: true, updatedBurnCount, lootBoxId: lootBox.id });
+      return;
+    }
+
+    if (!updatedBurnCount) {
+      res.status(400).json({ success: false });
+      return;
+    }
+
     try {
       console.log("burn will happen here");
       // const latestBlockhash = await connection.getLatestBlockhash();
@@ -151,8 +221,6 @@ export default async function handler(
       );
 
       console.log("webhook 4", rewardMintAddress);
-
-      const { fromUserAccount } = tokenTransfers[0];
 
       const fromTokenAccountAddress = await getAssociatedTokenAddress(
         rewardMintAddress,

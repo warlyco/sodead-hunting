@@ -5,12 +5,14 @@ export const ADD_BURN_ATTEMPT = gql`
     $txAddress: String
     $walletAddress: String
     $mintIds: jsonb
+    $hashListId: uuid!
   ) {
     insert_sodead_burnAttempts_one(
       object: {
         txAddress: $txAddress
         walletAddress: $walletAddress
         mintIds: $mintIds
+        hashListId: $hashListId
       }
     ) {
       id
