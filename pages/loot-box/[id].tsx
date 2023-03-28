@@ -113,54 +113,101 @@ const LootBoxDetailPage: NextPage = () => {
 
     const instructions: TransactionInstructionCtorFields[] = [];
 
-    for (const address of nftMintAddressesToBurn) {
-      const fromTokenAccountAddress = await getAssociatedTokenAddress(
-        new PublicKey(address),
-        wallet.publicKey
-      );
+    // for (const address of nftMintAddressesToBurn) {
+    //   const fromTokenAccountAddress = await getAssociatedTokenAddress(
+    //     new PublicKey(address),
+    //     wallet.publicKey
+    //   );
 
-      const toTokenAccountAddress = await getAssociatedTokenAddress(
-        new PublicKey(address),
-        new PublicKey(BURNING_WALLET_ADDRESS)
-      );
+    //   const toTokenAccountAddress = await getAssociatedTokenAddress(
+    //     new PublicKey(address),
+    //     new PublicKey(BURNING_WALLET_ADDRESS)
+    //   );
 
-      const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
-        new PublicKey(address),
-        new PublicKey(BURNING_WALLET_ADDRESS)
-      );
+    //   const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
+    //     new PublicKey(address),
+    //     new PublicKey(BURNING_WALLET_ADDRESS)
+    //   );
 
-      const receiverAccount = await connection.getAccountInfo(
-        associatedDestinationTokenAddr
-      );
+    //   const receiverAccount = await connection.getAccountInfo(
+    //     associatedDestinationTokenAddr
+    //   );
 
-      if (!receiverAccount) {
-        instructions.push(
-          createAssociatedTokenAccountInstruction(
-            wallet.publicKey,
-            associatedDestinationTokenAddr,
-            new PublicKey(BURNING_WALLET_ADDRESS),
-            new PublicKey(address)
-          )
-        );
-      }
+    //   if (!receiverAccount) {
+    //     instructions.push(
+    //       createAssociatedTokenAccountInstruction(
+    //         wallet.publicKey,
+    //         associatedDestinationTokenAddr,
+    //         new PublicKey(BURNING_WALLET_ADDRESS),
+    //         new PublicKey(address)
+    //       )
+    //     );
+    //   }
 
+    //   instructions.push(
+    //     createTransferInstruction(
+    //       fromTokenAccountAddress,
+    //       toTokenAccountAddress,
+    //       wallet.publicKey,
+    //       1
+    //     )
+    //   );
+
+    //   instructions.push(
+    //     createCloseAccountInstruction(
+    //       fromTokenAccountAddress,
+    //       wallet.publicKey,
+    //       wallet.publicKey
+    //     )
+    //   );
+    // }
+
+    const fromTokenAccountAddress = await getAssociatedTokenAddress(
+      new PublicKey(nftMintAddressesToBurn[0]),
+      wallet.publicKey
+    );
+
+    const toTokenAccountAddress = await getAssociatedTokenAddress(
+      new PublicKey(nftMintAddressesToBurn[0]),
+      new PublicKey(BURNING_WALLET_ADDRESS)
+    );
+
+    const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
+      new PublicKey(nftMintAddressesToBurn[0]),
+      new PublicKey(BURNING_WALLET_ADDRESS)
+    );
+
+    const receiverAccount = await connection.getAccountInfo(
+      associatedDestinationTokenAddr
+    );
+
+    if (!receiverAccount) {
       instructions.push(
-        createTransferInstruction(
-          fromTokenAccountAddress,
-          toTokenAccountAddress,
+        createAssociatedTokenAccountInstruction(
           wallet.publicKey,
-          1
-        )
-      );
-
-      instructions.push(
-        createCloseAccountInstruction(
-          fromTokenAccountAddress,
-          wallet.publicKey,
-          wallet.publicKey
+          associatedDestinationTokenAddr,
+          new PublicKey(BURNING_WALLET_ADDRESS),
+          new PublicKey(nftMintAddressesToBurn[0])
         )
       );
     }
+
+    instructions.push(
+      createTransferInstruction(
+        fromTokenAccountAddress,
+        toTokenAccountAddress,
+        wallet.publicKey,
+        1
+      )
+    );
+
+    instructions.push(
+      createCloseAccountInstruction(
+        fromTokenAccountAddress,
+        wallet.publicKey,
+        wallet.publicKey
+      )
+    );
 
     const latestBlockhash = await connection.getLatestBlockhash();
     const transaction = new Transaction({ ...latestBlockhash });
