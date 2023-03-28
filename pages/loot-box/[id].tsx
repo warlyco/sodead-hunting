@@ -228,9 +228,16 @@ const LootBoxDetailPage: NextPage = () => {
       },
       wallet,
       addBurnAttempt,
-      nftMintAddressesToBurn
+      nftMintAddressesToBurn,
+      hashListRewardCollectionId
     );
-  }, [wallet, connection, addBurnAttempt, nftMintAddressesToBurn]);
+  }, [
+    nftMintAddressesToBurn,
+    wallet,
+    connection,
+    addBurnAttempt,
+    hashListRewardCollectionId,
+  ]);
 
   const fetchUserHeldCostTokens = useCallback(async () => {
     if (
