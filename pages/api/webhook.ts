@@ -113,6 +113,7 @@ export default async function handler(
       });
 
     const lootBox = sodead_lootBoxes?.[0];
+    console.log("lootBox", lootBox);
 
     if (!lootBox?.id) {
       res.status(400).json({ success: false });
@@ -128,6 +129,8 @@ export default async function handler(
 
     const paymentAmount = costs?.[0]?.amount;
 
+    console.log("paymentAmount", paymentAmount);
+
     // add burn count per user to db
     const { fromUserAccount } = tokenTransfers[0];
 
@@ -135,6 +138,7 @@ export default async function handler(
       await client.request(GET_WALLET_BY_ADDRESS, { address: fromUserAccount });
 
     const walletId = sodead_wallets?.[0]?.id;
+    console.log("walletId", walletId);
 
     if (!walletId || !paymentAmount) {
       res.status(400).json({ success: false });
@@ -147,6 +151,7 @@ export default async function handler(
       });
 
     const currentCount = sodead_burnCounts?.[0]?.currentCount || 0;
+    console.log("currentCount", currentCount);
 
     let updatedBurnCount = 0;
 
@@ -157,6 +162,7 @@ export default async function handler(
         INCREMENT_BURN_COUNT
       );
       updatedBurnCount = update_sodead_burnCounts?.[0]?.currentCount || 0;
+      console.log("updatedBurnCount", updatedBurnCount);
       res
         .status(400)
         .json({ success: true, updatedBurnCount, lootBoxId: lootBox.id });
