@@ -107,7 +107,6 @@ export default async function handler(
       res.status(400).json({ success: false });
       return;
     }
-    console.log("burning mints and closing ATAs:", { mints });
     console.log("mints", mints);
     console.log("mints[0].mintAddress", mints[0].mintAddress);
 
@@ -118,7 +117,6 @@ export default async function handler(
 
     console.log("sodead_burnAttempts", sodead_burnAttempts);
 
-    // get loot box by token mint address in hash list
     const { sodead_lootBoxes_by_pk }: { sodead_lootBoxes_by_pk: LootBox } =
       await client.request(GET_LOOT_BOX_BY_ID, {
         id: sodead_burnAttempts?.[0]?.lootBox?.id,
@@ -156,15 +154,7 @@ export default async function handler(
       res.status(400).json({ success: false });
       return;
     }
-
-    const { sodead_burnCounts }: { sodead_burnCounts: BurnCount[] } =
-      await client.request(GET_BURN_COUNT, {
-        lootBoxId: lootBox.id,
-        walletId,
-      });
-
-    const currentCount = sodead_burnCounts?.[0]?.currentCount || 0;
-    console.log("currentCount", currentCount);
+    const currentCount = sodead_burnAttempts?.length || 0;
 
     let updatedBurnCount = 0;
 
@@ -309,55 +299,55 @@ export default async function handler(
       console.log("webhook 12", rewardInstructions);
 
       // Send platform reward
-      const platformTokenMintAddress = new PublicKey(
-        process.env.NEXT_PUBLIC_PLATFORM_TOKEN_MINT_ADDRESS
-      );
+      // const platformTokenMintAddress = new PublicKey(
+      //   process.env.NEXT_PUBLIC_PLATFORM_TOKEN_MINT_ADDRESS
+      // );
 
-      const fromPlatformTokenAccountAddress = await getAssociatedTokenAddress(
-        platformTokenMintAddress,
-        rewardPublicKey
-      );
+      // const fromPlatformTokenAccountAddress = await getAssociatedTokenAddress(
+      //   platformTokenMintAddress,
+      //   rewardPublicKey
+      // );
 
-      const toPlatformTokenAccountAddress = await getAssociatedTokenAddress(
-        platformTokenMintAddress,
-        new PublicKey(fromUserAccount)
-      );
+      // const toPlatformTokenAccountAddress = await getAssociatedTokenAddress(
+      //   platformTokenMintAddress,
+      //   new PublicKey(fromUserAccount)
+      // );
 
-      const associatedDestinationPlatformTokenAddress =
-        await getAssociatedTokenAddress(
-          platformTokenMintAddress,
-          new PublicKey(fromUserAccount)
-        );
+      // const associatedDestinationPlatformTokenAddress =
+      //   await getAssociatedTokenAddress(
+      //     platformTokenMintAddress,
+      //     new PublicKey(fromUserAccount)
+      //   );
 
-      const receiverPlatformTokenAccount = await connection.getAccountInfo(
-        associatedDestinationPlatformTokenAddress
-      );
+      // const receiverPlatformTokenAccount = await connection.getAccountInfo(
+      //   associatedDestinationPlatformTokenAddress
+      // );
 
-      if (!receiverPlatformTokenAccount) {
-        rewardInstructions.push(
-          createAssociatedTokenAccountInstruction(
-            rewardPublicKey,
-            associatedDestinationPlatformTokenAddress,
-            new PublicKey(fromUserAccount),
-            platformTokenMintAddress
-          )
-        );
+      // if (!receiverPlatformTokenAccount) {
+      //   rewardInstructions.push(
+      //     createAssociatedTokenAccountInstruction(
+      //       rewardPublicKey,
+      //       associatedDestinationPlatformTokenAddress,
+      //       new PublicKey(fromUserAccount),
+      //       platformTokenMintAddress
+      //     )
+      //   );
 
-        console.log("webhook 18", {
-          rewardPublicKey,
-          associatedDestinationPlatformTokenAddress,
-          fromUserAccount,
-        });
-      }
+      //   console.log("webhook 18", {
+      //     rewardPublicKey,
+      //     associatedDestinationPlatformTokenAddress,
+      //     fromUserAccount,
+      //   });
+      // }
 
-      rewardInstructions.push(
-        createTransferInstruction(
-          fromPlatformTokenAccountAddress,
-          toPlatformTokenAccountAddress,
-          rewardPublicKey,
-          1
-        )
-      );
+      // rewardInstructions.push(
+      //   createTransferInstruction(
+      //     fromPlatformTokenAccountAddress,
+      //     toPlatformTokenAccountAddress,
+      //     rewardPublicKey,
+      //     1
+      //   )
+      // );
 
       console.log("webhook 19", rewardInstructions);
 
