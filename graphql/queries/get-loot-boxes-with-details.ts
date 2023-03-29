@@ -14,6 +14,7 @@ export const GET_LOOT_BOXES_WITH_DETAILS = gql`
       rewardCollections {
         id
         hashListCollection {
+          amount
           name
           id
           hashList {
@@ -42,6 +43,7 @@ export const GET_LOOT_BOXES_WITH_DETAILS = gql`
         hashListCollection {
           name
           id
+          amount
           hashList {
             id
             name
@@ -73,6 +75,7 @@ export const GET_LOOT_BOXES_WITH_DETAILS = gql`
         hashListCollection {
           name
           id
+          amount
           hashList {
             id
             name

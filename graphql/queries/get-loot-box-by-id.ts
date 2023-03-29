@@ -4,8 +4,8 @@ export const GET_LOOT_BOX_BY_ID = gql`
   query GET_LOOT_BOX_BY_ID($id: uuid!) {
     sodead_lootBoxes_by_pk(id: $id) {
       id
-      createdAt
       description
+      createdAt
       name
       rarity {
         name
@@ -13,7 +13,6 @@ export const GET_LOOT_BOX_BY_ID = gql`
       }
       rewardCollections {
         id
-        name
         hashListCollection {
           amount
           name
@@ -38,41 +37,13 @@ export const GET_LOOT_BOX_BY_ID = gql`
             }
           }
         }
-        childRewardCollections {
-          id
-          name
-          hashListCollection {
-            amount
-            name
-            id
-            hashList {
-              id
-              name
-              rawHashList
-            }
-          }
-          itemCollection {
-            id
-            amount
-            name
-            item {
-              name
-              id
-              token {
-                id
-                mintAddress
-              }
-            }
-          }
-        }
       }
       imageUrl
       costCollections {
         hashListCollection {
-          amount
           name
           id
-          imageUrl
+          amount
           hashList {
             id
             name
@@ -94,12 +65,17 @@ export const GET_LOOT_BOX_BY_ID = gql`
         }
         id
       }
+      rewardCollections_aggregate {
+        aggregate {
+          count
+        }
+      }
       gateCollections {
         id
         hashListCollection {
-          amount
           name
           id
+          amount
           hashList {
             id
             name
@@ -116,11 +92,6 @@ export const GET_LOOT_BOX_BY_ID = gql`
               mintAddress
             }
           }
-        }
-      }
-      rewardCollections_aggregate {
-        aggregate {
-          count
         }
       }
     }

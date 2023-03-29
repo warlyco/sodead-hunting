@@ -4,8 +4,8 @@ export const GET_ENABLED_LOOT_BOXES_WITH_DETAILS = gql`
   query GET_ENABLED_LOOT_BOXES_WITH_DETAILS {
     sodead_lootBoxes(where: { isEnabled: { _eq: true } }) {
       id
-      createdAt
       description
+      createdAt
       name
       rarity {
         name
@@ -14,6 +14,7 @@ export const GET_ENABLED_LOOT_BOXES_WITH_DETAILS = gql`
       rewardCollections {
         id
         hashListCollection {
+          amount
           name
           id
           hashList {
@@ -42,6 +43,7 @@ export const GET_ENABLED_LOOT_BOXES_WITH_DETAILS = gql`
         hashListCollection {
           name
           id
+          amount
           hashList {
             id
             name
@@ -73,6 +75,7 @@ export const GET_ENABLED_LOOT_BOXES_WITH_DETAILS = gql`
         hashListCollection {
           name
           id
+          amount
           hashList {
             id
             name

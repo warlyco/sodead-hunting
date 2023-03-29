@@ -22,6 +22,7 @@ export const GET_LOOT_BOX_BY_TOKEN_MINT_ADDRESS_IN_HASH_LIST = gql`
       rewardCollections {
         id
         hashListCollection {
+          amount
           name
           id
           hashList {
@@ -50,6 +51,7 @@ export const GET_LOOT_BOX_BY_TOKEN_MINT_ADDRESS_IN_HASH_LIST = gql`
         hashListCollection {
           name
           id
+          amount
           hashList {
             id
             name
@@ -81,6 +83,7 @@ export const GET_LOOT_BOX_BY_TOKEN_MINT_ADDRESS_IN_HASH_LIST = gql`
         hashListCollection {
           name
           id
+          amount
           hashList {
             id
             name
