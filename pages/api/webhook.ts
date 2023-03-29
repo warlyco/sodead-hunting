@@ -114,6 +114,9 @@ export default async function handler(
         tokenMintAddress: mints[0].mintAddress,
       });
 
+    console.log("mints[0].mintAddress", mints[0].mintAddress);
+    console.log("sodead_burnAttempts", sodead_burnAttempts);
+
     // get loot box by token mint address in hash list
     const { sodead_lootBoxes_by_pk }: { sodead_lootBoxes_by_pk: LootBox } =
       await client.request(GET_LOOT_BOX_BY_ID, {
