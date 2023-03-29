@@ -115,12 +115,12 @@ export default async function handler(
       });
 
     // get loot box by token mint address in hash list
-    const { sodead_lootBoxes }: { sodead_lootBoxes: LootBox[] } =
+    const { sodead_lootBoxes_by_pk }: { sodead_lootBoxes_by_pk: LootBox } =
       await client.request(GET_LOOT_BOX_BY_ID, {
         id: sodead_burnAttempts?.[0]?.lootBox?.id,
       });
 
-    const lootBox = sodead_lootBoxes?.[0];
+    const lootBox = sodead_lootBoxes_by_pk;
     console.log("lootBox", lootBox);
 
     if (!lootBox?.id) {
