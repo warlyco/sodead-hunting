@@ -1,9 +1,7 @@
-import { LOOT_BOX_DETAILS_FRAGMENT } from "@/graphql/queries/get-loot-boxes-with-details";
 import { gql } from "@apollo/client";
 
 export const GET_LOOT_BOX_BY_TOKEN_MINT_ADDRESS_IN_HASH_LIST = gql`
   query GET_LOOT_BOX_BY_TOKEN_MINT_ADDRESS_IN_HASH_LIST($mintAddress: jsonb!) {
-    ${LOOT_BOX_DETAILS_FRAGMENT}
     sodead_lootBoxes(
       where: {
         costCollections: {
@@ -13,7 +11,94 @@ export const GET_LOOT_BOX_BY_TOKEN_MINT_ADDRESS_IN_HASH_LIST = gql`
         }
       }
     ) {
-      ...LootBoxDetails
+      id
+      description
+      createdAt
+      name
+      rarity {
+        name
+        id
+      }
+      rewardCollections {
+        id
+        hashListCollection {
+          name
+          id
+          hashList {
+            id
+            name
+            rawHashList
+          }
+        }
+        itemCollection {
+          id
+          amount
+          imageUrl
+          name
+          item {
+            id
+            name
+            token {
+              id
+              mintAddress
+            }
+          }
+        }
+      }
+      imageUrl
+      costCollections {
+        hashListCollection {
+          name
+          id
+          hashList {
+            id
+            name
+            rawHashList
+          }
+        }
+        itemCollection {
+          amount
+          id
+          name
+          item {
+            id
+            name
+            imageUrl
+            token {
+              mintAddress
+            }
+          }
+        }
+        id
+      }
+      rewardCollections_aggregate {
+        aggregate {
+          count
+        }
+      }
+      gateCollections {
+        id
+        hashListCollection {
+          name
+          id
+          hashList {
+            id
+            name
+            rawHashList
+          }
+        }
+        itemCollection {
+          amount
+          item {
+            id
+            name
+            token {
+              id
+              mintAddress
+            }
+          }
+        }
+      }
     }
   }
 `;

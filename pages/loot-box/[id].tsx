@@ -47,7 +47,8 @@ const LootBoxDetailPage: NextPage = () => {
   const [costTokenImageUrl, setCostTokenImageUrl] = useState<string | null>(
     null
   );
-  const [userHeldCostTokens, setUserHeldCostTokens] = useState<string[]>([]);
+  const [amountOfUserHeldCostTokens, setAmountOfUserHeldCostTokens] =
+    useState<number>(0);
   const [hasFetchUserHeldCostTokens, setHasFetchUserHeldCostTokens] =
     useState<boolean>(false);
   const [costAmount, setCostAmount] = useState<number>(0);
@@ -223,7 +224,9 @@ const LootBoxDetailPage: NextPage = () => {
             primaryMessage: "Success, your claim will be in your wallet soon",
           });
           setNftMintAddressesToBurn([]);
-          setUserHeldCostTokens([]);
+          setAmountOfUserHeldCostTokens(
+            amountOfUserHeldCostTokens - costAmount
+          );
         },
       },
       wallet,
@@ -237,6 +240,8 @@ const LootBoxDetailPage: NextPage = () => {
     connection,
     addBurnAttempt,
     hashListRewardCollectionId,
+    costAmount,
+    amountOfUserHeldCostTokens,
   ]);
 
   const fetchUserHeldCostTokens = useCallback(async () => {
@@ -253,7 +258,7 @@ const LootBoxDetailPage: NextPage = () => {
       publicKey: wallet.publicKey,
       connection,
     });
-    setUserHeldCostTokens(costTokens);
+    setAmountOfUserHeldCostTokens(costTokens.length);
     setHasFetchUserHeldCostTokens(true);
 
     if (costTokens.length >= costAmount) {
@@ -273,7 +278,7 @@ const LootBoxDetailPage: NextPage = () => {
 
   useEffect(() => {
     console.log({
-      userHeldCostTokens: userHeldCostTokens.length,
+      userHeldCostTokens: amountOfUserHeldCostTokens,
       costAmount,
     });
     if (
@@ -296,8 +301,8 @@ const LootBoxDetailPage: NextPage = () => {
     fetchUserHeldCostTokens,
     hashListCostCollectionId,
     hashListRewardCollectionId,
-    userHeldCostTokens.length,
     costAmount,
+    amountOfUserHeldCostTokens,
   ]);
 
   if (
@@ -356,7 +361,7 @@ const LootBoxDetailPage: NextPage = () => {
             <div className="flex items-center space-x-3">
               <div className="uppercase">You have:</div>
               {hasFetchUserHeldCostTokens ? (
-                <div>{userHeldCostTokens.length}</div>
+                <div>{amountOfUserHeldCostTokens}</div>
               ) : (
                 <Spinner />
               )}
@@ -369,7 +374,7 @@ const LootBoxDetailPage: NextPage = () => {
           className="text-2xl"
           isSubmitting={transferInProgress}
           onClick={handleTransferNfts}
-          disabled={!(userHeldCostTokens.length >= costAmount)}
+          disabled={!(amountOfUserHeldCostTokens >= costAmount)}
         >
           Claim
         </SubmitButton>
