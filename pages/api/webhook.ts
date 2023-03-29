@@ -178,6 +178,7 @@ export default async function handler(
           lootBoxId: lootBox.id,
           tokenMintAddress: mints?.[0]?.mintAddress,
           txAddress: signature,
+          currentCount: currentCount + 1,
         }
       );
       updatedBurnCount = update_sodead_burnCounts?.[0]?.currentCount || 0;
