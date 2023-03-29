@@ -159,6 +159,7 @@ export default async function handler(
 
     const { sodead_burnCounts }: { sodead_burnCounts: BurnCount[] } =
       await client.request(GET_BURN_COUNT, {
+        lootBoxId: lootBox.id,
         walletId,
       });
 
