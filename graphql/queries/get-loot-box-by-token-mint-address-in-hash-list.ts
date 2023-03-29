@@ -12,6 +12,7 @@ export const GET_LOOT_BOX_BY_TOKEN_MINT_ADDRESS_IN_HASH_LIST = gql`
       }
     ) {
       id
+      imageUrl
       description
       createdAt
       name

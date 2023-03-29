@@ -7,6 +7,7 @@ export const GET_LOOT_BOX_BY_ID = gql`
       description
       createdAt
       name
+      imageUrl
       rarity {
         name
         id

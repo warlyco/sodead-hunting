@@ -6,6 +6,7 @@ export const GET_LOOT_BOXES_WITH_DETAILS = gql`
       id
       description
       createdAt
+      imageUrl
       name
       rarity {
         name
