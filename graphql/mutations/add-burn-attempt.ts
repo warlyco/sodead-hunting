@@ -14,7 +14,7 @@ export const ADD_BURN_ATTEMPT = gql`
         walletAddress: $walletAddress
         mintIds: $mintIds
         hashListId: $hashListId
-        $lootBoxId: $lootBoxId
+        lootBoxId: $lootBoxId
       }
     ) {
       id
