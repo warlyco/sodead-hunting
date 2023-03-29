@@ -109,10 +109,11 @@ export default async function handler(
     }
     console.log("burning mints and closing ATAs:", { mints });
     console.log("mints", mints);
+    console.log("mints[0].mintAddress", mints[0].mintAddress);
 
     const { sodead_burnAttempts }: { sodead_burnAttempts: BurnAttempt[] } =
       await client.request(GET_BURN_ATTEMPT_BY_TOKEN_MINT_ADDRESS, {
-        tokenMintAddress: mints[0].mintAddress,
+        tokenMintAddress: mints?.[0]?.mintAddress,
       });
 
     console.log("sodead_burnAttempts", sodead_burnAttempts);
