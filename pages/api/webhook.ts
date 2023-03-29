@@ -45,7 +45,6 @@ import { client } from "@/graphql/backend-client";
 import { INCREMENT_BURN_COUNT } from "@/graphql/mutations/increment-burn-count";
 import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
 import { GET_WALLET_BY_ADDRESS } from "@/graphql/queries/get-wallet-by-address";
-import { GET_BURN_COUNT } from "@/graphql/queries/get-burn-count";
 import { Wallet } from "@/pages/me";
 import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
 import { GET_BURN_ATTEMPT_BY_TOKEN_MINT_ADDRESS } from "@/graphql/queries/get-burn-attempt-by-token-mint-address";
@@ -155,32 +154,17 @@ export default async function handler(
       return;
     }
     const currentCount = sodead_burnAttempts?.length || 0;
-
-    let updatedBurnCount = 0;
+    console.log("currentCount", currentCount);
 
     if (currentCount + 1 < paymentAmount) {
-      const {
-        update_sodead_burnCounts,
-      }: { update_sodead_burnCounts: BurnCount[] } = await client.request(
-        INCREMENT_BURN_COUNT,
-        {
-          walletId,
-          lootBoxId: lootBox.id,
-          tokenMintAddress: mints?.[0]?.mintAddress,
-          txAddress: signature,
-          currentCount: currentCount + 1,
-        }
-      );
-      updatedBurnCount = update_sodead_burnCounts?.[0]?.currentCount || 0;
-      console.log("updatedBurnCount", updatedBurnCount);
+      console.log("updatedBurnCount", currentCount);
       res
         .status(400)
-        .json({ success: true, updatedBurnCount, lootBoxId: lootBox.id });
-      return;
-    }
-
-    if (!updatedBurnCount) {
-      res.status(400).json({ success: false });
+        .json({
+          success: true,
+          updatedBurnCount: currentCount,
+          lootBoxId: lootBox.id,
+        });
       return;
     }
 
