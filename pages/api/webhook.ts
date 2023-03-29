@@ -20,6 +20,19 @@ export type BurnCount = {
   currentCount: number;
 };
 
+export type BurnAttempt = {
+  id: string;
+  txAddress: string;
+  walletAddress: string;
+  mintIds: string[];
+  hashList: {
+    id: string;
+  };
+  lootBox: {
+    id: string;
+  };
+};
+
 type Data = {
   success: boolean;
   burnTxAddress?: string;
@@ -28,14 +41,14 @@ type Data = {
   lootBoxId?: string;
 };
 
-import axios from "axios";
 import { client } from "@/graphql/backend-client";
-import { GET_LOOT_BOX_BY_TOKEN_MINT_ADDRESS_IN_HASH_LIST } from "@/graphql/queries/get-loot-box-by-token-mint-address-in-hash-list";
 import { INCREMENT_BURN_COUNT } from "@/graphql/mutations/increment-burn-count";
 import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
 import { GET_WALLET_BY_ADDRESS } from "@/graphql/queries/get-wallet-by-address";
 import { GET_BURN_COUNT } from "@/graphql/queries/get-burn-count";
 import { Wallet } from "@/pages/me";
+import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
+import { GET_BURN_ATTEMPT_BY_TOKEN_MINT_ADDRESS } from "@/graphql/queries/get-burn-attempt-by-token-mint-address";
 
 export default async function handler(
   req: NextApiRequest,
@@ -65,27 +78,17 @@ export default async function handler(
     res.status(400).json({ success: false });
     return;
   }
-  console.log("webhook 2a");
   const connection = new Connection(RPC_ENDPOINT);
-  console.log("webhook 2b");
   const fireKeypair = Keypair.fromSecretKey(
     base58.decode(process.env.FURNACE_PRIVATE_KEY)
   );
-  console.log("webhook 2c");
   const rewardKeypair = Keypair.fromSecretKey(
     base58.decode(process.env.REWARD_PRIVATE_KEY)
   );
-  console.log("webhook 2d");
   const firePublicKey = new PublicKey(fireKeypair.publicKey.toString());
-  console.log("webhook 2e");
   const rewardPublicKey = new PublicKey(rewardKeypair.publicKey.toString());
-  console.log("webhook 2f");
   let burnTxAddress;
-  console.log("webhook 2g");
   let rewardTxAddress;
-  console.log("webhook 2h");
-
-  console.log("webhook 3");
 
   if (
     body[0]?.type === "TRANSFER" &&
@@ -106,10 +109,15 @@ export default async function handler(
     }
     console.log("burning mints and closing ATAs:", { mints });
 
+    const { sodead_burnAttempts }: { sodead_burnAttempts: BurnAttempt[] } =
+      await client.request(GET_BURN_ATTEMPT_BY_TOKEN_MINT_ADDRESS, {
+        tokenMintAddress: mints[0].mintAddress,
+      });
+
     // get loot box by token mint address in hash list
     const { sodead_lootBoxes }: { sodead_lootBoxes: LootBox[] } =
-      await client.request(GET_LOOT_BOX_BY_TOKEN_MINT_ADDRESS_IN_HASH_LIST, {
-        mintAddress: mints[0].mintAddress,
+      await client.request(GET_LOOT_BOX_BY_ID, {
+        id: sodead_burnAttempts?.[0]?.lootBox?.id,
       });
 
     const lootBox = sodead_lootBoxes?.[0];

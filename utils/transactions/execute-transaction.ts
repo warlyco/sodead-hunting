@@ -24,7 +24,8 @@ export const executeTransaction = async (
   wallet?: any,
   addBurnAttempt?: any,
   mintIds?: string[],
-  hashListId?: string | null
+  hashListId?: string | null,
+  lootBoxId?: string | null
 ): Promise<string> => {
   let txid = "";
   try {
@@ -51,6 +52,7 @@ export const executeTransaction = async (
           walletAddress: wallet.publicKey,
           mintIds,
           hashListId,
+          lootBoxId,
         },
       });
     }
