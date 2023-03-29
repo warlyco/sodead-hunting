@@ -9,12 +9,11 @@ export const INCREMENT_BURN_COUNT = gql`
     $currentCount: Int!
   ) {
     update_sodead_burnCounts(
-      where: { walletId: { _eq: $walletId } }
+      where: { walletId: { _eq: $walletId }, lootBoxId: { _eq: $lootBoxId } }
       _set: {
         currentCount: $currentCount
         tokenMintAddress: $tokenMintAddress
         txAddress: $txAddress
-        lootBoxId: $lootBoxId
       }
     ) {
       returning {
