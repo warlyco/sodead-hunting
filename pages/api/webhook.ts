@@ -172,7 +172,13 @@ export default async function handler(
       const {
         update_sodead_burnCounts,
       }: { update_sodead_burnCounts: BurnCount[] } = await client.request(
-        INCREMENT_BURN_COUNT
+        INCREMENT_BURN_COUNT,
+        {
+          walletId,
+          lootBoxId: lootBox.id,
+          tokenMintAddress: mints?.[0]?.mintAddress,
+          txAddress: signature,
+        }
       );
       updatedBurnCount = update_sodead_burnCounts?.[0]?.currentCount || 0;
       console.log("updatedBurnCount", updatedBurnCount);
