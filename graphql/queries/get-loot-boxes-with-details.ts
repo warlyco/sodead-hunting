@@ -1,96 +1,103 @@
 import { gql } from "@apollo/client";
 
-export const GET_LOOT_BOXES_WITH_DETAILS = gql`
-  query GET_LOOT_BOXES_WITH_DETAILS {
-    sodead_lootBoxes {
-      id
-      description
-      createdAt
+export const LOOT_BOX_DETAILS_FRAGMENT = gql`
+  fragment LootBoxDetails on sodead_lootBoxes {
+    id
+    description
+    createdAt
+    name
+    rarity {
       name
-      rarity {
+      id
+    }
+    rewardCollections {
+      id
+      hashListCollection {
         name
         id
-      }
-      rewardCollections {
-        id
-        hashListCollection {
-          name
+        hashList {
           id
-          hashList {
+          name
+          rawHashList
+        }
+      }
+      itemCollection {
+        id
+        amount
+        imageUrl
+        name
+        item {
+          id
+          name
+          token {
             id
-            name
-            rawHashList
+            mintAddress
           }
         }
-        itemCollection {
+      }
+    }
+    imageUrl
+    costCollections {
+      hashListCollection {
+        name
+        id
+        hashList {
           id
-          amount
+          name
+          rawHashList
+        }
+      }
+      itemCollection {
+        amount
+        id
+        name
+        item {
+          id
+          name
           imageUrl
-          name
-          item {
-            id
-            name
-            token {
-              id
-              mintAddress
-            }
+          token {
+            mintAddress
           }
         }
       }
-      imageUrl
-      costCollections {
-        hashListCollection {
-          name
-          id
-          hashList {
-            id
-            name
-            rawHashList
-          }
-        }
-        itemCollection {
-          amount
-          id
-          name
-          item {
-            id
-            name
-            imageUrl
-            token {
-              mintAddress
-            }
-          }
-        }
+      id
+    }
+    rewardCollections_aggregate {
+      aggregate {
+        count
+      }
+    }
+    gateCollections {
+      id
+      hashListCollection {
+        name
         id
-      }
-      rewardCollections_aggregate {
-        aggregate {
-          count
-        }
-      }
-      gateCollections {
-        id
-        hashListCollection {
-          name
+        hashList {
           id
-          hashList {
-            id
-            name
-            rawHashList
-          }
+          name
+          rawHashList
         }
-        itemCollection {
-          amount
-          item {
+      }
+      itemCollection {
+        amount
+        item {
+          id
+          name
+          token {
             id
-            name
-            token {
-              id
-              mintAddress
-            }
+            mintAddress
           }
         }
       }
+    }
+  }
+`;
+
+export const GET_LOOT_BOXES_WITH_DETAILS = gql`
+  query GET_LOOT_BOXES_WITH_DETAILS {
+    ${LOOT_BOX_DETAILS_FRAGMENT}
+    sodead_lootBoxes {
+      ...LootBoxDetails
     }
   }
 `;

@@ -5,7 +5,6 @@ import type {
   Signer,
   Transaction,
 } from "@solana/web3.js";
-import { sendAndConfirmRawTransaction } from "@solana/web3.js";
 
 export const executeTransaction = async (
   connection: Connection,

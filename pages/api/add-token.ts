@@ -4,6 +4,7 @@ import request from "graphql-request";
 import { ADD_TOKEN } from "@/graphql/mutations/add-token";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { BASE_URL } from "@/constants/constants";
+import { client } from "@/graphql/backend-client";
 
 export type TokenMetadata = {
   image: string;
@@ -46,15 +47,11 @@ export default async function handler(
   console.log("tokenMetadata: ", tokenMetadata);
   try {
     const { insert_sodead_tokens_one }: { insert_sodead_tokens_one: Data } =
-      await request({
-        url: process.env.NEXT_PUBLIC_GRAPHQL_API_ENDPOINT!,
+      await client.request({
         document: ADD_TOKEN,
         variables: {
           mintAddress,
           ...tokenMetadata,
-        },
-        requestHeaders: {
-          "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
         },
       });
 
