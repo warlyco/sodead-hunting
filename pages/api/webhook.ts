@@ -109,16 +109,18 @@ export default async function handler(
     console.log("mints", mints);
     console.log("mints[0].mintAddress", mints[0].mintAddress);
 
-    const { sodead_burnAttempts }: { sodead_burnAttempts: BurnAttempt[] } =
-      await client.request(GET_BURN_ATTEMPT_BY_TOKEN_MINT_ADDRESS, {
+    const data: { sodead_burnAttempts: BurnAttempt[] } = await client.request(
+      GET_BURN_ATTEMPT_BY_TOKEN_MINT_ADDRESS,
+      {
         tokenMintAddress: mints?.[0]?.mintAddress,
-      });
+      }
+    );
 
-    console.log("sodead_burnAttempts", sodead_burnAttempts);
+    console.log("sodead_burnAttempts", data?.sodead_burnAttempts);
 
     const { sodead_lootBoxes_by_pk }: { sodead_lootBoxes_by_pk: LootBox } =
       await client.request(GET_LOOT_BOX_BY_ID, {
-        id: sodead_burnAttempts?.[0]?.lootBox?.id,
+        id: data?.sodead_burnAttempts?.[0]?.lootBox?.id,
       });
 
     const lootBox = sodead_lootBoxes_by_pk;
@@ -153,18 +155,16 @@ export default async function handler(
       res.status(400).json({ success: false });
       return;
     }
-    const currentCount = sodead_burnAttempts?.length || 0;
+    const currentCount = data?.sodead_burnAttempts?.length || 0;
     console.log("currentCount", currentCount);
 
     if (currentCount + 1 < paymentAmount) {
       console.log("updatedBurnCount", currentCount);
-      res
-        .status(400)
-        .json({
-          success: true,
-          updatedBurnCount: currentCount,
-          lootBoxId: lootBox.id,
-        });
+      res.status(400).json({
+        success: true,
+        updatedBurnCount: currentCount,
+        lootBoxId: lootBox.id,
+      });
       return;
     }
 
