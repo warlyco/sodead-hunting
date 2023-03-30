@@ -42,12 +42,29 @@ type Data = {
 };
 
 import { client } from "@/graphql/backend-client";
-import { INCREMENT_BURN_COUNT } from "@/graphql/mutations/increment-burn-count";
 import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
 import { GET_WALLET_BY_ADDRESS } from "@/graphql/queries/get-wallet-by-address";
 import { Wallet } from "@/pages/me";
 import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
 import { GET_BURN_ATTEMPT_BY_TOKEN_MINT_ADDRESS } from "@/graphql/queries/get-burn-attempt-by-token-mint-address";
+import { fetchNftsByHashList } from "@/utils/nfts/fetch-nfts-by-hash-list";
+
+const selectRandomRewardMintAddress = async (
+  rawHashList: string[],
+  amount: number, // amount of tokens to be burned, needs to be refactored in
+  rewardWalletAddress: string,
+  connection: Connection
+) => {
+  const tokensInRewardWallet = await fetchNftsByHashList({
+    hashList: rawHashList,
+    publicKey: new PublicKey(rewardWalletAddress),
+    connection,
+  });
+  const randomIndex = Math.floor(Math.random() * tokensInRewardWallet.length);
+  const randomRewardMintAddress = tokensInRewardWallet[randomIndex].mintAddress;
+
+  return randomRewardMintAddress;
+};
 
 export default async function handler(
   req: NextApiRequest,
@@ -57,8 +74,7 @@ export default async function handler(
 
   if (
     req.method !== "POST" ||
-    !process.env.NEXT_PUBLIC_PLATFORM_TOKEN_MINT_ADDRESS ||
-    !process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT_ADDRESS
+    !process.env.NEXT_PUBLIC_PLATFORM_TOKEN_MINT_ADDRESS
   ) {
     res.status(405).json({ success: false });
     return;
@@ -109,18 +125,16 @@ export default async function handler(
     console.log("mints", mints);
     console.log("mints[0].mintAddress", mints[0].mintAddress);
 
-    const data: { sodead_burnAttempts: BurnAttempt[] } = await client.request(
-      GET_BURN_ATTEMPT_BY_TOKEN_MINT_ADDRESS,
-      {
+    const { sodead_burnAttempts }: { sodead_burnAttempts: BurnAttempt[] } =
+      await client.request(GET_BURN_ATTEMPT_BY_TOKEN_MINT_ADDRESS, {
         tokenMintAddress: mints?.[0]?.mintAddress,
-      }
-    );
+      });
 
-    console.log("sodead_burnAttempts", data?.sodead_burnAttempts);
+    console.log("sodead_burnAttempts", sodead_burnAttempts);
 
     const { sodead_lootBoxes_by_pk }: { sodead_lootBoxes_by_pk: LootBox } =
       await client.request(GET_LOOT_BOX_BY_ID, {
-        id: data?.sodead_burnAttempts?.[0]?.lootBox?.id,
+        id: sodead_burnAttempts?.[0]?.lootBox?.id,
       });
 
     const lootBox = sodead_lootBoxes_by_pk;
@@ -138,7 +152,19 @@ export default async function handler(
       };
     });
 
-    const paymentAmount = costs?.[0]?.amount;
+    const rewards = lootBox?.rewardCollections?.map((rewardCollection) => {
+      return {
+        rawHashList: rewardCollection.hashListCollection.hashList.rawHashList,
+        amount: rewardCollection.hashListCollection.amount,
+      };
+    });
+
+    if (!rewards?.length || !costs?.length) {
+      res.status(400).json({ success: false });
+      return;
+    }
+
+    const paymentAmount = costs[0]?.amount;
 
     console.log("paymentAmount", paymentAmount);
 
@@ -155,12 +181,12 @@ export default async function handler(
       res.status(400).json({ success: false });
       return;
     }
-    const currentCount = data?.sodead_burnAttempts?.length || 0;
+    const currentCount = sodead_burnAttempts?.length || 0;
     console.log("currentCount", currentCount);
 
-    if (currentCount + 1 < paymentAmount) {
+    if (currentCount < paymentAmount) {
       console.log("updatedBurnCount", currentCount);
-      res.status(400).json({
+      res.status(200).json({
         success: true,
         updatedBurnCount: currentCount,
         lootBoxId: lootBox.id,
@@ -215,9 +241,19 @@ export default async function handler(
 
       // console.log("burned", { burnTxAddress });
 
+      const { rawHashList: rewardsRawHashList, amount: rewardsAmount } =
+        rewards?.[0];
+      const { rawHashList: costsRawHashList, amount: costsAmount } = costs?.[0];
+
       // Send reward
+      // Will need refactor for multiple rewards
       const rewardMintAddress = new PublicKey(
-        process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT_ADDRESS
+        selectRandomRewardMintAddress(
+          JSON.parse(rewardsRawHashList),
+          rewardsAmount,
+          rewardPublicKey.toString(),
+          connection
+        )
       );
 
       console.log("webhook 4", rewardMintAddress);
@@ -236,15 +272,10 @@ export default async function handler(
 
       console.log("webhook 7", toTokenAccountAddress);
 
-      const associatedDestinationTokenAddress = await getAssociatedTokenAddress(
-        rewardMintAddress,
-        new PublicKey(fromUserAccount)
-      );
-
-      console.log("webhook 8", associatedDestinationTokenAddress);
+      console.log("webhook 8", toTokenAccountAddress);
 
       const receiverAccount = await connection.getAccountInfo(
-        associatedDestinationTokenAddress
+        toTokenAccountAddress
       );
 
       console.log("webhook 9", receiverAccount);
@@ -258,7 +289,7 @@ export default async function handler(
         rewardInstructions.push(
           createAssociatedTokenAccountInstruction(
             rewardPublicKey,
-            associatedDestinationTokenAddress,
+            toTokenAccountAddress,
             new PublicKey(fromUserAccount),
             rewardMintAddress
           )
@@ -266,7 +297,7 @@ export default async function handler(
 
         console.log("webhook 10", {
           rewardPublicKey,
-          associatedDestinationTokenAddress,
+          toTokenAccountAddress,
           fromUserAccount,
         });
       }
