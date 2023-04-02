@@ -2,8 +2,11 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useUser } from "@/hooks/user";
-import { ActiveLootboxes } from "@/features/loot-boxes/active-loot-boxes";
 import { UserWithoutAccountBlocker } from "@/features/UI/user-without-account-blocker";
+import { ActiveHuntsList } from "@/features/hunts/active-hunts-list";
+import Image from "next/image";
+import { ContentWrapper } from "@/features/UI/content-wrapper";
+import { ContentWrapperCentered } from "@/features/UI/content-wrapper-centered";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();
@@ -36,15 +39,19 @@ const Home: NextPage = () => {
         <meta name="msapplication-TileColor" content="#b90811" />
         <meta name="theme-color" content="#000" />
       </Head>
-      <div className="container flex flex-col items-center justify-center gap-6 text-stone-300">
+      <ContentWrapperCentered>
         {publicKey && user?.accounts?.length ? (
-          <div className="overflow-y-auto pt-16 mb-16 text-center">
-            <ActiveLootboxes />
-          </div>
+          <Image
+            className="h-64 w-64"
+            src="/images/sodead-logo.png"
+            alt="SoDead Logo"
+            height={300}
+            width={300}
+          />
         ) : (
           <UserWithoutAccountBlocker />
         )}
-      </div>
+      </ContentWrapperCentered>
     </>
   );
 };

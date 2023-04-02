@@ -110,7 +110,7 @@ const LootBoxDetailPage: NextPage = () => {
       setCostItem(costItem);
       setCostAmount(costAmount);
       setCostTokenImageUrl(imageUrl);
-      setAmountOfUserHeldCostTokens(1); // FAKE THIS FOR NOW
+      setAmountOfUserHeldCostTokens(666); // FAKE THIS FOR NOW
       setHasFetchUserHeldCostTokens(true);
 
       // *** hashlist based rewards and costs ***
@@ -325,48 +325,50 @@ const LootBoxDetailPage: NextPage = () => {
       <h1 className="text-5xl font-strange-dreams text-center mb-12 tracking-wider">
         {lootBox?.name}
       </h1>
-      <div className="flex items-center flex-wrap">
+      <div className="flex items-center justify-center flex-wrap mb-16">
         <div className="flex-col flex w-full justify-center md:w-1/2 items-center mb-16 md:mb-0">
           <ImageWithFallback
-            className="rounded-2xl mb-12 border-2 border-red-500"
+            className="rounded-2xl border-2 border-red-500"
             src={lootBox?.imageUrl || ""}
-            width={350}
-            height={350}
+            width={400}
+            height={400}
             alt="Lootbox image"
           />
           <div className="italic text-2xl max-w-sm text-center">
             {lootBox?.description}
           </div>
         </div>
-        <div className="flex-col md:flex-row flex w-full justify-center md:w-1/2 items-center font-strange-dreams tracking-widest">
-          <div className="flex items-center mb-8 text-3xl space-y-6 flex-col">
-            <ImageWithFallback
-              src={costTokenImageUrl || ""}
-              width={200}
-              height={200}
-              alt="Cost token image"
-              className="border-2 border-red-500 rounded-2xl h-48 w-48 mb-6"
-            />
-            <div className="flex items-center space-x-3">
-              <div className="uppercase">Cost:</div>
-              <div>{costAmount}</div>
+        <div className="w-full px-8 md:px-0 md:w-1/2">
+          <div className="flex flex-col w-full mx-auto text-xl border-2 border-red-500 rounded-2xl p-6">
+            <div className="text-center uppercase text-3xl font-strange-dreams mb-2 tracking-widest">
+              Possible Rewards
             </div>
-            <div className="flex items-center space-x-3">
-              <div className="uppercase">You have:</div>
-              {hasFetchUserHeldCostTokens ? (
-                <div>{amountOfUserHeldCostTokens}</div>
-              ) : (
-                <Spinner />
-              )}
-            </div>
+            {!!lootBox && <LootBoxRewards lootBox={lootBox} />}
           </div>
         </div>
       </div>
-      <div className="flex flex-col w-full max-w-lg mx-auto text-xl border-2 border-red-500 rounded-2xl p-6 mb-8">
-        <div className="text-center uppercase text-3xl font-strange-dreams mb-2 tracking-widest">
-          Possible Rewards
+      <div className="flex flex-wrap justify-center items-center mb-8 text-4xl space-x-0 md:space-x-8 font-strange-dreams tracking-widest space-y-6 md:space-y-0">
+        <ImageWithFallback
+          src={costTokenImageUrl || ""}
+          width={100}
+          height={100}
+          alt="Cost token image"
+          className="border-2 border-red-500 rounded-2xl h-28 w-28"
+        />
+        <div className="flex flex-col space-y-3">
+          <div className="flex w-full md:w-auto items-center justify-center space-x-3">
+            <div className="uppercase">Cost:</div>
+            <div>{costAmount}</div>
+          </div>
+          <div className="flex w-full md:w-auto items-center justify-center space-x-3">
+            <div className="uppercase">You have:</div>
+            {hasFetchUserHeldCostTokens ? (
+              <div>{amountOfUserHeldCostTokens}</div>
+            ) : (
+              <Spinner />
+            )}
+          </div>
         </div>
-        {!!lootBox && <LootBoxRewards lootBox={lootBox} />}
       </div>
       <div className="pb-12 pt-4 w-full justify-center flex">
         <SubmitButton
