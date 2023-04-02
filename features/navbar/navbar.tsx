@@ -8,15 +8,15 @@ const Navbar = () => {
   const { isAdmin } = useAdmin();
 
   return (
-    <div className="relative mx-auto -mb-28 h-28 max-w-5xl pt-8 px-4 md:px-0">
-      <div className="flex w-full items-center justify-between gap-4 rounded-full border border-stone-900 bg-black px-10 shadow-deep py-2">
+    <div className="relative -mb-16 h-16  px-4 md:px-0 bg-stone-900 shadow-deep">
+      <div className="flex w-full items-center justify-between gap-4 py-2 max-w-5xl mx-auto">
         <Link href="/" className="flex items-center justify-center">
           <Image
-            className="h-16 hidden md:block"
+            className="h-12 hidden md:block"
             src="/images/sodead-long-logo.png"
             alt="SoDead Logo"
             height={42}
-            width={120}
+            width={100}
           />
           <div className="py-2 -ml-4">
             <Image

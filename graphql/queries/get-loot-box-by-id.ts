@@ -27,6 +27,7 @@ export const GET_LOOT_BOX_BY_ID = gql`
           }
         }
         itemCollection {
+          imageUrl
           id
           amount
           imageUrl
@@ -54,6 +55,7 @@ export const GET_LOOT_BOX_BY_ID = gql`
           }
         }
         itemCollection {
+          imageUrl
           amount
           id
           name
@@ -87,6 +89,7 @@ export const GET_LOOT_BOX_BY_ID = gql`
           }
         }
         itemCollection {
+          imageUrl
           amount
           item {
             id

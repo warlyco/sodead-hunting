@@ -1,10 +1,8 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { useUser } from "@/hooks/user";
-import { ActiveLootboxes } from "@/features/lootboxes/active-lootboxes";
-import Link from "next/link";
+import { ActiveLootboxes } from "@/features/loot-boxes/active-loot-boxes";
 import { UserWithoutAccountBlocker } from "@/features/UI/user-without-account-blocker";
 
 const Home: NextPage = () => {
@@ -40,7 +38,7 @@ const Home: NextPage = () => {
       </Head>
       <div className="container flex flex-col items-center justify-center gap-6 text-stone-300">
         {publicKey && user?.accounts?.length ? (
-          <div className="overflow-y-auto pt-48 mb-16 text-center">
+          <div className="overflow-y-auto pt-16 mb-16 text-center">
             <ActiveLootboxes />
           </div>
         ) : (

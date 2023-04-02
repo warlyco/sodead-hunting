@@ -28,7 +28,7 @@ export const SubmitButton = ({
           ? "opacity-50 cursor-not-allowed"
           : "opacity-100 cursor-pointer",
         disabled
-          ? "opacity-50 cursor-not-allowed bg-stone-500 hover:bg-stone-500"
+          ? "opacity-50 cursor-not-allowed bg-stone-500 hover:bg-stone-500 font-strange-dreams tracking-widest text-3xl"
           : "",
         className,
       ])}

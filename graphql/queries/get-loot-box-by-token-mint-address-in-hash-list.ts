@@ -34,6 +34,7 @@ export const GET_LOOT_BOX_BY_TOKEN_MINT_ADDRESS_IN_HASH_LIST = gql`
           }
         }
         itemCollection {
+          imageUrl
           id
           amount
           imageUrl
@@ -61,6 +62,7 @@ export const GET_LOOT_BOX_BY_TOKEN_MINT_ADDRESS_IN_HASH_LIST = gql`
           }
         }
         itemCollection {
+          imageUrl
           amount
           id
           name
@@ -93,6 +95,7 @@ export const GET_LOOT_BOX_BY_TOKEN_MINT_ADDRESS_IN_HASH_LIST = gql`
           }
         }
         itemCollection {
+          imageUrl
           amount
           item {
             id

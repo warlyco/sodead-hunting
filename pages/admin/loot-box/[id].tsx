@@ -9,11 +9,10 @@ import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
 
 import { Panel } from "@/features/UI/panel";
-import { formatDateTime } from "@/utils/date-time";
-import { formatNumberWithCommas } from "@/utils/formatting";
 import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
 import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
 import { RarityBadge } from "@/features/UI/badges/rarity-badge";
+import { LootBoxRewards } from "@/features/loot-boxes/loot-box-rewards-list";
 
 const LootBoxDetailPage = () => {
   const router = useRouter();
@@ -37,13 +36,8 @@ const LootBoxDetailPage = () => {
       const rewardCollections = [
         ...(sodead_lootBoxes_by_pk?.rewardCollections || []),
       ];
-      const sortedRewards = rewardCollections.sort((a, b) => {
-        if (!a.payoutChance) return 1;
-        if (!b.payoutChance) return -1;
-        return b.payoutChance - a.payoutChance;
-      });
 
-      setRewardCollections(sortedRewards);
+      setRewardCollections(rewardCollections);
       setHasBeenFetched(true);
     },
   });
@@ -76,78 +70,8 @@ const LootBoxDetailPage = () => {
                 <div className="mb-8">
                   <RarityBadge rarity={lootBox.rarity} />
                 </div>
-                <div className="mb-4 w-full">
-                  <div className="text-center uppercase text-lg">Rewards</div>
-                  {!!rewardCollections &&
-                    rewardCollections.map(
-                      ({
-                        itemCollection,
-                        hashListCollection,
-                        childRewardCollections,
-                        payoutChance,
-                        name: parentName,
-                      }) => (
-                        <Fragment key={itemCollection?.id}>
-                          <div className="flex w-full flex-1 justify-between border border-stone-800 rounded-lg p-2 my-2">
-                            {/* Top level name */}
-                            {!!itemCollection?.name && (
-                              <>
-                                <div>{itemCollection?.name}</div>
-                                <div>
-                                  {!!payoutChance && payoutChance * 100}%
-                                </div>
-                              </>
-                            )}
-                            {!!hashListCollection?.id && (
-                              <>
-                                <div>{hashListCollection?.name}</div>
-                                <div>
-                                  {!!payoutChance && payoutChance * 100}%
-                                </div>
-                              </>
-                            )}
-                            {/* Parent name */}
-                            {!!parentName && (
-                              <>
-                                <div>{parentName}</div>
-                                <div>
-                                  {!!childRewardCollections &&
-                                    childRewardCollections.map(
-                                      ({
-                                        itemCollection,
-                                        hashListCollection,
-                                      }) => (
-                                        <>
-                                          {!!itemCollection?.id && (
-                                            <div
-                                              key={itemCollection?.id}
-                                              className="p-2 rounded-lg"
-                                            >
-                                              <div>{itemCollection?.name}</div>
-                                            </div>
-                                          )}
-                                          {JSON.stringify(hashListCollection)}
-                                          {!!hashListCollection?.id && (
-                                            <div
-                                              key={hashListCollection?.id}
-                                              className="p-2 rounded-lg"
-                                            >
-                                              <div>
-                                                {hashListCollection?.name}
-                                              </div>
-                                            </div>
-                                          )}
-                                        </>
-                                      )
-                                    )}
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        </Fragment>
-                      )
-                    )}
-                </div>
+                <div className="text-center uppercase text-lg">Rewards</div>
+                <LootBoxRewards lootBox={lootBox} />
                 <div className="mb-4 w-full">
                   <div className="text-center uppercase text-lg">Costs</div>
                   {!!lootBox?.costCollections &&

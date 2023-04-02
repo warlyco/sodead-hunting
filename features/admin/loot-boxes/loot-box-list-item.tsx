@@ -20,6 +20,7 @@ export type ItemCollection = {
   amount: number;
   id: string;
   name: string;
+  imageUrl: string;
   item: {
     id: string;
     name: string;
