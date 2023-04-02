@@ -6,7 +6,6 @@ import { UserWithoutAccountBlocker } from "@/features/UI/user-without-account-bl
 import { ActiveHuntsList } from "@/features/hunts/active-hunts-list";
 import Image from "next/image";
 import { ContentWrapper } from "@/features/UI/content-wrapper";
-import { ContentWrapperCentered } from "@/features/UI/content-wrapper-centered";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();
@@ -39,7 +38,7 @@ const Home: NextPage = () => {
         <meta name="msapplication-TileColor" content="#b90811" />
         <meta name="theme-color" content="#000" />
       </Head>
-      <ContentWrapperCentered>
+      <>
         {publicKey && user?.accounts?.length ? (
           <Image
             className="h-64 w-64"
@@ -51,7 +50,7 @@ const Home: NextPage = () => {
         ) : (
           <UserWithoutAccountBlocker />
         )}
-      </ContentWrapperCentered>
+      </>
     </>
   );
 };

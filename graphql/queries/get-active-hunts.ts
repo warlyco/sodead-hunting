@@ -1,10 +1,11 @@
 import { gql } from "@apollo/client";
 
-export const GET_HUNTS = gql`
-  query GET_HUNTS {
+export const GET_ACTIVE_HUNTS = gql`
+  query GET_ACTIVE_HUNTS {
     sodead_activities(
       where: {
         category: { id: { _eq: "5ab3b7bd-a20b-469b-8274-62991c57c526" } }
+        _and: { isActive: { _eq: true } }
       }
     ) {
       createdAt

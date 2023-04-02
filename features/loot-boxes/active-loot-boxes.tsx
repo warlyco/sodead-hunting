@@ -1,10 +1,9 @@
 import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
 import { Card } from "@/features/UI/card";
-import { ContentWrapperCentered } from "@/features/UI/content-wrapper-centered";
+import { ContentWrapper } from "@/features/UI/content-wrapper";
 import Spinner from "@/features/UI/spinner";
 import { GET_ENABLED_LOOT_BOXES_WITH_DETAILS } from "@/graphql/queries/get-enabled-loot-boxes-with-details";
 import { useQuery } from "@apollo/client";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -25,7 +24,7 @@ export const ActiveLootBoxes = () => {
     );
 
   return (
-    <ContentWrapperCentered>
+    <>
       <h1 className="text-5xl mb-12 text-center font-strange-dreams tracking-wider">
         Active Loot Boxes
       </h1>
@@ -45,6 +44,6 @@ export const ActiveLootBoxes = () => {
             </Link>
           ))}
       </div>
-    </ContentWrapperCentered>
+    </>
   );
 };
