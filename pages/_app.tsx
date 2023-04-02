@@ -14,7 +14,7 @@ import { UserProvider } from "@/hooks/user";
 import SharedHead from "@/features/UI/head";
 
 const strangeDream = localFont({
-  src: "../fonts/strange-dreams.ttf",
+  src: "../public/fonts/strange-dreams.ttf",
   variable: "--font-strange-dreams",
 });
 
@@ -35,6 +35,12 @@ const App: AppType<{ session: Session | null }> = ({
     (
       // <SessionProvider session={session}>
       <ContextProvider>
+        <style jsx global>{`
+          :root {
+            /* ... */
+            --font-strange-dreams: ${strangeDream.style.fontFamily};
+          }
+        `}</style>
         <AdminProvider>
           <UserProvider>
             <FoucGuard />

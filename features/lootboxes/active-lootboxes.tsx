@@ -25,7 +25,9 @@ export const ActiveLootboxes = () => {
 
   return (
     <>
-      <h1 className="text-4xl mb-2 text-center">Active Loot Boxes</h1>
+      <h1 className="text-5xl mb-6 text-center font-strange-dreams tracking-wide">
+        Active Loot Boxes
+      </h1>
       <div className="flex w-full max-w-5xl just m-auto flex-wrap">
         {!!lootBoxes &&
           lootBoxes?.map((lootBox) => (
@@ -35,7 +37,9 @@ export const ActiveLootboxes = () => {
               className="w-full md:w-1/3 p-4 flex justify-center"
             >
               <Card imageUrl={lootBox.imageUrl}>
-                <div className="text-2xl">{lootBox.name}</div>
+                <div className="text-3xl font-strange-dreams tracking-widest">
+                  {lootBox.name}
+                </div>
               </Card>
             </Link>
           ))}

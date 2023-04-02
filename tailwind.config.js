@@ -21,7 +21,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        "strange-dreams": ["var(--font-strange-dreams)", ...fontFamily.sans],
+        "strange-dreams": ["var(--font-strange-dreams)", ...fontFamily.serif],
       },
     },
   },
