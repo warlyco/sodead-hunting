@@ -13,6 +13,7 @@ export const GET_ENABLED_LOOT_BOXES_WITH_DETAILS = gql`
       }
       rewardCollections {
         id
+        payoutChance
         hashListCollection {
           amount
           name

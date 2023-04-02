@@ -109,7 +109,6 @@ export default async function handler(
     body[0]?.type === "TRANSFER" &&
     body[0]?.tokenTransfers[0].toUserAccount === firePublicKey.toString()
   ) {
-    // handle burn and reward
     const { tokenTransfers, signature } = body[0];
     const mints = tokenTransfers.map(
       (transfer: { mint: string; toTokenAccount: string }) => ({

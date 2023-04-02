@@ -43,6 +43,7 @@ export type LootBox = {
   rewardCollections?: {
     id: string;
     name: string;
+    payoutChance?: number;
     hashListCollection: hashListCollection;
     itemCollection: ItemCollection;
     childRewardCollections?: {

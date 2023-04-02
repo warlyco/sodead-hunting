@@ -14,6 +14,7 @@ export const GET_LOOT_BOX_BY_ID = gql`
       }
       rewardCollections {
         id
+        payoutChance
         hashListCollection {
           amount
           name

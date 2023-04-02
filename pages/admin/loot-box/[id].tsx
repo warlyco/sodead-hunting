@@ -21,12 +21,29 @@ const LootBoxDetailPage = () => {
   const [hasBeenFetched, setHasBeenFetched] = useState(false);
   const [lootBox, setLootBox] = useState<LootBox | null>(null);
   const { isAdmin } = useAdmin();
+  const [rewardCollections, setRewardCollections] = useState<
+    LootBox["rewardCollections"]
+  >([]);
 
   const { loading, error } = useQuery(GET_LOOT_BOX_BY_ID, {
     variables: { id },
     skip: !id,
-    onCompleted: ({ sodead_lootBoxes_by_pk }) => {
+    onCompleted: ({
+      sodead_lootBoxes_by_pk,
+    }: {
+      sodead_lootBoxes_by_pk: LootBox;
+    }) => {
       setLootBox(sodead_lootBoxes_by_pk);
+      const rewardCollections = [
+        ...(sodead_lootBoxes_by_pk?.rewardCollections || []),
+      ];
+      const sortedRewards = rewardCollections.sort((a, b) => {
+        if (!a.payoutChance) return 1;
+        if (!b.payoutChance) return -1;
+        return b.payoutChance - a.payoutChance;
+      });
+
+      setRewardCollections(sortedRewards);
       setHasBeenFetched(true);
     },
   });
@@ -59,56 +76,73 @@ const LootBoxDetailPage = () => {
                 <div className="mb-8">
                   <RarityBadge rarity={lootBox.rarity} />
                 </div>
-
                 <div className="mb-4 w-full">
                   <div className="text-center uppercase text-lg">Rewards</div>
-                  {!!lootBox?.rewardCollections &&
-                    lootBox.rewardCollections.map(
+                  {!!rewardCollections &&
+                    rewardCollections.map(
                       ({
                         itemCollection,
                         hashListCollection,
                         childRewardCollections,
+                        payoutChance,
                         name: parentName,
                       }) => (
                         <Fragment key={itemCollection?.id}>
-                          <div className="flex justify-between items-center border border-stone-800 rounded-lg p-2 my-2">
+                          <div className="flex w-full flex-1 justify-between border border-stone-800 rounded-lg p-2 my-2">
                             {/* Top level name */}
                             {!!itemCollection?.name && (
-                              <div>{itemCollection?.name}</div>
+                              <>
+                                <div>{itemCollection?.name}</div>
+                                <div>
+                                  {!!payoutChance && payoutChance * 100}%
+                                </div>
+                              </>
                             )}
                             {!!hashListCollection?.id && (
-                              <div>
+                              <>
                                 <div>{hashListCollection?.name}</div>
-                              </div>
+                                <div>
+                                  {!!payoutChance && payoutChance * 100}%
+                                </div>
+                              </>
                             )}
                             {/* Parent name */}
-                            <div>{parentName}</div>
-                            <div>
-                              {!!childRewardCollections &&
-                                childRewardCollections.map(
-                                  ({ itemCollection, hashListCollection }) => (
-                                    <>
-                                      {!!itemCollection?.id && (
-                                        <div
-                                          key={itemCollection?.id}
-                                          className="p-2 rounded-lg"
-                                        >
-                                          <div>{itemCollection?.name}</div>
-                                        </div>
-                                      )}
-                                      {JSON.stringify(hashListCollection)}
-                                      {!!hashListCollection?.id && (
-                                        <div
-                                          key={hashListCollection?.id}
-                                          className="p-2 rounded-lg"
-                                        >
-                                          <div>{hashListCollection?.name}</div>
-                                        </div>
-                                      )}
-                                    </>
-                                  )
-                                )}
-                            </div>
+                            {!!parentName && (
+                              <>
+                                <div>{parentName}</div>
+                                <div>
+                                  {!!childRewardCollections &&
+                                    childRewardCollections.map(
+                                      ({
+                                        itemCollection,
+                                        hashListCollection,
+                                      }) => (
+                                        <>
+                                          {!!itemCollection?.id && (
+                                            <div
+                                              key={itemCollection?.id}
+                                              className="p-2 rounded-lg"
+                                            >
+                                              <div>{itemCollection?.name}</div>
+                                            </div>
+                                          )}
+                                          {JSON.stringify(hashListCollection)}
+                                          {!!hashListCollection?.id && (
+                                            <div
+                                              key={hashListCollection?.id}
+                                              className="p-2 rounded-lg"
+                                            >
+                                              <div>
+                                                {hashListCollection?.name}
+                                              </div>
+                                            </div>
+                                          )}
+                                        </>
+                                      )
+                                    )}
+                                </div>
+                              </>
+                            )}
                           </div>
                         </Fragment>
                       )
@@ -124,16 +158,12 @@ const LootBoxDetailPage = () => {
                             <div className="flex justify-between items-center border border-stone-800 rounded-lg p-2 my-2">
                               {/* Top level name */}
                               <div>{itemCollection?.name}</div>
-                              {/* Parent name */}
-                              <div className="">{}</div>
                             </div>
                           )}
                           {!!hashListCollection?.name && (
                             <div className="flex justify-between items-center border border-stone-800 rounded-lg p-2 my-2">
                               {/* Top level name */}
                               <div>{hashListCollection?.name}</div>
-                              {/* Parent name */}
-                              <div className="">{}</div>
                             </div>
                           )}
                         </Fragment>
