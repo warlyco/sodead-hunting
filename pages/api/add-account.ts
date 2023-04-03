@@ -1,6 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { User } from "@/features/admin/users/users-list-item";
+import { client } from "@/graphql/backend-client";
 import { ADD_ACCOUNT } from "@/graphql/mutations/add-account";
-import request from "graphql-request";
+import { UPDATE_USER } from "@/graphql/mutations/update-user";
+
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export type Account = {
@@ -30,6 +33,7 @@ export type NoopResponse = {
 
 type Data =
   | Account
+  | User
   | NoopResponse
   | {
       error: unknown;
@@ -74,12 +78,21 @@ export default async function handler(
 
   try {
     const { insert_sodead_accounts_one }: { insert_sodead_accounts_one: Data } =
-      await request({
-        url: process.env.NEXT_PUBLIC_GRAPHQL_API_ENDPOINT!,
+      await client.request({
         document: ADD_ACCOUNT,
         variables,
-        requestHeaders: {
-          "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
+      });
+
+    const { update_sodead_users_by_pk }: { update_sodead_users_by_pk: Data } =
+      await client.request({
+        document: UPDATE_USER,
+        variables: {
+          id: userId,
+          setInput: {
+            name: username,
+            email: email,
+            imageUrl: imageUrl,
+          },
         },
       });
 

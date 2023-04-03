@@ -1,4 +1,5 @@
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
+import { CreatureList } from "@/features/creatires/creature-list";
 import { formatDateTime } from "@/utils/date-time";
 
 export const HuntDetails = ({ hunt }: { hunt: Hunt }) => {
@@ -14,13 +15,13 @@ export const HuntDetails = ({ hunt }: { hunt: Hunt }) => {
 
   return (
     <>
-      <h1 className="text-5xl xl:mb-8 text-center font-strange-dreams tracking-wider">
+      <h1 className="text-4xl lg:text-5xl lg:mb-8 text-center font-strange-dreams tracking-wider">
         {name}
       </h1>
-      <div className="xl:text-lg tracking-wider mb-8 leading-8 xl:leading-relaxed px-8">
+      <div className="xl:text-lg tracking-wider mb-8 leading-8 xl:leading-relaxed px-8 py-4 bg-stone-900 rounded-2xl">
         {description}
       </div>
-      <div className="border-2 rounded-2xl border-red-500 p-4 w-full max-w-sm space-y-2">
+      <div className="border-2 rounded-2xl border-red-500 p-4 w-full max-w-sm space-y-2 bg-stone-900">
         <div className="flex justify-between">
           <div>Start time:</div>
           <div>{formatDateTime(startTime)}</div>

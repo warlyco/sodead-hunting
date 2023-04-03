@@ -40,7 +40,7 @@ const Home: NextPage = () => {
 
   const [fetchUser, { refetch }] = useLazyQuery(GET_USER_BY_WALLET_ADDRESS, {
     variables: { address: publicKey?.toString() },
-    fetchPolicy: "network-only",
+    fetchPolicy: "no-cache",
     onCompleted: (data) => {
       setUserFetched(true);
       const user = data?.sodead_users?.[0];
@@ -77,19 +77,19 @@ const Home: NextPage = () => {
         <>
           {!!user?.imageUrl || !!discordAccount?.imageUrl ? (
             <ImageWithFallback
-              className="rounded-2xl bg-stone-900 p-2 mb-12"
+              className="rounded-2xl bg-stone-900 p-2 mb-8"
               src={user?.imageUrl || discordAccount?.imageUrl}
               alt="SoDead Logo"
-              width={120}
-              height={120}
+              width={150}
+              height={150}
             />
           ) : (
             <ImageWithFallback
-              className="rounded-2xl bg-stone-900 p-2 mb-12"
+              className="rounded-2xl bg-stone-900 p-2 mb-8"
               src="/images/sodead-logo.png"
               alt="SoDead Logo"
-              width={120}
-              height={120}
+              width={150}
+              height={150}
             />
           )}
           {!user?.primaryWallet?.address ? (

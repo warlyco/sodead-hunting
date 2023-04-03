@@ -44,7 +44,6 @@ const DiscordRedirect = () => {
       }
 
       console.log("saving user", { user });
-      debugger;
 
       try {
         const res = await axios.post(`${BASE_URL}/api/add-account`, {
@@ -118,7 +117,6 @@ const DiscordRedirect = () => {
       fragment.get("access_token"),
       fragment.get("token_type"),
     ];
-    debugger;
     if (!accessToken || !tokenType) {
       router.push("/");
       return;
@@ -130,7 +128,7 @@ const DiscordRedirect = () => {
 
   return (
     <div className="flex w-full h-full items-center justify-center">
-      <div className="flex flex-col text-4xl mt-48 items-center justify-center space-x-4">
+      <div className="flex flex-col text-4xl mt-48 items-center justify-center space-x-4 font-strange-dreams tracking-wider">
         <div className="mb-8">Saving User Info</div>
         <Spinner />
       </div>

@@ -47,17 +47,15 @@ const LoginWithDiscord = ({ user }: { user: User }) => {
   return (
     <div>
       {!!discordAccount ? (
-        <div>
-          <div className="font-bold text-base mb-2 bg-purple-700 rounded-lg px-4 py-3 flex items-center space-x-3 text-stone-300 max-w-64">
-            <Image
-              height={20}
-              width={26}
-              src="/images/discord.svg"
-              alt="Discord"
-              className="block"
-            />
-            <div className="truncate">{discordAccount.username}</div>
-          </div>
+        <div className="font-bold text-base bg-purple-700 rounded-lg px-4 py-3 flex items-center space-x-3 text-stone-300 max-w-64">
+          <Image
+            height={20}
+            width={26}
+            src="/images/discord.svg"
+            alt="Discord"
+            className="block"
+          />
+          <div className="truncate">{discordAccount.username}</div>
         </div>
       ) : (
         <button
