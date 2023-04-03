@@ -59,16 +59,23 @@ const Home: NextPage = () => {
       walletAddress: publicKey?.toString(),
     });
 
-    console.log({ newUser });
-
     refetch();
   }, [publicKey, refetch]);
 
   useEffect(() => {
     if (!publicKey) return;
-    fetchUser();
-    if (user) setDiscordAccount(getUserDiscordAccount(user));
+    if (!user && !userFetched) fetchUser();
   }, [fetchUser, user, userFetched, publicKey]);
+
+  useEffect(() => {
+    if (user) setDiscordAccount(getUserDiscordAccount(user));
+  }, [user]);
+
+  useEffect(() => {
+    console.log("sanity check");
+    fetchUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -77,19 +84,19 @@ const Home: NextPage = () => {
         <>
           {!!user?.imageUrl || !!discordAccount?.imageUrl ? (
             <ImageWithFallback
-              className="rounded-2xl bg-stone-900 p-2 mb-8"
+              className="rounded-2xl bg-stone-900 p-2 mb-8 mt-4"
               src={user?.imageUrl || discordAccount?.imageUrl}
               alt="SoDead Logo"
-              width={150}
-              height={150}
+              width={200}
+              height={200}
             />
           ) : (
             <ImageWithFallback
-              className="rounded-2xl bg-stone-900 p-2 mb-8"
+              className="rounded-2xl bg-stone-900 p-2 mb-8 mt-4"
               src="/images/sodead-logo.png"
               alt="SoDead Logo"
-              width={150}
-              height={150}
+              width={200}
+              height={200}
             />
           )}
           {!user?.primaryWallet?.address ? (
@@ -115,7 +122,12 @@ const Home: NextPage = () => {
                     </div>
                   </div>
                 ))}
-              <div className="text-center py-4">
+              <div
+                className="text-center py-4"
+                onClick={() => {
+                  setUserFetched(false);
+                }}
+              >
                 <LoginWithDiscord user={user} />
               </div>
             </>
