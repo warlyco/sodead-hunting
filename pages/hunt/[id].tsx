@@ -32,26 +32,24 @@ const HuntDetailPage: NextPage = () => {
 
   const fetchCollection = useCallback(async () => {
     if (!publicKey) return;
+    setIsLoading(true);
 
     const nftsOne = await fetchNftsByFisrtCreatorAddress({
       publicKey,
       firstCreatorAddress: "Bm1Dy1qjqBd9crwpunnve1RejrxVDtddvyCfqhAebDQ4", // SoDead Vamps
       connection,
-      setIsLoading,
       setHasBeenFetched,
     });
     const nftsTwo = await fetchNftsByFisrtCreatorAddress({
       publicKey,
       firstCreatorAddress: "GCpHuz3UX8PKeMCosM7uN4FYkRsDWVbadpScH5juctBP", // SoDead Lady Vamps
       connection,
-      setIsLoading,
       setHasBeenFetched,
     });
     const nftsThree = await fetchNftsByFisrtCreatorAddress({
       publicKey,
       firstCreatorAddress: "BEJRdmGxhhWNGtjWqvkZfTwJg3ntMMYN6gCRxRgKrPYU", // SoDead Lady Vamps
       connection,
-      setIsLoading,
       setHasBeenFetched,
     });
 
@@ -66,31 +64,45 @@ const HuntDetailPage: NextPage = () => {
 
     const { sodead_traits: traitsFromDb } = data;
 
-    let collectionTraits = nfts.map(({ traits }) => traits);
-
+    console.log(traitsFromDb);
     debugger;
 
-    const collectionTraitsNotInDb = collectionTraits.filter(
-      (trait) =>
-        !traitsFromDb.find((traitFromDb: { name: string }) => {
-          console.log({ traitFromDb, trait });
-          return traitFromDb.name === trait.name;
-        })
+    let collectionTraits = nfts.map(({ traits }) => traits).flat();
+
+    let collectionTraitsNotInDb: { name: string }[] = [];
+
+    for (const trait of collectionTraits) {
+      const { name } = trait;
+
+      const traitFromDb = traitsFromDb.find(
+        (traitFromDb: { name: string }) => traitFromDb.name === name
+      );
+
+      if (!traitFromDb) {
+        collectionTraitsNotInDb.push(trait);
+      }
+    }
+
+    // get unique names
+    collectionTraitsNotInDb = collectionTraitsNotInDb.filter(
+      (thing, index, self) =>
+        index === self.findIndex((t) => t.name === thing.name)
     );
 
-    // for (const trait of collectionTraitsNotInDb) {
-    //   const { name } = trait;
+    for (const trait of collectionTraitsNotInDb) {
+      const { name } = trait;
 
-    //   await client.mutate({
-    //     mutation: ADD_TRAIT,
-    //     variables: {
-    //       name,
-    //       nftCollectionId: "334a2b4f-b0c6-4128-94b5-0123cb1bff0a", // SoDead
-    //     },
-    //   });
-    // }
+      await client.mutate({
+        mutation: ADD_TRAIT,
+        variables: {
+          name,
+          nftCollectionId: "334a2b4f-b0c6-4128-94b5-0123cb1bff0a", // SoDead
+        },
+      });
+    }
 
     setEligibleCreatures([...nftsOne, ...nftsTwo, ...nftsThree]);
+    setIsLoading(false);
   }, [connection, publicKey]);
 
   useEffect(() => {
