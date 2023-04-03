@@ -5,6 +5,23 @@ export type ModeledNftMetadata = {
   name: string;
   imageUrl: string;
   mintAddress: string;
+  description?: string;
+  edition?: number;
+  fee?: number;
+  attributes?: {
+    [key: string]: unknown;
+    trait_type?: string | undefined;
+    value?: string | undefined;
+  }[];
+  url?: string;
+  creators?: {
+    [key: string]: unknown;
+    address?: string | undefined;
+    share?: number | undefined;
+  }[];
+  symbol?: string;
+  freezeAuthorityAddress?: string;
+  mintAuthorityAddress?: string;
 };
 
 type NftMetadataJson = {
@@ -55,10 +72,20 @@ export const fetchNftsByFisrtCreatorAddress = async ({
         const { json, mint } = await metaplex.nfts().load({ metadata: nft });
         const { name, image: imageUrl } = json as NftMetadataJson;
         const { address: mintAddress } = mint;
+        debugger;
         const metadata: ModeledNftMetadata = {
+          attributes: json?.attributes || [],
+          description: json?.description,
+          edition: json?.edition as number,
+          url: json?.external_url,
           name,
           imageUrl,
           mintAddress: mintAddress.toString(),
+          creators: json?.properties?.creators,
+          fee: json?.properties?.seller_fee_basis_points as number,
+          symbol: json?.symbol,
+          freezeAuthorityAddress: mint.freezeAuthorityAddress?.toString(),
+          mintAuthorityAddress: mint.mintAuthorityAddress?.toString(),
         };
         nftsWithMetadata.push(metadata);
       }

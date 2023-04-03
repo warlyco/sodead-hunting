@@ -44,7 +44,15 @@ const HuntDetailPage: NextPage = () => {
       setIsLoading,
       setHasBeenFetched,
     });
-    setEligibleCreatures([...nftsOne, ...nftsTwo]);
+    const nftsThree = await fetchNftsByFisrtCreatorAddress({
+      publicKey,
+      firstCreatorAddress: "BEJRdmGxhhWNGtjWqvkZfTwJg3ntMMYN6gCRxRgKrPYU", // SoDead Lady Vamps
+      connection,
+      setIsLoading,
+      setHasBeenFetched,
+    });
+
+    setEligibleCreatures([...nftsOne, ...nftsTwo, ...nftsThree]);
   }, [connection, publicKey]);
 
   useEffect(() => {

@@ -71,12 +71,6 @@ const Home: NextPage = () => {
     if (user) setDiscordAccount(getUserDiscordAccount(user));
   }, [user]);
 
-  useEffect(() => {
-    console.log("sanity check");
-    fetchUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <>
       <SharedHead />
@@ -122,12 +116,7 @@ const Home: NextPage = () => {
                     </div>
                   </div>
                 ))}
-              <div
-                className="text-center py-4"
-                onClick={() => {
-                  setUserFetched(false);
-                }}
-              >
+              <div className="text-center py-4">
                 <LoginWithDiscord user={user} />
               </div>
             </>

@@ -16,19 +16,17 @@ export const ActiveHuntsList = () => {
     },
   });
 
-  if (loading)
-    return (
-      <ContentWrapper>
-        <Spinner />
-      </ContentWrapper>
-    );
-
   return (
     <>
       <h1 className="text-5xl mb-12 text-center font-strange-dreams tracking-wider">
         Active Hunts
       </h1>
       <div className="flex w-full max-w-5xl just m-auto flex-wrap space-y-10 pb-16 px-6 5xl:px-0">
+        {loading && (
+          <div className="w-full flex justify-center">
+            <Spinner />
+          </div>
+        )}
         {/* background url */}
         {!!hunts &&
           hunts?.map((hunt) => (

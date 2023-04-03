@@ -5,6 +5,9 @@ import showToast from "@/features/toasts/show-toast";
 import Spinner from "@/features/UI/spinner";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
+import { useUser } from "@/hooks/user";
+import { useLazyQuery } from "@apollo/client";
+import { GET_USER_BY_WALLET_ADDRESS } from "@/graphql/queries/get-user-by-wallet-address";
 
 export type DiscordUser = {
   accent_color: number | null;
@@ -27,11 +30,21 @@ export type DiscordUser = {
 };
 
 const DiscordRedirect = () => {
+  const { user, setUser } = useUser();
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [tokenType, setTokenType] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { publicKey } = useWallet();
   const router = useRouter();
+
+  const [fetchUser] = useLazyQuery(GET_USER_BY_WALLET_ADDRESS, {
+    variables: { address: publicKey?.toString() },
+    fetchPolicy: "no-cache",
+    onCompleted: ({ sodead_users }) => {
+      const user = sodead_users?.[0];
+      if (user) setUser(user);
+    },
+  });
 
   const saveUser = useCallback(
     async (user: DiscordUser) => {
@@ -64,6 +77,7 @@ const DiscordRedirect = () => {
           showToast({
             primaryMessage: "Discord info saved!",
           });
+          await fetchUser();
           router.push("/me");
         } else {
           showToast({
