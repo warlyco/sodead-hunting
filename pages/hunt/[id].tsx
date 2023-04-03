@@ -12,6 +12,7 @@ import { useUser } from "@/hooks/user";
 import { fetchNftsByFisrtCreatorAddress } from "@/utils/nfts/fetch-nfts-by-first-creator-address";
 import { useQuery } from "@apollo/client";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import axios from "axios";
 import classNames from "classnames";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -29,32 +30,9 @@ const HuntDetailPage: NextPage = () => {
     null
   );
   const [hasBeenFetched, setHasBeenFetched] = useState(false);
+  const [nfts, setNfts] = useState<any[]>([]);
 
-  const fetchCollection = useCallback(async () => {
-    if (!publicKey) return;
-    setIsLoading(true);
-
-    const nftsOne = await fetchNftsByFisrtCreatorAddress({
-      publicKey,
-      firstCreatorAddress: "Bm1Dy1qjqBd9crwpunnve1RejrxVDtddvyCfqhAebDQ4", // SoDead Vamps
-      connection,
-      setHasBeenFetched,
-    });
-    const nftsTwo = await fetchNftsByFisrtCreatorAddress({
-      publicKey,
-      firstCreatorAddress: "GCpHuz3UX8PKeMCosM7uN4FYkRsDWVbadpScH5juctBP", // SoDead Lady Vamps
-      connection,
-      setHasBeenFetched,
-    });
-    const nftsThree = await fetchNftsByFisrtCreatorAddress({
-      publicKey,
-      firstCreatorAddress: "BEJRdmGxhhWNGtjWqvkZfTwJg3ntMMYN6gCRxRgKrPYU", // SoDead Lady Vamps
-      connection,
-      setHasBeenFetched,
-    });
-
-    const nfts = [...nftsOne, ...nftsTwo, ...nftsThree];
-
+  const addTraitsToDb = useCallback(async () => {
     const { data } = await client.query({
       query: GET_TRAITS_BY_NFT_COLLECTION,
       variables: {
@@ -64,8 +42,7 @@ const HuntDetailPage: NextPage = () => {
 
     const { sodead_traits: traitsFromDb } = data;
 
-    console.log(traitsFromDb);
-    debugger;
+    console.log("traitsFromDb");
 
     let collectionTraits = nfts.map(({ traits }) => traits).flat();
 
@@ -100,15 +77,54 @@ const HuntDetailPage: NextPage = () => {
         },
       });
     }
+  }, [nfts]);
 
+  const addCreaturesToDb = useCallback(async () => {
+    console.log(nfts);
+    axios.post("/api/add-creatures-from-nfts", {
+      nfts,
+    });
+  }, [nfts]);
+
+  const fetchCollection = useCallback(async () => {
+    if (!publicKey) return;
+    setIsLoading(true);
+
+    const nftsOne = await fetchNftsByFisrtCreatorAddress({
+      publicKey,
+      firstCreatorAddress: "Bm1Dy1qjqBd9crwpunnve1RejrxVDtddvyCfqhAebDQ4", // SoDead Vamps
+      connection,
+      setHasBeenFetched,
+    });
+    const nftsTwo = await fetchNftsByFisrtCreatorAddress({
+      publicKey,
+      firstCreatorAddress: "GCpHuz3UX8PKeMCosM7uN4FYkRsDWVbadpScH5juctBP", // SoDead Lady Vamps
+      connection,
+      setHasBeenFetched,
+    });
+    const nftsThree = await fetchNftsByFisrtCreatorAddress({
+      publicKey,
+      firstCreatorAddress: "BEJRdmGxhhWNGtjWqvkZfTwJg3ntMMYN6gCRxRgKrPYU", // SoDead Lady Vamps
+      connection,
+      setHasBeenFetched,
+    });
+
+    setNfts([...nftsOne, ...nftsTwo, ...nftsThree]);
+    await addTraitsToDb();
     setEligibleCreatures([...nftsOne, ...nftsTwo, ...nftsThree]);
     setIsLoading(false);
-  }, [connection, publicKey]);
+  }, [publicKey, connection, addTraitsToDb]);
 
   useEffect(() => {
-    if (!publicKey) return;
+    if (!publicKey || nfts.length) return;
     fetchCollection();
-  }, [connection, fetchCollection, publicKey]);
+  }, [connection, fetchCollection, publicKey, nfts]);
+
+  useEffect(() => {
+    if (nfts.length) {
+      addCreaturesToDb();
+    }
+  }, [nfts, addCreaturesToDb]);
 
   const { data: hunts, loading: loadingHunts } = useQuery(GET_HUNT_BY_ID, {
     variables: {

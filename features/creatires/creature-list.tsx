@@ -45,14 +45,6 @@ export const CreatureList = ({
                     height={500}
                   />
                 </div>
-                {creature.traits.map((trait) => (
-                  <div
-                    key={trait.name}
-                    className="text-center text-lg font-strange-dreams tracking-wider"
-                  >
-                    {trait.name}: {trait.value}
-                  </div>
-                ))}
               </div>
             ))
           ) : (

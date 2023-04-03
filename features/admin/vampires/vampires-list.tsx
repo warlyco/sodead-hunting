@@ -13,7 +13,7 @@ export const VampiresList = () => {
 
   return (
     <TableWrapper>
-      {data?.sodead_vampires?.map((vampire: Vampire) => {
+      {data?.sodead_creatures?.map((vampire: Vampire) => {
         return <VampiresListItem key={vampire.id} vampire={vampire} />;
       })}
     </TableWrapper>

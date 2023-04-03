@@ -2,6 +2,7 @@
 import request from "graphql-request";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ADD_ITEM } from "@/graphql/mutations/add-item";
+import { client } from "@/graphql/backend-client";
 
 export type Item = {
   costs: {
@@ -87,8 +88,7 @@ export default async function handler(
 
   try {
     const { insert_sodead_items_one }: { insert_sodead_items_one: Data } =
-      await request({
-        url: process.env.NEXT_PUBLIC_GRAPHQL_API_ENDPOINT!,
+      await client.request({
         document: ADD_ITEM,
         variables: {
           imageUrl,
@@ -97,9 +97,6 @@ export default async function handler(
           isCraftable,
           itemCategoryId,
           description,
-        },
-        requestHeaders: {
-          "x-hasura-admin-secret": process.env.HASURA_GRAPHQL_ADMIN_SECRET!,
         },
       });
 
