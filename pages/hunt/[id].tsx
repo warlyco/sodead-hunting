@@ -33,58 +33,6 @@ const HuntDetailPage: NextPage = () => {
   const [hasBeenFetched, setHasBeenFetched] = useState(false);
   const [nfts, setNfts] = useState<any[]>([]);
 
-  const addTraitsToDb = useCallback(async () => {
-    const { data } = await client.query({
-      query: GET_TRAITS_BY_NFT_COLLECTION,
-      variables: {
-        nftCollectionId: "334a2b4f-b0c6-4128-94b5-0123cb1bff0a", // SoDead
-      },
-    });
-
-    const { sodead_traits: traitsFromDb } = data;
-
-    let collectionTraits = nfts.map(({ traits }) => traits).flat();
-
-    let collectionTraitsNotInDb: { name: string }[] = [];
-
-    for (const trait of collectionTraits) {
-      const { name } = trait;
-
-      const traitFromDb = traitsFromDb.find(
-        (traitFromDb: { name: string }) => traitFromDb.name === name
-      );
-
-      if (!traitFromDb) {
-        collectionTraitsNotInDb.push(trait);
-      }
-    }
-
-    // get unique names
-    collectionTraitsNotInDb = collectionTraitsNotInDb.filter(
-      (thing, index, self) =>
-        index === self.findIndex((t) => t.name === thing.name)
-    );
-
-    for (const trait of collectionTraitsNotInDb) {
-      const { name } = trait;
-
-      await client.mutate({
-        mutation: ADD_TRAIT,
-        variables: {
-          name,
-          nftCollectionId: "334a2b4f-b0c6-4128-94b5-0123cb1bff0a", // SoDead
-        },
-      });
-    }
-  }, [nfts]);
-
-  const addCreaturesToDb = useCallback(async () => {
-    console.log(nfts);
-    axios.post("/api/add-creatures-from-nfts", {
-      nfts,
-    });
-  }, [nfts]);
-
   const filterIneligibleCreatures = useCallback(
     (creatures: Creature[]) => {
       if (!hunt || !hunt.gateCollections?.length) return creatures;
@@ -161,49 +109,41 @@ const HuntDetailPage: NextPage = () => {
     console.log(creatures.length);
     console.log(mintAddresses.length);
 
-    if (creatures.length === mintAddresses.length) {
-      setEligibleCreatures(filterIneligibleCreatures(creatures));
-      setIsLoading(false);
-      return;
-    }
+    // if (creatures.length === mintAddresses.length) {
+    //   setEligibleCreatures(filterIneligibleCreatures(creatures));
+    //   setIsLoading(false);
+    //   return;
+    // }
 
-    const nftsOne = await fetchNftsByFirstCreatorAddress({
-      publicKey,
-      firstCreatorAddress: "Bm1Dy1qjqBd9crwpunnve1RejrxVDtddvyCfqhAebDQ4", // SoDead Vamps
-      connection,
-      setHasBeenFetched,
-    });
-    const nftsTwo = await fetchNftsByFirstCreatorAddress({
-      publicKey,
-      firstCreatorAddress: "GCpHuz3UX8PKeMCosM7uN4FYkRsDWVbadpScH5juctBP", // SoDead Lady Vamps
-      connection,
-      setHasBeenFetched,
-    });
-    const nftsThree = await fetchNftsByFirstCreatorAddress({
-      publicKey,
-      firstCreatorAddress: "BEJRdmGxhhWNGtjWqvkZfTwJg3ntMMYN6gCRxRgKrPYU", // SoDead Vamps 2
-      connection,
-      setHasBeenFetched,
-    });
+    // const nftsOne = await fetchNftsByFirstCreatorAddress({
+    //   publicKey,
+    //   firstCreatorAddress: "Bm1Dy1qjqBd9crwpunnve1RejrxVDtddvyCfqhAebDQ4", // SoDead Vamps
+    //   connection,
+    //   setHasBeenFetched,
+    // });
+    // const nftsTwo = await fetchNftsByFirstCreatorAddress({
+    //   publicKey,
+    //   firstCreatorAddress: "GCpHuz3UX8PKeMCosM7uN4FYkRsDWVbadpScH5juctBP", // SoDead Lady Vamps
+    //   connection,
+    //   setHasBeenFetched,
+    // });
+    // const nftsThree = await fetchNftsByFirstCreatorAddress({
+    //   publicKey,
+    //   firstCreatorAddress: "BEJRdmGxhhWNGtjWqvkZfTwJg3ntMMYN6gCRxRgKrPYU", // SoDead Vamps 2
+    //   connection,
+    //   setHasBeenFetched,
+    // });
 
-    setNfts([...nftsOne, ...nftsTwo, ...nftsThree]);
-    await addTraitsToDb();
-    setEligibleCreatures(
-      filterIneligibleCreatures([...creatures, ...nftsOne, ...nftsTwo])
-    );
+    // setNfts([...nftsOne, ...nftsTwo, ...nftsThree]);
+    // await addTraitsToDb();
+    setEligibleCreatures(filterIneligibleCreatures([...creatures]));
     setIsLoading(false);
-  }, [publicKey, hunt, connection, addTraitsToDb, filterIneligibleCreatures]);
+  }, [publicKey, hunt, connection, filterIneligibleCreatures]);
 
   useEffect(() => {
     if (!publicKey || nfts.length) return;
     fetchCollection();
   }, [connection, fetchCollection, publicKey, nfts]);
-
-  useEffect(() => {
-    if (nfts.length) {
-      addCreaturesToDb();
-    }
-  }, [nfts, addCreaturesToDb]);
 
   const { data: hunts, loading: loadingHunts } = useQuery(GET_HUNT_BY_ID, {
     variables: {

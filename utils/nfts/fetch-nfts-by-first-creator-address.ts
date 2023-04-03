@@ -1,3 +1,4 @@
+import { fetchNftsWithMetadata } from "@/utils/nfts/fetch-nfts-with-metadata";
 import { Metaplex } from "@metaplex-foundation/js";
 import { PublicKey } from "@solana/web3.js";
 
@@ -27,11 +28,6 @@ export type ModeledNftMetadata = {
   symbol?: string;
   freezeAuthorityAddress?: string;
   mintAuthorityAddress?: string;
-};
-
-type NftMetadataJson = {
-  name: string;
-  image: string;
 };
 
 interface Props {
@@ -80,37 +76,10 @@ export const fetchNftsByFirstCreatorAddress = async ({
         return;
       }
 
-      let nftsWithMetadata: any[] = [];
-
-      for (const nft of nftCollection) {
-        const { json, mint } = await metaplex.nfts().load({ metadata: nft });
-        const { name, image: imageUrl } = json as NftMetadataJson;
-        const { address: mintAddress } = mint;
-
-        const traitInstances =
-          json?.attributes
-            ?.map(({ trait_type, value }: Attribute) => ({
-              name: trait_type || "",
-              value: value || "",
-            }))
-            .filter(({ name, value }) => name !== "" && value !== "") || [];
-
-        const metadata: ModeledNftMetadata = {
-          traits: traitInstances,
-          description: json?.description,
-          edition: json?.edition as number,
-          url: json?.external_url,
-          name,
-          imageUrl,
-          mintAddress: mintAddress.toString(),
-          creators: json?.properties?.creators,
-          fee: json?.properties?.seller_fee_basis_points as number,
-          symbol: json?.symbol,
-          freezeAuthorityAddress: mint.freezeAuthorityAddress?.toString(),
-          mintAuthorityAddress: mint.mintAuthorityAddress?.toString(),
-        };
-        nftsWithMetadata.push(metadata);
-      }
+      const nftsWithMetadata = await fetchNftsWithMetadata(
+        nftCollection,
+        metaplex
+      );
 
       resolve(nftsWithMetadata);
     } catch (error) {

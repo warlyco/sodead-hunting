@@ -1,11 +1,7 @@
+import { Trait } from "@/features/admin/traits/traits-list-item";
+import { ModeledNftMetadata } from "@/utils/nfts/fetch-nfts-by-first-creator-address";
 import { Metaplex } from "@metaplex-foundation/js";
 import { PublicKey } from "@solana/web3.js";
-
-export type ModeledNftMetadata = {
-  name: string;
-  imageUrl: string;
-  mintAddress: string;
-};
 
 type NftMetadataJson = {
   name: string;

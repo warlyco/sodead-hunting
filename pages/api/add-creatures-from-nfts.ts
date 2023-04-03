@@ -48,13 +48,10 @@ export default async function handler(
           },
         });
 
-      console.log(1);
       const creature = sodead_creatures?.[0];
-      console.log(2);
 
       if (creature) continue;
 
-      console.log(3);
       const { insert_sodead_tokens_one }: { insert_sodead_tokens_one: Token } =
         await client.request({
           document: ADD_TOKEN,
@@ -66,7 +63,6 @@ export default async function handler(
             name,
           },
         });
-      console.log(4);
 
       const {
         insert_sodead_creatures_one,
@@ -88,7 +84,6 @@ export default async function handler(
               name: trait.name,
             },
           });
-        console.log(5);
 
         const traitId = sodead_traits[0].id;
         const {
@@ -103,11 +98,17 @@ export default async function handler(
         });
       });
 
-      console.log("insert_sodead_tokens_one: ", insert_sodead_tokens_one);
-      console.log("insert_sodead_creatures_one: ", insert_sodead_creatures_one);
+      console.log("Token added: ", {
+        mintAddress: insert_sodead_tokens_one.mintAddress,
+        name: insert_sodead_tokens_one.name,
+        imageUrl: insert_sodead_tokens_one.imageUrl,
+      });
+      console.log("Creature added: ", {
+        name: insert_sodead_creatures_one.name,
+      });
       response.push(insert_sodead_creatures_one);
     } catch (error) {
-      console.log("error: ", error);
+      console.log("```````````FAIL error: ", error);
       res.status(500).json({ error });
     }
   }
