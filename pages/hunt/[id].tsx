@@ -121,7 +121,7 @@ const HuntDetailPage: NextPage = () => {
         <div className="md:hidden mx-auto mb-8 w-full flex flex-col items-center space-y-8">
           <HuntDetails hunt={hunt} />
         </div>
-        <CreatureList creatures={eligibleCreatures} />
+        <CreatureList creatures={eligibleCreatures} isLoading={isLoading} />
       </ContentWrapper>
     </>
   );
