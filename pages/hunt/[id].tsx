@@ -6,10 +6,11 @@ import Spinner from "@/features/UI/spinner";
 import { UserWithoutAccountBlocker } from "@/features/UI/user-without-account-blocker";
 import client from "@/graphql/apollo/client";
 import { ADD_TRAIT } from "@/graphql/mutations/add-trait";
+import { GET_CREATURES_BY_TOKEN_MINT_ADDRESSES } from "@/graphql/queries/get-creatures-by-token-mint-addresses";
 import { GET_HUNT_BY_ID } from "@/graphql/queries/get-hunt-by-id";
 import { GET_TRAITS_BY_NFT_COLLECTION } from "@/graphql/queries/get-traits-by-nft-collection";
 import { useUser } from "@/hooks/user";
-import { fetchNftsByFisrtCreatorAddress } from "@/utils/nfts/fetch-nfts-by-first-creator-address";
+import { fetchNftsByFirstCreatorAddress } from "@/utils/nfts/fetch-nfts-by-first-creator-address";
 import { useQuery } from "@apollo/client";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import axios from "axios";
@@ -41,8 +42,6 @@ const HuntDetailPage: NextPage = () => {
     });
 
     const { sodead_traits: traitsFromDb } = data;
-
-    console.log("traitsFromDb");
 
     let collectionTraits = nfts.map(({ traits }) => traits).flat();
 
@@ -90,21 +89,69 @@ const HuntDetailPage: NextPage = () => {
     if (!publicKey) return;
     setIsLoading(true);
 
-    const nftsOne = await fetchNftsByFisrtCreatorAddress({
+    const nftsWithoutDetailsOne = await fetchNftsByFirstCreatorAddress({
+      publicKey,
+      firstCreatorAddress: "Bm1Dy1qjqBd9crwpunnve1RejrxVDtddvyCfqhAebDQ4", // SoDead Vamps
+      connection,
+      setHasBeenFetched,
+      withDetails: false,
+    });
+    const nftsWithoutDetailsTwo = await fetchNftsByFirstCreatorAddress({
+      publicKey,
+      firstCreatorAddress: "GCpHuz3UX8PKeMCosM7uN4FYkRsDWVbadpScH5juctBP", // SoDead Lady Vamps
+      connection,
+      setHasBeenFetched,
+      withDetails: false,
+    });
+    const nftsWithoutDetailsThree = await fetchNftsByFirstCreatorAddress({
+      publicKey,
+      firstCreatorAddress: "BEJRdmGxhhWNGtjWqvkZfTwJg3ntMMYN6gCRxRgKrPYU", // SoDead Vamps 2
+      connection,
+      setHasBeenFetched,
+      withDetails: false,
+    });
+
+    const mintAddresses = [
+      ...nftsWithoutDetailsOne.map(({ mintAddress }) => mintAddress),
+      ...nftsWithoutDetailsTwo.map(({ mintAddress }) => mintAddress),
+      ...nftsWithoutDetailsThree.map(({ mintAddress }) => mintAddress),
+    ];
+
+    const { data } = await client.query({
+      query: GET_CREATURES_BY_TOKEN_MINT_ADDRESSES,
+      variables: {
+        mintAddresses: mintAddresses.map((mintAddress) =>
+          mintAddress.toString()
+        ),
+      },
+    });
+
+    const { sodead_creatures: creatures }: { sodead_creatures: Creature[] } =
+      data;
+
+    console.log(creatures.length);
+    console.log(mintAddresses.length);
+    if (creatures.length === mintAddresses.length) {
+      setEligibleCreatures(creatures);
+      setIsLoading(false);
+      return;
+    }
+
+    const nftsOne = await fetchNftsByFirstCreatorAddress({
       publicKey,
       firstCreatorAddress: "Bm1Dy1qjqBd9crwpunnve1RejrxVDtddvyCfqhAebDQ4", // SoDead Vamps
       connection,
       setHasBeenFetched,
     });
-    const nftsTwo = await fetchNftsByFisrtCreatorAddress({
+    const nftsTwo = await fetchNftsByFirstCreatorAddress({
       publicKey,
       firstCreatorAddress: "GCpHuz3UX8PKeMCosM7uN4FYkRsDWVbadpScH5juctBP", // SoDead Lady Vamps
       connection,
       setHasBeenFetched,
     });
-    const nftsThree = await fetchNftsByFisrtCreatorAddress({
+    const nftsThree = await fetchNftsByFirstCreatorAddress({
       publicKey,
-      firstCreatorAddress: "BEJRdmGxhhWNGtjWqvkZfTwJg3ntMMYN6gCRxRgKrPYU", // SoDead Lady Vamps
+      firstCreatorAddress: "BEJRdmGxhhWNGtjWqvkZfTwJg3ntMMYN6gCRxRgKrPYU", // SoDead Vamps 2
       connection,
       setHasBeenFetched,
     });

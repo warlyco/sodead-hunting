@@ -1,6 +1,3 @@
-import client from "@/graphql/apollo/client";
-import { ADD_TRAIT } from "@/graphql/mutations/add-trait";
-import { GET_TRAITS_BY_NFT_COLLECTION } from "@/graphql/queries/get-traits-by-nft-collection";
 import { Metaplex } from "@metaplex-foundation/js";
 import { PublicKey } from "@solana/web3.js";
 
@@ -43,14 +40,16 @@ interface Props {
   setIsLoading?: (isLoading: boolean) => void;
   setHasBeenFetched?: (hasBeenFetched: boolean) => void;
   firstCreatorAddress: string;
+  withDetails?: boolean;
 }
 
-export const fetchNftsByFisrtCreatorAddress = async ({
+export const fetchNftsByFirstCreatorAddress = async ({
   publicKey,
   connection,
   setIsLoading,
   setHasBeenFetched,
   firstCreatorAddress,
+  withDetails = true,
 }: Props): Promise<any[]> => {
   setIsLoading && setIsLoading(true);
   return new Promise(async (resolve, reject) => {
@@ -71,6 +70,13 @@ export const fetchNftsByFisrtCreatorAddress = async ({
         setIsLoading && setIsLoading(false);
         setHasBeenFetched && setHasBeenFetched(true);
         resolve([]);
+        return;
+      }
+
+      if (!withDetails) {
+        setIsLoading && setIsLoading(false);
+        setHasBeenFetched && setHasBeenFetched(true);
+        resolve(nftCollection);
         return;
       }
 

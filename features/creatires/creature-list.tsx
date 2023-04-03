@@ -5,9 +5,13 @@ export type Creature = {
   id: string;
   name: string;
   imageUrl: string;
-  traits: {
-    name: string;
+  traitInstances: {
+    id: string;
     value: string;
+    trait: {
+      id: string;
+      name: string;
+    };
   }[];
 };
 
