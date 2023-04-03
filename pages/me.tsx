@@ -66,7 +66,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (!publicKey) return;
-    if (!user && !userFetched) fetchUser();
+    fetchUser();
     if (user) setDiscordAccount(getUserDiscordAccount(user));
   }, [fetchUser, user, userFetched, publicKey]);
 
