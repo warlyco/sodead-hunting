@@ -1,6 +1,12 @@
 import { Metaplex } from "@metaplex-foundation/js";
 import { PublicKey } from "@solana/web3.js";
 
+export type Attribute = {
+  [key: string]: unknown;
+  trait_type?: string | undefined;
+  value?: string | undefined;
+};
+
 export type ModeledNftMetadata = {
   name: string;
   imageUrl: string;
@@ -8,10 +14,9 @@ export type ModeledNftMetadata = {
   description?: string;
   edition?: number;
   fee?: number;
-  attributes?: {
-    [key: string]: unknown;
-    trait_type?: string | undefined;
-    value?: string | undefined;
+  traits?: {
+    name: string;
+    value: string;
   }[];
   url?: string;
   creators?: {
@@ -74,7 +79,13 @@ export const fetchNftsByFisrtCreatorAddress = async ({
         const { address: mintAddress } = mint;
         debugger;
         const metadata: ModeledNftMetadata = {
-          attributes: json?.attributes || [],
+          traits:
+            json?.attributes
+              ?.map(({ trait_type, value }: Attribute) => ({
+                name: trait_type || "",
+                value: value || "",
+              }))
+              .filter(({ name, value }) => name !== "" && value !== "") || [],
           description: json?.description,
           edition: json?.edition as number,
           url: json?.external_url,

@@ -6,6 +6,10 @@ export type Creature = {
   id: string;
   name: string;
   imageUrl: string;
+  traits: {
+    name: string;
+    value: string;
+  }[];
 };
 
 export const CreatureList = ({
@@ -42,6 +46,14 @@ export const CreatureList = ({
                     height={500}
                   />
                 </div>
+                {/* {creature.traits.map((trait) => (
+                  <div
+                    key={trait.name}
+                    className="text-center text-2xl font-strange-dreams tracking-wider"
+                  >
+                    {trait.name}: {trait.value}
+                  </div>
+                ))} */}
               </div>
             ))
           ) : (
