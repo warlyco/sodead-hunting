@@ -1,4 +1,3 @@
-import { ContentWrapper } from "@/features/UI/content-wrapper";
 import Spinner from "@/features/UI/spinner";
 import Image from "next/image";
 
@@ -20,7 +19,7 @@ export const CreatureList = ({
   isLoading: boolean;
 }) => {
   return (
-    <div className="max-w-5xl mx-auto w-full">
+    <div className="max-w-6xl mx-auto w-full">
       {/* <h1>{creature.creatureCategoryId}</h1> */}
       <div className="text-4xl font-strange-dreams text-center mb-12 tracking-wider">
         Your vamps
@@ -46,14 +45,14 @@ export const CreatureList = ({
                     height={500}
                   />
                 </div>
-                {/* {creature.traits.map((trait) => (
+                {creature.traits.map((trait) => (
                   <div
                     key={trait.name}
-                    className="text-center text-2xl font-strange-dreams tracking-wider"
+                    className="text-center text-lg font-strange-dreams tracking-wider"
                   >
                     {trait.name}: {trait.value}
                   </div>
-                ))} */}
+                ))}
               </div>
             ))
           ) : (

@@ -28,7 +28,7 @@ export const ActiveLootBoxes = () => {
       <h1 className="text-5xl mb-12 text-center font-strange-dreams tracking-wider">
         Active Loot Boxes
       </h1>
-      <div className="flex w-full max-w-5xl just m-auto flex-wrap">
+      <div className="flex w-full max-w-6xl just m-auto flex-wrap">
         {!!lootBoxes &&
           lootBoxes?.map((lootBox) => (
             <Link

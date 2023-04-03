@@ -4,7 +4,10 @@ import { HuntDetails } from "@/features/hunts/hunt-details";
 import { ContentWrapper } from "@/features/UI/content-wrapper";
 import Spinner from "@/features/UI/spinner";
 import { UserWithoutAccountBlocker } from "@/features/UI/user-without-account-blocker";
+import client from "@/graphql/apollo/client";
+import { ADD_TRAIT } from "@/graphql/mutations/add-trait";
 import { GET_HUNT_BY_ID } from "@/graphql/queries/get-hunt-by-id";
+import { GET_TRAITS_BY_NFT_COLLECTION } from "@/graphql/queries/get-traits-by-nft-collection";
 import { useUser } from "@/hooks/user";
 import { fetchNftsByFisrtCreatorAddress } from "@/utils/nfts/fetch-nfts-by-first-creator-address";
 import { useQuery } from "@apollo/client";
@@ -51,6 +54,41 @@ const HuntDetailPage: NextPage = () => {
       setIsLoading,
       setHasBeenFetched,
     });
+
+    const nfts = [...nftsOne, ...nftsTwo, ...nftsThree];
+
+    const { data } = await client.query({
+      query: GET_TRAITS_BY_NFT_COLLECTION,
+      variables: {
+        nftCollectionId: "334a2b4f-b0c6-4128-94b5-0123cb1bff0a", // SoDead
+      },
+    });
+
+    const { sodead_traits: traitsFromDb } = data;
+
+    let collectionTraits = nfts.map(({ traits }) => traits);
+
+    debugger;
+
+    const collectionTraitsNotInDb = collectionTraits.filter(
+      (trait) =>
+        !traitsFromDb.find((traitFromDb: { name: string }) => {
+          console.log({ traitFromDb, trait });
+          return traitFromDb.name === trait.name;
+        })
+    );
+
+    // for (const trait of collectionTraitsNotInDb) {
+    //   const { name } = trait;
+
+    //   await client.mutate({
+    //     mutation: ADD_TRAIT,
+    //     variables: {
+    //       name,
+    //       nftCollectionId: "334a2b4f-b0c6-4128-94b5-0123cb1bff0a", // SoDead
+    //     },
+    //   });
+    // }
 
     setEligibleCreatures([...nftsOne, ...nftsTwo, ...nftsThree]);
   }, [connection, publicKey]);

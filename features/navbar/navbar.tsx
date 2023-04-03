@@ -9,7 +9,7 @@ const Navbar = () => {
 
   return (
     <div className="relative -mb-16 h-16  px-4 md:px-0 bg-stone-900 shadow-2xl z-100">
-      <div className="flex w-full items-center justify-between gap-4 py-2 max-w-5xl mx-auto">
+      <div className="flex w-full items-center justify-between gap-4 py-2 max-w-6xl mx-auto">
         <div className="flex space-x-8 items-center font-strange-dreams text-base md:text-xl tracking-wider">
           <Link href="/" className="flex items-center justify-center">
             <Image

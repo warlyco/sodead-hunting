@@ -9,7 +9,7 @@ export const ContentWrapper = ({ children, className }: Props) => {
   return (
     <div
       className={classNames([
-        "pt-40 max-w-5xl w-full mx-auto px-6 5xl:px-0",
+        "pt-40 max-w-6xl w-full mx-auto px-6 5xl:px-0",
         className,
       ])}
     >

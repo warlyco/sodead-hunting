@@ -1,3 +1,6 @@
+import client from "@/graphql/apollo/client";
+import { ADD_TRAIT } from "@/graphql/mutations/add-trait";
+import { GET_TRAITS_BY_NFT_COLLECTION } from "@/graphql/queries/get-traits-by-nft-collection";
 import { Metaplex } from "@metaplex-foundation/js";
 import { PublicKey } from "@solana/web3.js";
 
@@ -77,15 +80,17 @@ export const fetchNftsByFisrtCreatorAddress = async ({
         const { json, mint } = await metaplex.nfts().load({ metadata: nft });
         const { name, image: imageUrl } = json as NftMetadataJson;
         const { address: mintAddress } = mint;
-        debugger;
+
+        const traitInstances =
+          json?.attributes
+            ?.map(({ trait_type, value }: Attribute) => ({
+              name: trait_type || "",
+              value: value || "",
+            }))
+            .filter(({ name, value }) => name !== "" && value !== "") || [];
+
         const metadata: ModeledNftMetadata = {
-          traits:
-            json?.attributes
-              ?.map(({ trait_type, value }: Attribute) => ({
-                name: trait_type || "",
-                value: value || "",
-              }))
-              .filter(({ name, value }) => name !== "" && value !== "") || [],
+          traits: traitInstances,
           description: json?.description,
           edition: json?.edition as number,
           url: json?.external_url,

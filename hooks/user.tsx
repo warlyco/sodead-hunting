@@ -36,23 +36,23 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   );
 
-  useEffect(() => {
-    if (publicKey && !user) {
-      getUser();
-      return;
-    }
-    if (ENV === "production") {
-      const handleRouteChange = (url: string) => {
-        if (!user?.accounts?.length) {
-          router.push("/me");
-        }
-      };
-      router.events.on("routeChangeStart", handleRouteChange);
-      return () => {
-        router.events.off("routeChangeStart", handleRouteChange);
-      };
-    }
-  }, [user, router, publicKey, getUser]);
+  // useEffect(() => {
+  //   if (publicKey && !user) {
+  //     getUser();
+  //     return;
+  //   }
+  //   if (ENV === "production") {
+  //     const handleRouteChange = (url: string) => {
+  //       if (!user?.accounts?.length) {
+  //         router.push("/me");
+  //       }
+  //     };
+  //     router.events.on("routeChangeStart", handleRouteChange);
+  //     return () => {
+  //       router.events.off("routeChangeStart", handleRouteChange);
+  //     };
+  //   }
+  // }, [user, router, publicKey, getUser]);
 
   return (
     <Provider
