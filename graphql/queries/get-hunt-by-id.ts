@@ -14,6 +14,18 @@ export const GET_HUNT_BY_ID = gql`
       description
       maxTotalParticipants
       maxConcurrentParticipants
+      gateCollections {
+        id
+        traitCollection {
+          id
+          value
+          name
+          trait {
+            id
+            name
+          }
+        }
+      }
       rewardCollections {
         id
         name

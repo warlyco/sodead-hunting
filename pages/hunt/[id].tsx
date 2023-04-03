@@ -85,8 +85,37 @@ const HuntDetailPage: NextPage = () => {
     });
   }, [nfts]);
 
+  const filterIneligibleCreatures = useCallback(
+    (creatures: Creature[]) => {
+      if (!hunt || !hunt.gateCollections?.length) return creatures;
+
+      let eligibleCreatures: Creature[] = [];
+      for (let creature of creatures) {
+        const traits = creature.traitInstances.map(({ id, value, trait }) => ({
+          id,
+          value,
+          name: trait.name,
+        }));
+
+        for (let trait of traits) {
+          const { name, value } = trait;
+
+          if (
+            hunt.gateCollections?.[0]?.traitCollection?.trait?.name === name &&
+            hunt.gateCollections?.[0]?.traitCollection?.value === value
+          ) {
+            eligibleCreatures.push(creature);
+          }
+        }
+      }
+
+      return eligibleCreatures;
+    },
+    [hunt]
+  );
+
   const fetchCollection = useCallback(async () => {
-    if (!publicKey) return;
+    if (!publicKey || !hunt) return;
     setIsLoading(true);
 
     const nftsWithoutDetailsOne = await fetchNftsByFirstCreatorAddress({
@@ -131,8 +160,9 @@ const HuntDetailPage: NextPage = () => {
 
     console.log(creatures.length);
     console.log(mintAddresses.length);
+
     if (creatures.length === mintAddresses.length) {
-      setEligibleCreatures(creatures);
+      setEligibleCreatures(filterIneligibleCreatures(creatures));
       setIsLoading(false);
       return;
     }
@@ -158,9 +188,11 @@ const HuntDetailPage: NextPage = () => {
 
     setNfts([...nftsOne, ...nftsTwo, ...nftsThree]);
     await addTraitsToDb();
-    setEligibleCreatures([...nftsOne, ...nftsTwo, ...nftsThree]);
+    setEligibleCreatures(
+      filterIneligibleCreatures([...creatures, ...nftsOne, ...nftsTwo])
+    );
     setIsLoading(false);
-  }, [publicKey, connection, addTraitsToDb]);
+  }, [publicKey, hunt, connection, addTraitsToDb, filterIneligibleCreatures]);
 
   useEffect(() => {
     if (!publicKey || nfts.length) return;

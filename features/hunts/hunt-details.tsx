@@ -1,5 +1,4 @@
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
-import { CreatureList } from "@/features/creatires/creature-list";
 import { formatDateTime } from "@/utils/date-time";
 
 export const HuntDetails = ({ hunt }: { hunt: Hunt }) => {
@@ -11,6 +10,7 @@ export const HuntDetails = ({ hunt }: { hunt: Hunt }) => {
     maxConcurrentParticipants,
     maxTotalParticipants,
     rewardCollections,
+    gateCollections,
   } = hunt;
 
   return (
@@ -43,6 +43,10 @@ export const HuntDetails = ({ hunt }: { hunt: Hunt }) => {
           <div>
             {maxTotalParticipants > 10000 ? "Unlimited" : maxTotalParticipants}
           </div>
+        </div>
+        <div className="flex justify-between">
+          <div>Requirement:</div>
+          <div>{gateCollections?.[0]?.traitCollection?.name || "None"}</div>
         </div>
         {!!rewardCollections?.[0] && (
           <div className="flex justify-between">
