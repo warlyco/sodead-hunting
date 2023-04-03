@@ -9,7 +9,6 @@ export const GET_HUNTS = gql`
     ) {
       createdAt
       id
-      isActive
       name
       startTime
       endTime
@@ -19,6 +18,21 @@ export const GET_HUNTS = gql`
       description
       maxTotalParticipants
       maxConcurrentParticipants
+      rewardCollections {
+        id
+        name
+        itemCollection {
+          id
+          name
+          imageUrl
+          amount
+          item {
+            id
+            name
+            imageUrl
+          }
+        }
+      }
       instances {
         mainCharacter {
           id

@@ -3,9 +3,7 @@ import Head from "next/head";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useUser } from "@/hooks/user";
 import { UserWithoutAccountBlocker } from "@/features/UI/user-without-account-blocker";
-import { ActiveHuntsList } from "@/features/hunts/active-hunts-list";
 import Image from "next/image";
-import { ContentWrapper } from "@/features/UI/content-wrapper";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();

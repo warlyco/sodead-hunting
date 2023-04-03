@@ -5,7 +5,6 @@ import Link from "next/link";
 
 export const UserWithoutAccountBlocker = () => {
   const { publicKey } = useWallet();
-  const { user } = useUser();
 
   return (
     <div className="flex flex-col items-center">

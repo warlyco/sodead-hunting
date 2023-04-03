@@ -9,12 +9,11 @@ import Spinner from "@/features/UI/spinner";
 import { UserWithoutAccountBlocker } from "@/features/UI/user-without-account-blocker";
 import { ADD_BURN_ATTEMPT } from "@/graphql/mutations/add-burn-attempt";
 import { GET_HASH_LIST_BY_ID } from "@/graphql/queries/get-hash-list-by-id";
-import { GET_ITEM_BY_ID } from "@/graphql/queries/get-item-by-id";
 import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
 import { useUser } from "@/hooks/user";
 import { fetchNftsByHashList } from "@/utils/nfts/fetch-nfts-by-hash-list";
 import { executeTransaction } from "@/utils/transactions/execute-transaction";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   createAssociatedTokenAccountInstruction,
   createCloseAccountInstruction,

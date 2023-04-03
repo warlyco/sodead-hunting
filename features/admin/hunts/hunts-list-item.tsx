@@ -17,6 +17,21 @@ export type Hunt = {
   description: string;
   maxConcurrentParticipants: number;
   maxTotalParticipants: number;
+  rewardCollections: {
+    id: string;
+    name: string;
+    itemCollection: {
+      id: string;
+      name: string;
+      imageUrl: string;
+      amount: number;
+      item: {
+        id: string;
+        name: string;
+        imageUrl: string;
+      };
+    };
+  }[];
   instances: {
     vampire: {
       id: string;
