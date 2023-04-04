@@ -2,7 +2,7 @@ import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 // import { SessionProvider } from "next-auth/react";
 import localFont from "next/font/local";
-
+import NextNProgress from "nextjs-progressbar";
 import "@/styles/globals.css";
 import MainLayout from "@/layouts/main";
 import { ContextProvider } from "@/providers/context-provider";
@@ -45,6 +45,7 @@ const App: AppType<{ session: Session | null }> = ({
           <UserProvider>
             <FoucGuard />
             <MainLayout centered={isCentered}>
+              <NextNProgress color="#b90811" />
               <SharedHead />
               <Component {...pageProps} />
             </MainLayout>

@@ -47,7 +47,7 @@ export const ActiveHuntsList = () => {
                   className="hidden md:flex h-full"
                 />
               </div>
-              <div className="text-3xl font-strange-dreams tracking-widest p-2 mb-4 md:mb-0 px-4 md:absolute md:bottom-0 bg-black rounded-b-2xl">
+              <div className="text-3xl font-strange-dreams tracking-widest p-2 mb-4 md:mb-0 px-4 md:absolute md:bottom-0 bg-black rounded-tr-2xl rounded-b-2xl md:rounded-bl-2xl md:rounded-br-none">
                 {hunt.name}
               </div>
               <HuntDetailsInfoBox
