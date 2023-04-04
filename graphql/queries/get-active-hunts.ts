@@ -20,6 +20,33 @@ export const GET_ACTIVE_HUNTS = gql`
       description
       maxTotalParticipants
       maxConcurrentParticipants
+      gateCollections {
+        id
+        traitCollection {
+          id
+          value
+          name
+          trait {
+            id
+            name
+          }
+        }
+      }
+      rewardCollections {
+        id
+        name
+        itemCollection {
+          id
+          name
+          imageUrl
+          amount
+          item {
+            id
+            name
+            imageUrl
+          }
+        }
+      }
       instances {
         mainCharacter {
           id

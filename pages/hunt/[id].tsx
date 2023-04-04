@@ -64,13 +64,13 @@ const HuntDetailPage: NextPage = () => {
           for (let trait of traits) {
             const { name, value } = trait;
 
-            if (
-              hunt.gateCollections?.length &&
-              hunt.gateCollections?.[0]?.traitCollection?.trait?.name ===
-                name &&
-              hunt.gateCollections?.[0]?.traitCollection?.value === value
-            ) {
-              eligibleCreatures.push(creature);
+            for (let gateCollection of hunt.gateCollections) {
+              if (
+                gateCollection.traitCollection?.trait?.name === name &&
+                gateCollection.traitCollection?.value === value
+              ) {
+                eligibleCreatures.push(creature);
+              }
             }
           }
         }

@@ -48,8 +48,16 @@ export const HuntDetailsInfoBox = ({
         </div>
       </div>
       <div className="flex justify-between">
-        <div>Requirement:</div>
-        <div>{gateCollections?.[0]?.traitCollection?.name || "None"}</div>
+        <div className="w-1/2">Requirement:</div>
+        <div className="w-1/2 text-right">
+          {!!gateCollections.length
+            ? gateCollections?.map((gateCollection, i) => (
+                <div key={gateCollection.id}>
+                  {gateCollection.traitCollection?.name}
+                </div>
+              ))
+            : "None"}
+        </div>
       </div>
       {!!rewardCollections?.[0] && (
         <div className="flex justify-between">
