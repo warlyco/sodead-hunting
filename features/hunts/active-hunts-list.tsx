@@ -1,6 +1,5 @@
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
-import { Card } from "@/features/UI/card";
-import { ContentWrapper } from "@/features/UI/content-wrapper";
+import { HuntDetailsInfoBox } from "@/features/hunts/hunt-details-info-box";
 import Spinner from "@/features/UI/spinner";
 import { GET_ACTIVE_HUNTS } from "@/graphql/queries/get-active-hunts";
 import { useQuery } from "@apollo/client";
@@ -27,26 +26,34 @@ export const ActiveHuntsList = () => {
             <Spinner />
           </div>
         )}
-        {/* background url */}
         {!!hunts &&
           hunts?.map((hunt) => (
             <Link
               href={`/hunt/${hunt.id}`}
               key={hunt.id}
-              className="w-full flex flex-col justify-center border-2 border-red-500 rounded-2xl hover:scale-[1.01] transition-all duration-300"
+              className="w-full flex flex-col justify-center border-2 border-red-500 rounded-2xl hover:scale-[1.01] transition-all duration-300 bg-top relative"
             >
-              <div
-                className="w-full h-64 rounded-t-2xl"
-                style={{
-                  backgroundImage: `url(${hunt.imageUrl})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
-                }}
-              />
-              <div className="text-4xl font-strange-dreams tracking-widest p-4">
+              <div className="flex w-full">
+                <div
+                  className="w-full h-72 rounded-2xl"
+                  style={{
+                    backgroundImage: `url(${hunt.imageUrl})`,
+                    backgroundSize: "cover",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                />
+                <HuntDetailsInfoBox
+                  hunt={hunt}
+                  className="hidden md:flex h-full"
+                />
+              </div>
+              <div className="text-3xl font-strange-dreams tracking-widest p-2 mb-4 md:mb-0 px-4 md:absolute md:bottom-0 bg-black rounded-b-2xl">
                 {hunt.name}
               </div>
+              <HuntDetailsInfoBox
+                hunt={hunt}
+                className="md:hidden w-full mx-auto mb-4"
+              />
             </Link>
           ))}
       </div>

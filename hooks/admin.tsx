@@ -16,19 +16,19 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    // if (ENV === "production") {
-    //   const handleRouteChange = (url: string) => {
-    //     if (url.startsWith("/admin")) {
-    //       if (!isAdmin) {
-    //         router.push("/");
-    //       }
-    //     }
-    //   };
-    //   router.events.on("routeChangeStart", handleRouteChange);
-    //   return () => {
-    //     router.events.off("routeChangeStart", handleRouteChange);
-    //   };
-    // }
+    if (ENV === "production") {
+      const handleRouteChange = (url: string) => {
+        if (url.startsWith("/admin")) {
+          if (!isAdmin) {
+            router.push("/");
+          }
+        }
+      };
+      router.events.on("routeChangeStart", handleRouteChange);
+      return () => {
+        router.events.off("routeChangeStart", handleRouteChange);
+      };
+    }
   }, [isAdmin, router]);
 
   useEffect(() => {

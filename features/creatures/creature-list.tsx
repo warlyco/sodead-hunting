@@ -1,5 +1,7 @@
+import { CreatureListItem } from "@/features/creatures/creature-list-item";
 import Spinner from "@/features/UI/spinner";
-import Image from "next/image";
+import classNames from "classnames";
+import { useState } from "react";
 
 export type Creature = {
   id: string;
@@ -18,15 +20,18 @@ export type Creature = {
 export const CreatureList = ({
   creatures,
   isLoading,
+  title,
 }: {
   creatures: Creature[] | null;
   isLoading: boolean;
+  title: string;
 }) => {
+  const [selectedCreatures, setSelectedCreatures] = useState<Creature[]>([]);
+
   return (
     <div className="max-w-6xl mx-auto w-full">
-      {/* <h1>{creature.creatureCategoryId}</h1> */}
       <div className="text-4xl font-strange-dreams text-center mb-12 tracking-wider">
-        Your vamps
+        {title}
       </div>
       {!!isLoading ? (
         <div className="flex w-full justify-center mb-16">
@@ -37,26 +42,27 @@ export const CreatureList = ({
           {!!creatures?.length ? (
             creatures.map((creature) => (
               <div
+                onClick={() => {
+                  if (selectedCreatures.includes(creature)) {
+                    setSelectedCreatures(
+                      selectedCreatures.filter(
+                        (selectedCreature) => selectedCreature !== creature
+                      )
+                    );
+                  } else {
+                    setSelectedCreatures([...selectedCreatures, creature]);
+                  }
+                }}
                 key={creature.id}
-                className="w-1/2 md:w-1/3 lg:w-1/4 p-2 cursor-pointer hover:scale-[1.04] transition-all duration-300"
+                className={classNames([
+                  "w-1/2 md:w-1/3 p-2 cursor-pointer hover:scale-[1.04] transition-all duration-300",
+                ])}
               >
-                <div className="border-4 border-rounded-2xl border-red-500 rounded-lg overflow-hidden shadow-lg border-opacity-60">
-                  <Image
-                    src={creature.imageUrl}
-                    alt={creature.name}
-                    className="w-full h-full object-cover"
-                    width={500}
-                    height={500}
-                  />
-                </div>
-                {/* <div className="p-2">
-                  {creature.traitInstances.map(({ id, value, trait }) => (
-                    <div key={id} className="flex w-full justify-between">
-                      <div>{trait.name}</div>
-                      <div>{value}</div>
-                    </div>
-                  ))}
-                </div> */}
+                <CreatureListItem
+                  key={creature.id}
+                  creature={creature}
+                  isSelected={selectedCreatures.includes(creature)}
+                />
               </div>
             ))
           ) : (

@@ -1,0 +1,66 @@
+import { Hunt } from "@/features/admin/hunts/hunts-list-item";
+import { formatDateTime } from "@/utils/date-time";
+import classNames from "classnames";
+
+export const HuntDetailsInfoBox = ({
+  hunt,
+  className,
+}: {
+  hunt: Hunt;
+  className?: string;
+}) => {
+  const {
+    startTime,
+    endTime,
+    maxConcurrentParticipants,
+    maxTotalParticipants,
+    rewardCollections,
+    gateCollections,
+  } = hunt;
+
+  return (
+    <div
+      className={classNames([
+        "border-2 rounded-2xl border-red-500 p-4 w-full max-w-sm space-y-2 bg-stone-900 flex flex-col justify-center",
+        className,
+      ])}
+    >
+      <div className="flex justify-between">
+        <div>Start time:</div>
+        <div>{formatDateTime(startTime)}</div>
+      </div>
+      <div className="flex justify-between">
+        <div>End time:</div>
+        <div>{formatDateTime(endTime)}</div>
+      </div>
+      <div className="flex justify-between">
+        <div>Max concurrent hunters:</div>
+        <div>
+          {maxConcurrentParticipants > 10000
+            ? "Unlimited"
+            : maxConcurrentParticipants}
+        </div>
+      </div>
+      <div className="flex justify-between">
+        <div>Max total hunters:</div>
+        <div>
+          {maxTotalParticipants > 10000 ? "Unlimited" : maxTotalParticipants}
+        </div>
+      </div>
+      <div className="flex justify-between">
+        <div>Requirement:</div>
+        <div>{gateCollections?.[0]?.traitCollection?.name || "None"}</div>
+      </div>
+      {!!rewardCollections?.[0] && (
+        <div className="flex justify-between">
+          <div>Reward:</div>
+          <div>
+            {rewardCollections?.[0]?.itemCollection?.amount}x{" "}
+            {rewardCollections?.[0]?.itemCollection?.item?.name}
+            {rewardCollections?.[0]?.itemCollection?.amount > 1 ? "s" : ""}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

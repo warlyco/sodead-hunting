@@ -1,19 +1,15 @@
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
-import { Creature, CreatureList } from "@/features/creatires/creature-list";
+import { Creature, CreatureList } from "@/features/creatures/creature-list";
 import { HuntDetails } from "@/features/hunts/hunt-details";
 import { ContentWrapper } from "@/features/UI/content-wrapper";
 import Spinner from "@/features/UI/spinner";
 import { UserWithoutAccountBlocker } from "@/features/UI/user-without-account-blocker";
 import client from "@/graphql/apollo/client";
-import { ADD_TRAIT } from "@/graphql/mutations/add-trait";
 import { GET_CREATURES_BY_TOKEN_MINT_ADDRESSES } from "@/graphql/queries/get-creatures-by-token-mint-addresses";
 import { GET_HUNT_BY_ID } from "@/graphql/queries/get-hunt-by-id";
-import { GET_TRAITS_BY_NFT_COLLECTION } from "@/graphql/queries/get-traits-by-nft-collection";
 import { useUser } from "@/hooks/user";
-import { fetchNftsByFirstCreatorAddress } from "@/utils/nfts/fetch-nfts-by-first-creator-address";
 import { useQuery } from "@apollo/client";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import axios from "axios";
 import classNames from "classnames";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -171,7 +167,22 @@ const HuntDetailPage: NextPage = () => {
         <div className="md:hidden mx-auto mb-8 w-full flex flex-col items-center space-y-8">
           <HuntDetails hunt={hunt} />
         </div>
-        <CreatureList creatures={eligibleCreatures} isLoading={isLoading} />
+        <div className="flex w-full flex-wrap">
+          <div className="w-full lg:w-1/2">
+            <CreatureList
+              creatures={eligibleCreatures}
+              isLoading={isLoading}
+              title="Your Vamps"
+            />
+          </div>
+          <div className="w-full lg:w-1/2">
+            <CreatureList
+              creatures={[]}
+              isLoading={isLoading}
+              title="Vamps on Hunt"
+            />
+          </div>
+        </div>
       </ContentWrapper>
     </>
   );
