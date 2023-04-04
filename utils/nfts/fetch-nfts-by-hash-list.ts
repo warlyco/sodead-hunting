@@ -14,6 +14,7 @@ interface Props {
   setIsLoading?: (isLoading: boolean) => void;
   setHasBeenFetched?: (hasBeenFetched: boolean) => void;
   hashList: string[];
+  withDetails?: boolean;
 }
 
 export const fetchNftsByHashList = async ({
@@ -22,6 +23,7 @@ export const fetchNftsByHashList = async ({
   setIsLoading,
   setHasBeenFetched,
   hashList,
+  withDetails = true,
 }: Props): Promise<any[]> => {
   setIsLoading && setIsLoading(true);
   return new Promise(async (resolve, reject) => {
@@ -42,6 +44,13 @@ export const fetchNftsByHashList = async ({
         setIsLoading && setIsLoading(false);
         setHasBeenFetched && setHasBeenFetched(true);
         resolve([]);
+        return;
+      }
+
+      if (!withDetails) {
+        setIsLoading && setIsLoading(false);
+        setHasBeenFetched && setHasBeenFetched(true);
+        resolve(nftCollection);
         return;
       }
 

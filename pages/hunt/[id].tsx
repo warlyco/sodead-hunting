@@ -18,6 +18,8 @@ import classNames from "classnames";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
+import collectionHashList from "@/features/hashlist/sodead-full-collection.json";
+import { fetchNftsByHashList } from "@/utils/nfts/fetch-nfts-by-hash-list";
 
 const HuntDetailPage: NextPage = () => {
   const { user, loadingUser } = useUser();
@@ -66,23 +68,9 @@ const HuntDetailPage: NextPage = () => {
     if (!publicKey || !hunt) return;
     setIsLoading(true);
 
-    const nftsWithoutDetailsOne = await fetchNftsByFirstCreatorAddress({
+    const nftsWithoutDetailsOne = await fetchNftsByHashList({
       publicKey,
-      firstCreatorAddress: "Bm1Dy1qjqBd9crwpunnve1RejrxVDtddvyCfqhAebDQ4", // SoDead Vamps
-      connection,
-      setHasBeenFetched,
-      withDetails: false,
-    });
-    const nftsWithoutDetailsTwo = await fetchNftsByFirstCreatorAddress({
-      publicKey,
-      firstCreatorAddress: "GCpHuz3UX8PKeMCosM7uN4FYkRsDWVbadpScH5juctBP", // SoDead Lady Vamps
-      connection,
-      setHasBeenFetched,
-      withDetails: false,
-    });
-    const nftsWithoutDetailsThree = await fetchNftsByFirstCreatorAddress({
-      publicKey,
-      firstCreatorAddress: "BEJRdmGxhhWNGtjWqvkZfTwJg3ntMMYN6gCRxRgKrPYU", // SoDead Vamps 2
+      hashList: collectionHashList,
       connection,
       setHasBeenFetched,
       withDetails: false,
@@ -90,8 +78,6 @@ const HuntDetailPage: NextPage = () => {
 
     const mintAddresses = [
       ...nftsWithoutDetailsOne.map(({ mintAddress }) => mintAddress),
-      ...nftsWithoutDetailsTwo.map(({ mintAddress }) => mintAddress),
-      ...nftsWithoutDetailsThree.map(({ mintAddress }) => mintAddress),
     ];
 
     const { data } = await client.query({
@@ -106,44 +92,15 @@ const HuntDetailPage: NextPage = () => {
     const { sodead_creatures: creatures }: { sodead_creatures: Creature[] } =
       data;
 
-    console.log(creatures.length);
-    console.log(mintAddresses.length);
-
-    // if (creatures.length === mintAddresses.length) {
-    //   setEligibleCreatures(filterIneligibleCreatures(creatures));
-    //   setIsLoading(false);
-    //   return;
-    // }
-
-    // const nftsOne = await fetchNftsByFirstCreatorAddress({
-    //   publicKey,
-    //   firstCreatorAddress: "Bm1Dy1qjqBd9crwpunnve1RejrxVDtddvyCfqhAebDQ4", // SoDead Vamps
-    //   connection,
-    //   setHasBeenFetched,
-    // });
-    // const nftsTwo = await fetchNftsByFirstCreatorAddress({
-    //   publicKey,
-    //   firstCreatorAddress: "GCpHuz3UX8PKeMCosM7uN4FYkRsDWVbadpScH5juctBP", // SoDead Lady Vamps
-    //   connection,
-    //   setHasBeenFetched,
-    // });
-    // const nftsThree = await fetchNftsByFirstCreatorAddress({
-    //   publicKey,
-    //   firstCreatorAddress: "BEJRdmGxhhWNGtjWqvkZfTwJg3ntMMYN6gCRxRgKrPYU", // SoDead Vamps 2
-    //   connection,
-    //   setHasBeenFetched,
-    // });
-
-    // setNfts([...nftsOne, ...nftsTwo, ...nftsThree]);
-    // await addTraitsToDb();
     setEligibleCreatures(filterIneligibleCreatures([...creatures]));
+
     setIsLoading(false);
   }, [publicKey, hunt, connection, filterIneligibleCreatures]);
 
   useEffect(() => {
-    if (!publicKey || nfts.length) return;
+    if (!publicKey || !user || nfts.length) return;
     fetchCollection();
-  }, [connection, fetchCollection, publicKey, nfts]);
+  }, [connection, fetchCollection, publicKey, nfts, user]);
 
   const { data: hunts, loading: loadingHunts } = useQuery(GET_HUNT_BY_ID, {
     variables: {
