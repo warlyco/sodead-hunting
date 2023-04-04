@@ -8,6 +8,10 @@ export const GET_CREATURES_BY_TOKEN_MINT_ADDRESSES = gql`
       name
       id
       imageUrl
+      token {
+        id
+        mintAddress
+      }
       traitInstances {
         trait {
           name

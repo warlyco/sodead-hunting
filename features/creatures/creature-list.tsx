@@ -6,6 +6,10 @@ export type Creature = {
   id: string;
   name: string;
   imageUrl: string;
+  token: {
+    id: string;
+    mintAddress: string;
+  };
   traitInstances: {
     id: string;
     value: string;

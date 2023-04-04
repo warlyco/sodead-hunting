@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { UserProvider } from "@/hooks/user";
 import SharedHead from "@/features/UI/head";
+import { DebugModeProvider } from "@/hooks/debug-mode";
 
 const strangeDream = localFont({
   src: "../public/fonts/strange-dreams.ttf",
@@ -41,16 +42,18 @@ const App: AppType<{ session: Session | null }> = ({
             --font-strange-dreams: ${strangeDream.style.fontFamily};
           }
         `}</style>
-        <AdminProvider>
-          <UserProvider>
-            <FoucGuard />
-            <MainLayout centered={isCentered}>
-              <NextNProgress color="#b90811" />
-              <SharedHead />
-              <Component {...pageProps} />
-            </MainLayout>
-          </UserProvider>
-        </AdminProvider>
+        <DebugModeProvider>
+          <AdminProvider>
+            <UserProvider>
+              <FoucGuard />
+              <MainLayout centered={isCentered}>
+                <NextNProgress color="#b90811" />
+                <SharedHead />
+                <Component {...pageProps} />
+              </MainLayout>
+            </UserProvider>
+          </AdminProvider>
+        </DebugModeProvider>
       </ContextProvider>
     )
     // </SessionProvider>

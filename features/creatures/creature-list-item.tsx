@@ -1,6 +1,8 @@
 import { Creature } from "@/features/creatures/creature-list";
+import { useDebugMode } from "@/hooks/debug-mode";
 import classNames from "classnames";
 import Image from "next/image";
+import { useEffect } from "react";
 
 export const CreatureListItem = ({
   creature,
@@ -11,6 +13,12 @@ export const CreatureListItem = ({
   className?: string;
   isSelected?: boolean;
 }) => {
+  const { isDebugMode, setIsDebugMode } = useDebugMode();
+
+  useEffect(() => {
+    setIsDebugMode(true);
+  }, [setIsDebugMode]);
+
   return (
     <>
       <div
@@ -29,14 +37,20 @@ export const CreatureListItem = ({
           height={500}
         />
       </div>
-      {/* <div className="p-2">
-        {creature.traitInstances.map(({ id, value, trait }) => (
-          <div key={id} className="flex w-full justify-between">
-            <div>{trait.name}</div>
-            <div>{value}</div>
+      {!!isDebugMode && (
+        <div className="p-2">
+          {creature.traitInstances.map(({ id, value, trait }) => (
+            <div key={id} className="flex w-full justify-between">
+              <div>{trait.name}</div>
+              <div>{value}</div>
+            </div>
+          ))}
+          <div className="flex w-full justify-between">
+            <div>Mint </div>
+            <div className="w-3/4 break-all">{creature.token.mintAddress}</div>
           </div>
-        ))}
-      </div> */}
+        </div>
+      )}
     </>
   );
 };
