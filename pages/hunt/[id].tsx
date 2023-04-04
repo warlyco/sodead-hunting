@@ -58,22 +58,39 @@ const HuntDetailPage: NextPage = () => {
           name: trait.name,
         }));
 
-        if (!hunt.gateCollections?.length) {
-          eligibleCreatures.push(creature);
-        } else {
-          for (let trait of traits) {
-            const { name, value } = trait;
+        // if (!hunt.gateCollections?.length) {
+        //   eligibleCreatures.push(creature);
+        // } else {
+        for (let trait of traits) {
+          const { name, value } = trait;
 
-            for (let gateCollection of hunt.gateCollections) {
-              if (
-                gateCollection.traitCollection?.trait?.name === name &&
-                gateCollection.traitCollection?.value === value
-              ) {
-                eligibleCreatures.push(creature);
-              }
+          for (let gateCollection of hunt.gateCollections) {
+            if (
+              gateCollection.traitCollection?.trait?.name === name &&
+              gateCollection.traitCollection?.value === value
+            ) {
+              eligibleCreatures.push(creature);
+            }
+          }
+          // temp fix to remove Tribe from eligible creatures
+          const OG_HUNT_SUSTENANCE_ID = "bdd48849-d6ff-47d8-ba01-27da50c7fb1a";
+          console.log(value, "value");
+          if (hunt.id === OG_HUNT_SUSTENANCE_ID && value === "Unrevealed") {
+            // remove from eligible creatures
+            eligibleCreatures = eligibleCreatures.filter(
+              (c) => c.id !== creature.id
+            );
+          } else if (hunt.id === OG_HUNT_SUSTENANCE_ID) {
+            // add to eligible creatures if uniqye
+            const isUnique = eligibleCreatures.find(
+              (c) => c.id === creature.id
+            );
+            if (!isUnique) {
+              eligibleCreatures.push(creature);
             }
           }
         }
+        // }
       }
       console.log("filterIneligibleCreatures", { hunt });
 

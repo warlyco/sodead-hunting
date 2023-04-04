@@ -29,14 +29,14 @@ export const CreatureListItem = ({
           height={500}
         />
       </div>
-      {/* <div className="p-2">
+      <div className="p-2">
         {creature.traitInstances.map(({ id, value, trait }) => (
           <div key={id} className="flex w-full justify-between">
             <div>{trait.name}</div>
             <div>{value}</div>
           </div>
         ))}
-      </div> */}
+      </div>
     </>
   );
 };
