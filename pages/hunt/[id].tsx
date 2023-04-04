@@ -16,6 +16,10 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import collectionHashList from "@/features/hashlist/sodead-full-collection.json";
 import { fetchNftsByHashList } from "@/utils/nfts/fetch-nfts-by-hash-list";
+import { SubmitButton } from "@/features/UI/buttons/submit-button";
+import axios from "axios";
+import { BASE_URL } from "@/constants/constants";
+import showToast from "@/features/toasts/show-toast";
 
 const HuntDetailPage: NextPage = () => {
   const { user, loadingUser } = useUser();
@@ -28,8 +32,19 @@ const HuntDetailPage: NextPage = () => {
   const [eligibleCreatures, setEligibleCreatures] = useState<Creature[] | null>(
     null
   );
+  const [creaturesInActivity, setCreaturesInActivity] = useState<Creature[]>(
+    []
+  );
   const [hasBeenFetched, setHasBeenFetched] = useState(false);
   const [nfts, setNfts] = useState<any[]>([]);
+  const [selectedCreatures, setSelectedCreatures] = useState<Creature[]>([]);
+
+  const getCreaturesNotInActivity = (creatures: Creature[]) => {
+    return creatures.filter(
+      ({ id, mainCharacterActivityInstances }) =>
+        !mainCharacterActivityInstances?.length
+    );
+  };
 
   const filterIneligibleCreatures = useCallback(
     (creatures: Creature[]) => {
@@ -55,7 +70,7 @@ const HuntDetailPage: NextPage = () => {
         }
       }
 
-      return eligibleCreatures;
+      return getCreaturesNotInActivity(eligibleCreatures);
     },
     [hunt]
   );
@@ -88,10 +103,52 @@ const HuntDetailPage: NextPage = () => {
     const { sodead_creatures: creatures }: { sodead_creatures: Creature[] } =
       data;
 
-    setEligibleCreatures(filterIneligibleCreatures([...creatures]));
+    setEligibleCreatures(filterIneligibleCreatures(creatures));
+
+    const creaturesInActivity = creatures.filter(
+      ({ id, mainCharacterActivityInstances }) =>
+        mainCharacterActivityInstances?.[0]?.activity?.id === hunt.id
+    );
+
+    console.log({ creaturesInActivity });
+
+    setCreaturesInActivity(creaturesInActivity);
 
     setIsLoading(false);
   }, [publicKey, hunt, connection, filterIneligibleCreatures]);
+
+  const addToHunt = useCallback(async () => {
+    if (!publicKey || !hunt) return;
+
+    setIsLoading(true);
+
+    try {
+      await axios.post(`${BASE_URL}/api/add-to-hunt`, {
+        huntId: hunt.id,
+        mainCharacterIds: selectedCreatures.map(({ id }) => id),
+      });
+      showToast({
+        primaryMessage: "Vampires sent on hunt!",
+      });
+      setCreaturesInActivity([...creaturesInActivity, ...selectedCreatures]);
+      setEligibleCreatures(
+        eligibleCreatures?.filter(
+          ({ id }) => !selectedCreatures.map(({ id }) => id).includes(id)
+        ) || []
+      );
+      setSelectedCreatures([]);
+    } catch (error) {
+      console.log(error);
+    }
+
+    setIsLoading(false);
+  }, [
+    publicKey,
+    hunt,
+    selectedCreatures,
+    creaturesInActivity,
+    eligibleCreatures,
+  ]);
 
   useEffect(() => {
     if (!publicKey || !user || nfts.length) return;
@@ -163,23 +220,40 @@ const HuntDetailPage: NextPage = () => {
           </div>
         </div>
       </div>
-      <ContentWrapper className="flex flex-col items-center pt-0 -mt-16 md:mt-0 md:pt-28">
+      <ContentWrapper className="flex flex-col items-center pt-0 -mt-16 md:mt-0 md:pt-28 max-w-7xl">
         <div className="md:hidden mx-auto mb-8 w-full flex flex-col items-center space-y-8">
           <HuntDetails hunt={hunt} />
         </div>
         <div className="flex w-full flex-wrap">
-          <div className="w-full lg:w-1/2">
+          <div className="w-full lg:w-1/2 px-4 flex flex-col">
+            <div className="text-4xl font-strange-dreams text-center mb-12 tracking-wider">
+              Your Vamps
+            </div>
+            {selectedCreatures.length > 0 && (
+              <div className="mx-auto pb-8">
+                <SubmitButton
+                  className="shadow-2xl"
+                  isSubmitting={false}
+                  onClick={addToHunt}
+                >
+                  Send Selected on hunt
+                </SubmitButton>
+              </div>
+            )}
             <CreatureList
               creatures={eligibleCreatures}
               isLoading={isLoading}
-              title="Your Vamps"
+              selectedCreatures={selectedCreatures}
+              setSelectedCreatures={setSelectedCreatures}
             />
           </div>
-          <div className="w-full lg:w-1/2">
+          <div className="w-full lg:w-1/2 px-4">
+            <div className="text-4xl font-strange-dreams text-center mb-12 tracking-wider">
+              Vamps on Hunt
+            </div>
             <CreatureList
-              creatures={[]}
+              creatures={creaturesInActivity}
               isLoading={isLoading}
-              title="Vamps on Hunt"
             />
           </div>
         </div>

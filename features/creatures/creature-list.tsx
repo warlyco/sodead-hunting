@@ -1,7 +1,6 @@
 import { CreatureListItem } from "@/features/creatures/creature-list-item";
 import Spinner from "@/features/UI/spinner";
 import classNames from "classnames";
-import { useState } from "react";
 
 export type Creature = {
   id: string;
@@ -15,24 +14,34 @@ export type Creature = {
       name: string;
     };
   }[];
+  mainCharacterActivityInstances: {
+    id: string;
+    activity: {
+      id: string;
+    };
+  }[];
 };
 
 export const CreatureList = ({
   creatures,
   isLoading,
   title,
+  selectedCreatures,
+  setSelectedCreatures,
 }: {
   creatures: Creature[] | null;
   isLoading: boolean;
-  title: string;
+  title?: string;
+  selectedCreatures?: Creature[];
+  setSelectedCreatures?: (creatures: Creature[]) => void;
 }) => {
-  const [selectedCreatures, setSelectedCreatures] = useState<Creature[]>([]);
-
   return (
     <div className="max-w-6xl mx-auto w-full">
-      <div className="text-4xl font-strange-dreams text-center mb-12 tracking-wider">
-        {title}
-      </div>
+      {!!title?.length && (
+        <div className="text-4xl font-strange-dreams text-center mb-12 tracking-wider">
+          {title}
+        </div>
+      )}
       {!!isLoading ? (
         <div className="flex w-full justify-center mb-16">
           <Spinner />
@@ -43,6 +52,7 @@ export const CreatureList = ({
             creatures.map((creature) => (
               <div
                 onClick={() => {
+                  if (!setSelectedCreatures || !selectedCreatures) return;
                   if (selectedCreatures.includes(creature)) {
                     setSelectedCreatures(
                       selectedCreatures.filter(
@@ -61,7 +71,9 @@ export const CreatureList = ({
                 <CreatureListItem
                   key={creature.id}
                   creature={creature}
-                  isSelected={selectedCreatures.includes(creature)}
+                  isSelected={
+                    !!selectedCreatures && selectedCreatures.includes(creature)
+                  }
                 />
               </div>
             ))

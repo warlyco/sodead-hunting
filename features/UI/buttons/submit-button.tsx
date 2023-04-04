@@ -21,7 +21,10 @@ export const SubmitButton = ({
 }: Props) => {
   return (
     <SecondaryButton
-      onClick={onClick}
+      onClick={(e) => {
+        e.preventDefault();
+        onClick && onClick();
+      }}
       disabled={isSubmitting || disabled}
       className={classNames([
         isSubmitting

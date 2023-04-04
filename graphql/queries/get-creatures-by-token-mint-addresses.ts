@@ -16,6 +16,12 @@ export const GET_CREATURES_BY_TOKEN_MINT_ADDRESSES = gql`
         id
         value
       }
+      mainCharacterActivityInstances {
+        id
+        activity {
+          id
+        }
+      }
     }
   }
 `;
