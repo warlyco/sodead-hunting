@@ -48,7 +48,7 @@ const HuntDetailPage: NextPage = () => {
 
   const filterIneligibleCreatures = useCallback(
     (creatures: Creature[]) => {
-      if (!hunt || !hunt.gateCollections?.length) return creatures;
+      if (!hunt) return creatures;
 
       let eligibleCreatures: Creature[] = [];
       for (let creature of creatures) {
@@ -58,17 +58,24 @@ const HuntDetailPage: NextPage = () => {
           name: trait.name,
         }));
 
-        for (let trait of traits) {
-          const { name, value } = trait;
+        if (!hunt.gateCollections?.length) {
+          eligibleCreatures.push(creature);
+        } else {
+          for (let trait of traits) {
+            const { name, value } = trait;
 
-          if (
-            hunt.gateCollections?.[0]?.traitCollection?.trait?.name === name &&
-            hunt.gateCollections?.[0]?.traitCollection?.value === value
-          ) {
-            eligibleCreatures.push(creature);
+            if (
+              hunt.gateCollections?.length &&
+              hunt.gateCollections?.[0]?.traitCollection?.trait?.name ===
+                name &&
+              hunt.gateCollections?.[0]?.traitCollection?.value === value
+            ) {
+              eligibleCreatures.push(creature);
+            }
           }
         }
       }
+      console.log("filterIneligibleCreatures", { hunt });
 
       return getCreaturesNotInActivity(eligibleCreatures);
     },
@@ -132,9 +139,11 @@ const HuntDetailPage: NextPage = () => {
       });
       setCreaturesInActivity([...creaturesInActivity, ...selectedCreatures]);
       setEligibleCreatures(
-        eligibleCreatures?.filter(
-          ({ id }) => !selectedCreatures.map(({ id }) => id).includes(id)
-        ) || []
+        filterIneligibleCreatures(
+          eligibleCreatures?.filter(
+            ({ id }) => !selectedCreatures.map(({ id }) => id).includes(id)
+          ) || []
+        )
       );
       setSelectedCreatures([]);
     } catch (error) {
@@ -147,6 +156,7 @@ const HuntDetailPage: NextPage = () => {
     hunt,
     selectedCreatures,
     creaturesInActivity,
+    filterIneligibleCreatures,
     eligibleCreatures,
   ]);
 
