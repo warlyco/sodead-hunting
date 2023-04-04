@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import request from "graphql-request";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Creature } from "@/features/creatires/creature-list";
+import { Creature } from "@/features/creatures/creature-list";
 import { client } from "@/graphql/backend-client";
 import { ADD_TOKEN } from "@/graphql/mutations/add-token";
 import { ADD_CREATURE } from "@/graphql/mutations/add-creature";
