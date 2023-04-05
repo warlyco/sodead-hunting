@@ -38,6 +38,10 @@ const HuntDetailPage: NextPage = () => {
   const [hasBeenFetched, setHasBeenFetched] = useState(false);
   const [nfts, setNfts] = useState<any[]>([]);
   const [selectedCreatures, setSelectedCreatures] = useState<Creature[]>([]);
+  const [
+    selectedActivityCompleteCreatures,
+    setSelectedActivityCompleteCreatures,
+  ] = useState<Creature[]>([]);
 
   const getCreaturesNotInActivity = (creatures: Creature[]) => {
     return creatures.filter(
@@ -148,6 +152,43 @@ const HuntDetailPage: NextPage = () => {
 
     setIsLoading(false);
   }, [publicKey, hunt, connection, filterIneligibleCreatures]);
+
+  const removeFromHunt = useCallback(async () => {
+    if (!publicKey || !hunt) return;
+
+    setIsLoading(true);
+
+    try {
+      await axios.post(`${BASE_URL}/api/remove-from-hunt`, {
+        huntId: hunt.id,
+        mainCharacterIds: selectedActivityCompleteCreatures.map(({ id }) => id),
+      });
+      showToast({
+        primaryMessage: "Vampire removed from hunt!",
+      });
+      setCreaturesInActivity(
+        creaturesInActivity.filter(
+          ({ id }) =>
+            !selectedActivityCompleteCreatures.map(({ id }) => id).includes(id)
+        )
+      );
+      setEligibleCreatures([
+        ...(eligibleCreatures || []),
+        ...selectedActivityCompleteCreatures,
+      ]);
+      setSelectedActivityCompleteCreatures([]);
+    } catch (error) {
+      console.log(error);
+    }
+
+    setIsLoading(false);
+  }, [
+    creaturesInActivity,
+    eligibleCreatures,
+    hunt,
+    publicKey,
+    selectedActivityCompleteCreatures,
+  ]);
 
   const addToHunt = useCallback(async () => {
     if (!publicKey || !hunt) return;
@@ -286,9 +327,18 @@ const HuntDetailPage: NextPage = () => {
             <div className="text-4xl font-strange-dreams text-center mb-12 tracking-wider">
               Vamps on Hunt
             </div>
+            {selectedActivityCompleteCreatures.length > 0 && (
+              <div className="mx-auto pb-8">
+                <SubmitButton isSubmitting={false} onClick={removeFromHunt}>
+                  Remove Selected from hunt
+                </SubmitButton>
+              </div>
+            )}
             <CreatureList
               creatures={creaturesInActivity}
               isLoading={isLoading}
+              selectedCreatures={selectedActivityCompleteCreatures}
+              setSelectedCreatures={setSelectedActivityCompleteCreatures}
             />
           </div>
         </div>
