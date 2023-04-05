@@ -16,3 +16,19 @@ export const diffInHours = (date: string | number) =>
   dayjs().diff(dayjs(date), "hour");
 export const diffInDays = (date: string | number) =>
   dayjs().diff(dayjs(date), "day");
+export const convertSecondsToHours = (seconds: number) => seconds / 60 / 60;
+export const convertSecondsToDays = (seconds: number) => seconds / 60 / 60 / 24;
+export const convertSecondsToDaysAndHoursAndMinutes = (seconds: number) => {
+  const days = Math.floor(seconds / 60 / 60 / 24);
+  const hours = Math.floor((seconds / 60 / 60) % 24);
+  const minutes = Math.floor((seconds / 60) % 60);
+
+  return { days, hours, minutes };
+};
+export const convertSecondsToDaysAndHoursAndMinutesString = (
+  seconds: number
+) => {
+  const { days, hours, minutes } =
+    convertSecondsToDaysAndHoursAndMinutes(seconds);
+  return days > 0 ? `${days} days` : `${hours} hours ${minutes} minutes`;
+};

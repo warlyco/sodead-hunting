@@ -1,5 +1,8 @@
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
-import { formatDateTime } from "@/utils/date-time";
+import {
+  convertSecondsToDaysAndHoursAndMinutesString,
+  formatDateTime,
+} from "@/utils/date-time";
 import classNames from "classnames";
 
 export const HuntDetailsInfoBox = ({
@@ -17,6 +20,7 @@ export const HuntDetailsInfoBox = ({
     rewardCollections,
     gateCollections,
     restrictionCollections,
+    durationInSeconds,
   } = hunt;
 
   return (
@@ -33,6 +37,12 @@ export const HuntDetailsInfoBox = ({
       <div className="flex justify-between">
         <div>End time:</div>
         <div>{formatDateTime(endTime)}</div>
+      </div>
+      <div className="flex justify-between">
+        <div>Duration:</div>
+        <div>
+          {convertSecondsToDaysAndHoursAndMinutesString(durationInSeconds)}
+        </div>
       </div>
       <div className="flex justify-between">
         <div>Max concurrent hunters:</div>
