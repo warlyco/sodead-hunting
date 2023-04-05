@@ -63,7 +63,7 @@ export const HuntDetailsInfoBox = ({
       <div className="flex justify-between">
         <div className="w-1/2">Restrictions:</div>
         <div className="w-1/2 text-right">
-          {!!restrictionCollections.length
+          {!!restrictionCollections?.length
             ? restrictionCollections?.map((restirctionCollection, i) => (
                 <div key={restirctionCollection.id}>
                   {restirctionCollection.traitCollection?.name}
