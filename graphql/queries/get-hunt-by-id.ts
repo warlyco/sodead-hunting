@@ -26,6 +26,18 @@ export const GET_HUNT_BY_ID = gql`
           }
         }
       }
+      restrictionCollections {
+        id
+        traitCollection {
+          id
+          value
+          name
+          trait {
+            id
+            name
+          }
+        }
+      }
       rewardCollections {
         id
         name

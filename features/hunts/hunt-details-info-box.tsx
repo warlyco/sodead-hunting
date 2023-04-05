@@ -16,6 +16,7 @@ export const HuntDetailsInfoBox = ({
     maxTotalParticipants,
     rewardCollections,
     gateCollections,
+    restrictionCollections,
   } = hunt;
 
   return (
@@ -54,6 +55,18 @@ export const HuntDetailsInfoBox = ({
             ? gateCollections?.map((gateCollection, i) => (
                 <div key={gateCollection.id}>
                   {gateCollection.traitCollection?.name}
+                </div>
+              ))
+            : "None"}
+        </div>
+      </div>
+      <div className="flex justify-between">
+        <div className="w-1/2">Restrictions:</div>
+        <div className="w-1/2 text-right">
+          {!!restrictionCollections.length
+            ? restrictionCollections?.map((restirctionCollection, i) => (
+                <div key={restirctionCollection.id}>
+                  {restirctionCollection.traitCollection?.name}
                 </div>
               ))
             : "None"}

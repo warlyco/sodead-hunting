@@ -44,6 +44,18 @@ export type Hunt = {
       };
     };
   }[];
+  restrictionCollections: {
+    id: string;
+    traitCollection: {
+      id: string;
+      value: string;
+      name: string;
+      trait: {
+        id: string;
+        name: string;
+      };
+    };
+  }[];
   instances: {
     vampire: {
       id: string;

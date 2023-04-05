@@ -81,6 +81,24 @@ const HuntDetailPage: NextPage = () => {
             }
           }
         }
+
+        if (hunt?.restrictionCollections?.length) {
+          for (let trait of traits) {
+            const { name, value } = trait;
+
+            for (let restrictionCollection of hunt.restrictionCollections) {
+              if (
+                restrictionCollection.traitCollection?.trait?.name === name &&
+                restrictionCollection.traitCollection?.value === value
+              ) {
+                // remove from eligible creatures
+                eligibleCreatures = eligibleCreatures.filter(
+                  ({ id }) => id !== creature.id
+                );
+              }
+            }
+          }
+        }
       }
       console.log("filterIneligibleCreatures", { hunt });
 
