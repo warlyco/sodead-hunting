@@ -22,8 +22,12 @@ export const GET_CREATURES_BY_TOKEN_MINT_ADDRESSES = gql`
       }
       mainCharacterActivityInstances {
         id
+        startTime
+        endTime
         activity {
           id
+          startTime
+          endTime
         }
       }
     }

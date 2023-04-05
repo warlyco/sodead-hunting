@@ -1,23 +1,33 @@
 import { Creature } from "@/features/creatures/creature-list";
 import { useDebugMode } from "@/hooks/debug-mode";
+import { formatDate, formatDateTime } from "@/utils/date-time";
 import classNames from "classnames";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const CreatureListItem = ({
   creature,
   className,
   isSelected = false,
+  activityId,
 }: {
   creature: Creature;
   className?: string;
   isSelected?: boolean;
+  activityId?: string;
 }) => {
   const { isDebugMode, setIsDebugMode } = useDebugMode();
+  const [activityInstance, setActivityInstance] =
+    useState<Creature["mainCharacterActivityInstances"][0]>();
 
   useEffect(() => {
     setIsDebugMode(true);
-  }, [setIsDebugMode]);
+    setActivityInstance(
+      creature.mainCharacterActivityInstances.find(
+        ({ activity }) => activity.id === activityId
+      )
+    );
+  }, [activityId, creature.mainCharacterActivityInstances, setIsDebugMode]);
 
   return (
     <>
@@ -36,6 +46,13 @@ export const CreatureListItem = ({
           width={500}
           height={500}
         />
+        {!!activityInstance && (
+          <div className="p-2">
+            Ends:
+            <br />
+            {formatDateTime(activityInstance.endTime)}
+          </div>
+        )}
       </div>
       {!!isDebugMode && (
         <div className="p-2">

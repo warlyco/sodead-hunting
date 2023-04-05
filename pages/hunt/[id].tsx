@@ -243,8 +243,10 @@ const HuntDetailPage: NextPage = () => {
 
   if (loadingUser || loadingHunts)
     return (
-      <ContentWrapper>
-        <Spinner />
+      <ContentWrapper className="flex flex-col items-center">
+        <div className="pt-48">
+          <Spinner />
+        </div>
       </ContentWrapper>
     );
 
@@ -317,6 +319,7 @@ const HuntDetailPage: NextPage = () => {
               </div>
             )}
             <CreatureList
+              activityId={hunt.id}
               creatures={eligibleCreatures}
               isLoading={isLoading}
               selectedCreatures={selectedCreatures}
@@ -335,6 +338,7 @@ const HuntDetailPage: NextPage = () => {
               </div>
             )}
             <CreatureList
+              activityId={hunt.id}
               creatures={creaturesInActivity}
               isLoading={isLoading}
               selectedCreatures={selectedActivityCompleteCreatures}

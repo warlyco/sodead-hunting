@@ -1,6 +1,7 @@
 import { CreatureListItem } from "@/features/creatures/creature-list-item";
 import Spinner from "@/features/UI/spinner";
 import classNames from "classnames";
+import { useState } from "react";
 
 export type Creature = {
   id: string;
@@ -20,8 +21,12 @@ export type Creature = {
   }[];
   mainCharacterActivityInstances: {
     id: string;
+    startTime: string;
+    endTime: string;
     activity: {
       id: string;
+      startTime: string;
+      endTime: string;
     };
   }[];
 };
@@ -32,13 +37,37 @@ export const CreatureList = ({
   title,
   selectedCreatures,
   setSelectedCreatures,
+  activityId,
 }: {
   creatures: Creature[] | null;
   isLoading: boolean;
   title?: string;
   selectedCreatures?: Creature[];
   setSelectedCreatures?: (creatures: Creature[]) => void;
+  activityId?: string;
 }) => {
+  const selectCreature = (creature: Creature) => {
+    if (!setSelectedCreatures || !selectedCreatures) return;
+
+    // only allow if activityInstance endTime has passed
+    const activityInstance = creature.mainCharacterActivityInstances.find(
+      ({ activity }) => activity.id === activityId
+    );
+    if (!!activityInstance && new Date(activityInstance.endTime) > new Date()) {
+      return;
+    }
+
+    if (selectedCreatures.includes(creature)) {
+      setSelectedCreatures(
+        selectedCreatures.filter(
+          (selectedCreature) => selectedCreature !== creature
+        )
+      );
+    } else {
+      setSelectedCreatures([...selectedCreatures, creature]);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto w-full">
       {!!title?.length && (
@@ -55,24 +84,14 @@ export const CreatureList = ({
           {!!creatures?.length ? (
             creatures.map((creature) => (
               <div
-                onClick={() => {
-                  if (!setSelectedCreatures || !selectedCreatures) return;
-                  if (selectedCreatures.includes(creature)) {
-                    setSelectedCreatures(
-                      selectedCreatures.filter(
-                        (selectedCreature) => selectedCreature !== creature
-                      )
-                    );
-                  } else {
-                    setSelectedCreatures([...selectedCreatures, creature]);
-                  }
-                }}
+                onClick={() => selectCreature(creature)}
                 key={creature.id}
                 className={classNames([
                   "w-1/2 md:w-1/3 p-2 cursor-pointer hover:scale-[1.04] transition-all duration-300",
                 ])}
               >
                 <CreatureListItem
+                  activityId={activityId}
                   key={creature.id}
                   creature={creature}
                   isSelected={

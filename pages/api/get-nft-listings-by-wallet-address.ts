@@ -20,7 +20,12 @@ export default async function handler(
 ) {
   const { walletAddress, firstVerifiedCreators, startTime } = req.body;
 
-  if (!walletAddress || !process.env.HELIUS_API_KEY) {
+  if (
+    !walletAddress ||
+    !process.env.HELIUS_API_KEY ||
+    !startTime ||
+    typeof Number(startTime) !== "number"
+  ) {
     res.status(500).json({ error: "Required fields not set" });
     return;
   }
