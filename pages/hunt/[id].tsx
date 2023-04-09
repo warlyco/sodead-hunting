@@ -8,7 +8,7 @@ import client from "@/graphql/apollo/client";
 import { GET_CREATURES_BY_TOKEN_MINT_ADDRESSES } from "@/graphql/queries/get-creatures-by-token-mint-addresses";
 import { GET_HUNT_BY_ID } from "@/graphql/queries/get-hunt-by-id";
 import { useUser } from "@/hooks/user";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import classNames from "classnames";
 import { NextPage } from "next";
@@ -20,6 +20,10 @@ import { SubmitButton } from "@/features/UI/buttons/submit-button";
 import axios from "axios";
 import { BASE_URL } from "@/constants/constants";
 import showToast from "@/features/toasts/show-toast";
+import {
+  getCreaturesInActivity,
+  getCreaturesNotInActivity,
+} from "@/utils/creatures";
 
 const HuntDetailPage: NextPage = () => {
   const { user, loadingUser } = useUser();
@@ -35,6 +39,9 @@ const HuntDetailPage: NextPage = () => {
   const [creaturesInActivity, setCreaturesInActivity] = useState<Creature[]>(
     []
   );
+  const [creatureMintAddresses, setCreatureMintAddresses] = useState<string[]>(
+    []
+  );
   const [hasBeenFetched, setHasBeenFetched] = useState(false);
   const [nfts, setNfts] = useState<any[]>([]);
   const [selectedCreatures, setSelectedCreatures] = useState<Creature[]>([]);
@@ -43,12 +50,28 @@ const HuntDetailPage: NextPage = () => {
     setSelectedActivityCompleteCreatures,
   ] = useState<Creature[]>([]);
 
-  const getCreaturesNotInActivity = (creatures: Creature[]) => {
-    return creatures.filter(
-      ({ id, mainCharacterActivityInstances }) =>
-        !mainCharacterActivityInstances?.length
-    );
-  };
+  const [getCreaturesByTokenMintAddress, { loading: creaturesLoading }] =
+    useLazyQuery(GET_CREATURES_BY_TOKEN_MINT_ADDRESSES, {
+      variables: {
+        mintAddresses: creatureMintAddresses.map((mintAddress) =>
+          mintAddress.toString()
+        ),
+      },
+      fetchPolicy: "no-cache",
+      onCompleted: ({
+        sodead_creatures: creatures,
+      }: {
+        sodead_creatures: Creature[];
+      }) => {
+        if (!hunt) return;
+
+        setEligibleCreatures(filterIneligibleCreatures(creatures));
+        const creaturesInActivity = getCreaturesInActivity(creatures, hunt);
+        console.log({ creaturesInActivity });
+        setCreaturesInActivity(creaturesInActivity);
+        setIsLoading(false);
+      },
+    });
 
   const filterIneligibleCreatures = useCallback(
     (creatures: Creature[]) => {
@@ -106,7 +129,7 @@ const HuntDetailPage: NextPage = () => {
       }
       console.log("filterIneligibleCreatures", { hunt });
 
-      return getCreaturesNotInActivity(eligibleCreatures);
+      return getCreaturesNotInActivity(eligibleCreatures, hunt);
     },
     [hunt]
   );
@@ -127,31 +150,9 @@ const HuntDetailPage: NextPage = () => {
       ...nftsWithoutDetailsOne.map(({ mintAddress }) => mintAddress),
     ];
 
-    const { data } = await client.query({
-      query: GET_CREATURES_BY_TOKEN_MINT_ADDRESSES,
-      variables: {
-        mintAddresses: mintAddresses.map((mintAddress) =>
-          mintAddress.toString()
-        ),
-      },
-    });
-
-    const { sodead_creatures: creatures }: { sodead_creatures: Creature[] } =
-      data;
-
-    setEligibleCreatures(filterIneligibleCreatures(creatures));
-
-    const creaturesInActivity = creatures.filter(
-      ({ id, mainCharacterActivityInstances }) =>
-        mainCharacterActivityInstances?.[0]?.activity?.id === hunt.id && !mainCharacterActivityInstances?.[0]?.isComplete
-    )
-
-    console.log({ creaturesInActivity });
-
-    setCreaturesInActivity(creaturesInActivity);
-
-    setIsLoading(false);
-  }, [publicKey, hunt, connection, filterIneligibleCreatures]);
+    setCreatureMintAddresses(mintAddresses);
+    getCreaturesByTokenMintAddress();
+  }, [publicKey, hunt, connection, getCreaturesByTokenMintAddress]);
 
   const removeFromHunt = useCallback(async () => {
     if (!publicKey || !hunt) return;
@@ -162,7 +163,7 @@ const HuntDetailPage: NextPage = () => {
       await axios.post(`${BASE_URL}/api/remove-from-hunt`, {
         huntId: hunt.id,
         mainCharacterIds: selectedActivityCompleteCreatures.map(({ id }) => id),
-        walletAddress: publicKey.toString()
+        walletAddress: publicKey.toString(),
       });
       showToast({
         primaryMessage: "Vampire removed from hunt!",
@@ -184,7 +185,14 @@ const HuntDetailPage: NextPage = () => {
     }
 
     setIsLoading(false);
-  }, [creaturesInActivity, eligibleCreatures, fetchCollection, hunt, publicKey, selectedActivityCompleteCreatures]);
+  }, [
+    creaturesInActivity,
+    eligibleCreatures,
+    fetchCollection,
+    hunt,
+    publicKey,
+    selectedActivityCompleteCreatures,
+  ]);
 
   const addToHunt = useCallback(async () => {
     if (!publicKey || !hunt) return;
@@ -214,7 +222,15 @@ const HuntDetailPage: NextPage = () => {
     }
 
     setIsLoading(false);
-  }, [publicKey, hunt, selectedCreatures, creaturesInActivity, filterIneligibleCreatures, eligibleCreatures, fetchCollection]);
+  }, [
+    publicKey,
+    hunt,
+    selectedCreatures,
+    creaturesInActivity,
+    filterIneligibleCreatures,
+    eligibleCreatures,
+    fetchCollection,
+  ]);
 
   useEffect(() => {
     if (!publicKey || !user || nfts.length) return;
@@ -309,7 +325,7 @@ const HuntDetailPage: NextPage = () => {
               </div>
             )}
             <CreatureList
-              activityId={hunt.id}
+              activity={hunt}
               creatures={eligibleCreatures}
               isLoading={isLoading}
               selectedCreatures={selectedCreatures}
@@ -328,7 +344,7 @@ const HuntDetailPage: NextPage = () => {
               </div>
             )}
             <CreatureList
-              activityId={hunt.id}
+              activity={hunt}
               creatures={creaturesInActivity}
               isLoading={isLoading}
               selectedCreatures={selectedActivityCompleteCreatures}

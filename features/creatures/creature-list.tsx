@@ -1,3 +1,4 @@
+import { Hunt } from "@/features/admin/hunts/hunts-list-item";
 import { CreatureListItem } from "@/features/creatures/creature-list-item";
 import Spinner from "@/features/UI/spinner";
 import classNames from "classnames";
@@ -37,21 +38,21 @@ export const CreatureList = ({
   title,
   selectedCreatures,
   setSelectedCreatures,
-  activityId,
+  activity,
 }: {
   creatures: Creature[] | null;
   isLoading: boolean;
   title?: string;
   selectedCreatures?: Creature[];
   setSelectedCreatures?: (creatures: Creature[]) => void;
-  activityId?: string;
+  activity?: Hunt;
 }) => {
   const selectCreature = (creature: Creature) => {
     if (!setSelectedCreatures || !selectedCreatures) return;
 
     // only allow if activityInstance endTime has passed
     const activityInstance = creature.mainCharacterActivityInstances.find(
-      ({ activity }) => activity.id === activityId
+      ({ activity: instance }) => instance.id === activity?.id
     );
     if (!!activityInstance && new Date(activityInstance.endTime) > new Date()) {
       return;
@@ -91,7 +92,7 @@ export const CreatureList = ({
                 ])}
               >
                 <CreatureListItem
-                  activityId={activityId}
+                  activity={activity}
                   key={creature.id}
                   creature={creature}
                   isSelected={

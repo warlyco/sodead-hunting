@@ -1,7 +1,14 @@
+import { Hunt } from "@/features/admin/hunts/hunts-list-item";
+import CountdownTimer from "@/features/countdown/coundown-timer";
 import { Creature } from "@/features/creatures/creature-list";
 import { useDebugMode } from "@/hooks/debug-mode";
+import {
+  getCreatureActiveInstance,
+  getCreaturesNotInActivity,
+} from "@/utils/creatures";
 import { formatDate, formatDateTime } from "@/utils/date-time";
 import classNames from "classnames";
+import dayjs from "dayjs";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -9,25 +16,28 @@ export const CreatureListItem = ({
   creature,
   className,
   isSelected = false,
-  activityId,
+  activity,
 }: {
   creature: Creature;
   className?: string;
   isSelected?: boolean;
-  activityId?: string;
+  activity?: Hunt;
 }) => {
   const { isDebugMode, setIsDebugMode } = useDebugMode();
   const [activityInstance, setActivityInstance] =
     useState<Creature["mainCharacterActivityInstances"][0]>();
 
   useEffect(() => {
+    if (!activity) return;
     setIsDebugMode(true);
-    setActivityInstance(
-      creature.mainCharacterActivityInstances.find(
-        ({ activity }) => activity.id === activityId
-      )
-    );
-  }, [activityId, creature.mainCharacterActivityInstances, setIsDebugMode]);
+    getCreaturesNotInActivity([creature], activity)[0];
+    setActivityInstance(getCreatureActiveInstance(creature, activity));
+  }, [
+    activity,
+    creature,
+    creature.mainCharacterActivityInstances,
+    setIsDebugMode,
+  ]);
 
   return (
     <>
@@ -46,11 +56,13 @@ export const CreatureListItem = ({
           width={500}
           height={500}
         />
-        {!!activityInstance && (
-          <div className="p-2">
-            Ends:
-            <br />
-            {formatDateTime(activityInstance.endTime)}
+        {!!activityInstance?.endTime && (
+          <div className="-mt-16 bg-gradient-to-t from-black via-black to-transparent relative text-stone-300">
+            <div className="h-16 flex flex-col items-center justify-center">
+              <CountdownTimer
+                endsAt={new Date(activityInstance.endTime).getTime()}
+              />
+            </div>
           </div>
         )}
       </div>
