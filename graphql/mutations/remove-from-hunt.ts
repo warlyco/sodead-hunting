@@ -1,14 +1,18 @@
 import { gql } from "@apollo/client";
 
 export const REMOVE_FROM_HUNT = gql`
-  mutation MyMutation($mainCharacterId: uuid!, $activityId: uuid!) {
-    delete_sodead_activityInstances(
+  mutation REMOVE_FROM_HUNT($mainCharacterId: uuid!, $activityId: uuid!) {
+    update_sodead_activityInstances(
       where: {
         mainCharacterId: { _eq: $mainCharacterId }
-        activityId: { _eq: $activityId }
+        _and: { activityId: { _eq: $activityId } }
       }
+      _set: { isComplete: true }
     ) {
-      affected_rows
+      returning {
+        id
+        isComplete
+      }
     }
   }
 `;

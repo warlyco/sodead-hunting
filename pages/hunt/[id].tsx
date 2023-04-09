@@ -143,8 +143,8 @@ const HuntDetailPage: NextPage = () => {
 
     const creaturesInActivity = creatures.filter(
       ({ id, mainCharacterActivityInstances }) =>
-        mainCharacterActivityInstances?.[0]?.activity?.id === hunt.id
-    );
+        mainCharacterActivityInstances?.[0]?.activity?.id === hunt.id && !mainCharacterActivityInstances?.[0]?.isComplete
+    )
 
     console.log({ creaturesInActivity });
 
@@ -162,6 +162,7 @@ const HuntDetailPage: NextPage = () => {
       await axios.post(`${BASE_URL}/api/remove-from-hunt`, {
         huntId: hunt.id,
         mainCharacterIds: selectedActivityCompleteCreatures.map(({ id }) => id),
+        walletAddress: publicKey.toString()
       });
       showToast({
         primaryMessage: "Vampire removed from hunt!",

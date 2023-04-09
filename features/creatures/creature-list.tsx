@@ -1,7 +1,6 @@
 import { CreatureListItem } from "@/features/creatures/creature-list-item";
 import Spinner from "@/features/UI/spinner";
 import classNames from "classnames";
-import { useState } from "react";
 
 export type Creature = {
   id: string;
@@ -23,6 +22,7 @@ export type Creature = {
     id: string;
     startTime: string;
     endTime: string;
+    isComplete: boolean;
     activity: {
       id: string;
       startTime: string;

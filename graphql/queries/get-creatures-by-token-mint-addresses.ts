@@ -24,6 +24,7 @@ export const GET_CREATURES_BY_TOKEN_MINT_ADDRESSES = gql`
         id
         startTime
         endTime
+        isComplete
         activity {
           id
           startTime

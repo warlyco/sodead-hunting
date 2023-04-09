@@ -173,7 +173,9 @@ const ItemDetailPage = () => {
                           onChange={formik.handleChange}
                         />
                         <div className="space-x-2 flex">
-                          <SubmitButton isSubmitting={formik.isSubmitting}>
+                          <SubmitButton isSubmitting={formik.isSubmitting}
+                          onClick={formik.handleSubmit}
+                          >
                             <PlusCircleIcon className="h-6 w-6" />
                           </SubmitButton>
                           <SecondaryButton

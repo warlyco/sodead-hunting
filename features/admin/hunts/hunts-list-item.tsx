@@ -29,6 +29,10 @@ export type Hunt = {
         id: string;
         name: string;
         imageUrl: string;
+        token: {
+          id: string;
+          mintAddress: string;
+        };
       };
     };
   }[];

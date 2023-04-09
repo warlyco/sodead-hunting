@@ -11,6 +11,7 @@ export const GET_VAMPIRES = gql`
       id
       name
       mainCharacterActivityInstances {
+        isComplete
         id
         startTime
         endTime

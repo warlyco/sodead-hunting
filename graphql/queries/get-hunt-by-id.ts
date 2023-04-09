@@ -50,6 +50,10 @@ export const GET_HUNT_BY_ID = gql`
             id
             name
             imageUrl
+            token {
+              mintAddress
+              id
+            }
           }
         }
       }

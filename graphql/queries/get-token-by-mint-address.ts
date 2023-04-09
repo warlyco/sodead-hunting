@@ -14,15 +14,7 @@ export const GET_TOKEN_BY_MINT_ADDRESS = gql`
         id
         name
       }
-      mounts {
-        id
-        name
-      }
       nftCollection {
-        id
-        name
-      }
-      vampires {
         id
         name
       }
