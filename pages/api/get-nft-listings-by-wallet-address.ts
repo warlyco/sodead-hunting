@@ -22,6 +22,7 @@ export default async function handler(
 
   if (
     !walletAddress ||
+    !firstVerifiedCreators ||
     !process.env.HELIUS_API_KEY ||
     !startTime ||
     typeof Number(startTime) !== "number"

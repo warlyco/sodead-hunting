@@ -178,18 +178,13 @@ const HuntDetailPage: NextPage = () => {
         ...selectedActivityCompleteCreatures,
       ]);
       setSelectedActivityCompleteCreatures([]);
+      fetchCollection();
     } catch (error) {
       console.log(error);
     }
 
     setIsLoading(false);
-  }, [
-    creaturesInActivity,
-    eligibleCreatures,
-    hunt,
-    publicKey,
-    selectedActivityCompleteCreatures,
-  ]);
+  }, [creaturesInActivity, eligibleCreatures, fetchCollection, hunt, publicKey, selectedActivityCompleteCreatures]);
 
   const addToHunt = useCallback(async () => {
     if (!publicKey || !hunt) return;
@@ -213,19 +208,13 @@ const HuntDetailPage: NextPage = () => {
         )
       );
       setSelectedCreatures([]);
+      fetchCollection();
     } catch (error) {
       console.log(error);
     }
 
     setIsLoading(false);
-  }, [
-    publicKey,
-    hunt,
-    selectedCreatures,
-    creaturesInActivity,
-    filterIneligibleCreatures,
-    eligibleCreatures,
-  ]);
+  }, [publicKey, hunt, selectedCreatures, creaturesInActivity, filterIneligibleCreatures, eligibleCreatures, fetchCollection]);
 
   useEffect(() => {
     if (!publicKey || !user || nfts.length) return;

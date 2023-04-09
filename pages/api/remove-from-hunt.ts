@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { RPC_ENDPOINT } from "@/constants/constants";
+import { BASE_URL, RPC_ENDPOINT } from "@/constants/constants";
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
 import { client } from "@/graphql/backend-client";
 import { REMOVE_FROM_HUNT } from "@/graphql/mutations/remove-from-hunt";
@@ -17,6 +17,7 @@ import {
   TransactionInstructionCtorFields,
   sendAndConfirmTransaction,
 } from "@solana/web3.js";
+import axios from "axios";
 import base58 from "bs58";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -57,6 +58,15 @@ export default async function handler(
         },
       });
       removalsCount += 1;
+
+      // const {} = axios.get(`${BASE_URL}/api/get-nft-listings-by-wallet-address`, {
+      //   params: {
+      //     walletAddress,
+      //     firstVerifiedCreators: ["Bm1Dy1qjqBd9crwpunnve1RejrxVDtddvyCfqhAebDQ4"] // SoDead
+      //     // get start from activity instance
+      //     // startTime:
+      //   },
+      // });
     }
 
     console.log("amount of removals", removalsCount);
