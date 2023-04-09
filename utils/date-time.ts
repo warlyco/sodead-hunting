@@ -2,16 +2,16 @@ import { default as dayjspkg } from "dayjs";
 // use require instead
 // import relativeTime from "dayjs/plugin/relativeTime";
 // use local require statement
-import { default as relativeTime } from "../node_modules/dayjs/plugin/relativeTime";
+// import { default as relativeTime } from "../node_modules/dayjs/plugin/relativeTime";
 
-dayjspkg.extend(relativeTime);
+// dayjspkg.extend(relativeTime);
 
 export const dayjs = dayjspkg;
 export const formatDate = (date: string) =>
   dayjs(dayjs(date).toString()).format("M/DD/YYYY");
 export const formatTime = (date: string) =>
   dayjs(dayjs(date).toString()).format("h:mm A");
-export const fromNow = (date: string) => dayjs(date).fromNow();
+// export const fromNow = (date: string) => dayjs(date).fromNow();
 export const formatDateTime = (date: string) =>
   dayjs(dayjs(date).toString()).format("M/DD/YY @ h:mm a");
 export const diff = (date: string) => dayjs(date).diff(dayjs());
