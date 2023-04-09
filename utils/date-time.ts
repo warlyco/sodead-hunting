@@ -2,7 +2,7 @@ import { default as dayjspkg } from "dayjs";
 // use require instead
 // import relativeTime from "dayjs/plugin/relativeTime";
 // use local require statement
-import { default as relativeTime } from "dayjs/plugin/relativeTime"; // import plugin
+import { default as relativeTime } from "../node_modules/dayjs/plugin/relativeTime";
 
 dayjspkg.extend(relativeTime);
 
