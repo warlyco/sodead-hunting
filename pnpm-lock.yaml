@@ -115,9 +115,6 @@ dependencies:
   react-hot-toast:
     specifier: ^2.4.0
     version: 2.4.0(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
-  relativeTime:
-    specifier: link:dayjs/plugin/relativeTime
-    version: link:dayjs/plugin/relativeTime
   typescript:
     specifier: 4.9.5
     version: 4.9.5
@@ -5610,7 +5607,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.21.5
-      caniuse-lite: 1.0.30001476
+      caniuse-lite: 1.0.30001477
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -5984,7 +5981,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001476
+      caniuse-lite: 1.0.30001477
       electron-to-chromium: 1.4.356
       node-releases: 2.0.10
       update-browserslist-db: 1.0.10(browserslist@4.21.5)
@@ -6137,8 +6134,8 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /caniuse-lite@1.0.30001476:
-    resolution: {integrity: sha512-JmpktFppVSvyUN4gsLS0bShY2L9ZUslHLE72vgemBkS43JD2fOvKTKs+GtRwuxrtRGnwJFW0ye7kWRRlLJS9vQ==}
+  /caniuse-lite@1.0.30001477:
+    resolution: {integrity: sha512-lZim4iUHhGcy5p+Ri/G7m84hJwncj+Kz7S5aD4hoQfslKZJgt0tHc/hafVbqHC5bbhHb+mrW2JOUHkI5KH7toQ==}
 
   /capability@0.2.5:
     resolution: {integrity: sha512-rsJZYVCgXd08sPqwmaIqjAd5SUTfonV0z/gDJ8D6cN8wQphky1kkAYEqQ+hmDxTw7UihvBfjUVUSY+DBEe44jg==}
@@ -9796,7 +9793,7 @@ packages:
     dependencies:
       '@next/env': 13.2.4
       '@swc/helpers': 0.4.14
-      caniuse-lite: 1.0.30001476
+      caniuse-lite: 1.0.30001477
       postcss: 8.4.14
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
