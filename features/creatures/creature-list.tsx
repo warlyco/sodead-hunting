@@ -52,7 +52,8 @@ export const CreatureList = ({
 
     // only allow if activityInstance endTime has passed
     const activityInstance = creature.mainCharacterActivityInstances.find(
-      ({ activity: instance }) => instance.id === activity?.id
+      ({ activity: instance, isComplete }) =>
+        instance.id === activity?.id && !isComplete
     );
     if (!!activityInstance && new Date(activityInstance.endTime) > new Date()) {
       return;

@@ -4,7 +4,6 @@ import { HuntDetails } from "@/features/hunts/hunt-details";
 import { ContentWrapper } from "@/features/UI/content-wrapper";
 import Spinner from "@/features/UI/spinner";
 import { UserWithoutAccountBlocker } from "@/features/UI/user-without-account-blocker";
-import client from "@/graphql/apollo/client";
 import { GET_CREATURES_BY_TOKEN_MINT_ADDRESSES } from "@/graphql/queries/get-creatures-by-token-mint-addresses";
 import { GET_HUNT_BY_ID } from "@/graphql/queries/get-hunt-by-id";
 import { useUser } from "@/hooks/user";
@@ -24,6 +23,7 @@ import {
   getCreaturesInActivity,
   getCreaturesNotInActivity,
 } from "@/utils/creatures";
+import { NON_PAYMENT_PAYOUT_ID } from "@/constants/constants";
 
 const HuntDetailPage: NextPage = () => {
   const { user, loadingUser } = useUser();
@@ -58,17 +58,88 @@ const HuntDetailPage: NextPage = () => {
         ),
       },
       fetchPolicy: "no-cache",
-      onCompleted: ({
+      onCompleted: async ({
         sodead_creatures: creatures,
       }: {
         sodead_creatures: Creature[];
       }) => {
-        if (!hunt) return;
+        if (!hunt || !publicKey) return;
 
         setEligibleCreatures(filterIneligibleCreatures(creatures));
         const creaturesInActivity = getCreaturesInActivity(creatures, hunt);
         console.log({ creaturesInActivity });
-        setCreaturesInActivity(creaturesInActivity);
+
+        // check if listed, invalidate
+        if (creaturesInActivity?.length) {
+          // find earliest start time
+          let earliestStartTime;
+          for (let creature of creaturesInActivity) {
+            const activityInstanceStartTime =
+              creature.mainCharacterActivityInstances.find(
+                ({ isComplete }) => !isComplete
+              )?.startTime || 0;
+
+            if (
+              !earliestStartTime ||
+              activityInstanceStartTime < earliestStartTime
+            ) {
+              earliestStartTime = activityInstanceStartTime;
+            }
+          }
+
+          if (!earliestStartTime) return;
+          const { data } = await axios.post(
+            `${BASE_URL}/api/get-nft-listings-by-wallet-address`,
+            {
+              walletAddress: publicKey?.toString(),
+              // conver to iso
+              startTime: Math.floor(
+                new Date(earliestStartTime).getTime() / 1000
+              ),
+            }
+          );
+          console.log({ data, earliestStartTime });
+
+          if (data?.nfts?.length) {
+            const mainCharacterMintAddresses = data.nfts.map(
+              ({ mint }: { mint: string }) => mint
+            );
+
+            const mainCharacterIds = mainCharacterMintAddresses
+              .map((mintAddress: string) => {
+                const creature = creaturesInActivity.find(
+                  (c) => c.token.mintAddress === mintAddress
+                );
+                return creature?.id;
+              })
+              .filter((id: string) => id);
+
+            console.log({ mainCharacterIds });
+            debugger;
+            if (!mainCharacterIds.length) {
+              setCreaturesInActivity(creaturesInActivity);
+              setIsLoading(false);
+              return;
+            }
+
+            await axios.post(`${BASE_URL}/api/remove-from-hunt`, {
+              huntId: hunt.id,
+              mainCharacterIds,
+              walletAddress: publicKey.toString(),
+              shouldInvalidate: true,
+            });
+            const numberOfInvalidated = mainCharacterIds.length;
+            showToast({
+              primaryMessage: "Invalidation",
+              secondaryMessage: `
+                ${numberOfInvalidated} ${
+                numberOfInvalidated === 1 ? "Vamp" : "Vamps"
+              } removed from hunt due to being listed on the marketplace.
+              `,
+            });
+          }
+          setCreaturesInActivity(creaturesInActivity);
+        }
         setIsLoading(false);
       },
     });
@@ -127,9 +198,29 @@ const HuntDetailPage: NextPage = () => {
           }
         }
       }
-      console.log("filterIneligibleCreatures", { hunt });
 
-      return getCreaturesNotInActivity(eligibleCreatures, hunt);
+      const creaturesActiveInOtherActivity = eligibleCreatures
+        .filter((creature) =>
+          creature.mainCharacterActivityInstances.find(
+            ({ isComplete }) => !isComplete
+          )
+        )
+        .filter((creature) =>
+          creature.mainCharacterActivityInstances.find(
+            ({ activity }) => activity.id !== hunt.id
+          )
+        );
+
+      console.log({ creaturesActiveInOtherActivity });
+
+      return getCreaturesNotInActivity(
+        eligibleCreatures.filter(
+          (creature) => !creaturesActiveInOtherActivity.includes(creature)
+        ),
+        hunt
+      );
+
+      // return getCreaturesNotInActivity(eligibleCreatures, hunt);
     },
     [hunt]
   );

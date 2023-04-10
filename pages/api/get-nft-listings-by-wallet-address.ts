@@ -18,7 +18,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { walletAddress, firstVerifiedCreators, startTime } = req.body;
+  const {
+    walletAddress,
+    firstVerifiedCreators = SO_DEAD_FIRST_VERIFIED_CREATORS,
+    startTime,
+  } = req.body;
 
   if (
     !walletAddress ||
@@ -51,7 +55,8 @@ export default async function handler(
     );
 
     console.log("~~data: ", data);
-    res.status(200).json(data);
+    const nfts = data?.result?.[0]?.nfts || [];
+    res.status(200).json({ ...data, nfts });
   } catch (error) {
     console.log("~~error: ", error);
     res.status(500).json({ error: "No metadata found" });

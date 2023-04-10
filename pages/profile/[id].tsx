@@ -131,7 +131,7 @@ const ProfilePage: NextPage = () => {
                   className="flex w-full justify-between text-base leading-8"
                 >
                   <div>{formatDateTime(createdAtWithTimezone)}</div>
-                  <div>{token.items[0].name}</div>
+                  <div>{token?.items?.[0]?.name}</div>
                   <div>{amount}</div>
                   <a
                     className="flex justify-center items-center underline"
