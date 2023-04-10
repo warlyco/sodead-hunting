@@ -90,9 +90,9 @@ const HuntDetailPage: NextPage = () => {
 
           if (!earliestStartTime) return;
           // get unix time
-          const startTime = new Date(earliestStartTime).getTime();
-          console.log(startTime, new Date(earliestStartTime).toISOString());
+          const startTime = dayjs(earliestStartTime).unix();
           debugger;
+
           const { data } = await axios.post(
             `${BASE_URL}/api/get-nft-listings-by-wallet-address`,
             {

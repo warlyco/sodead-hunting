@@ -35,6 +35,9 @@ export default async function handler(
     return;
   }
 
+  const startTimeNumber = Number(startTime);
+  console.log("~~startTimeNumber: ", startTimeNumber);
+
   try {
     const { data } = await axios.post(
       `https://api.helius.xyz/v1/nft-events?api-key=${process.env.HELIUS_API_KEY}`,
@@ -42,7 +45,7 @@ export default async function handler(
         query: {
           accounts: [walletAddress],
           types: ["NFT_LISTING"],
-          startTime: Number(startTime),
+          startTime: startTimeNumber,
           nftCollectionFilters: {
             firstVerifiedCreator: firstVerifiedCreators,
           },
