@@ -24,6 +24,7 @@ import {
   getCreaturesNotInActivity,
 } from "@/utils/creatures";
 import { NON_PAYMENT_PAYOUT_ID } from "@/constants/constants";
+import dayjs from "dayjs";
 
 const HuntDetailPage: NextPage = () => {
   const { user, loadingUser } = useUser();
@@ -88,14 +89,15 @@ const HuntDetailPage: NextPage = () => {
           }
 
           if (!earliestStartTime) return;
+          // get unix time
+          const startTime = new Date(earliestStartTime).getTime();
+          console.log(startTime, new Date(earliestStartTime).toISOString());
+          debugger;
           const { data } = await axios.post(
             `${BASE_URL}/api/get-nft-listings-by-wallet-address`,
             {
               walletAddress: publicKey?.toString(),
-              // conver to iso
-              startTime: Math.floor(
-                new Date(earliestStartTime).getTime() / 1000
-              ),
+              startTime,
             }
           );
           console.log({ data, earliestStartTime });
@@ -115,7 +117,7 @@ const HuntDetailPage: NextPage = () => {
               .filter((id: string) => id);
 
             console.log({ mainCharacterIds });
-            debugger;
+
             if (!mainCharacterIds.length) {
               setCreaturesInActivity(creaturesInActivity);
               setIsLoading(false);
