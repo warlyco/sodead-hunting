@@ -10,6 +10,7 @@ export const GET_PAYOUTS_BY_CREATURE_ID = gql`
       id
       createdAt
       createdAtWithTimezone
+      txAddress
       token {
         id
         name
