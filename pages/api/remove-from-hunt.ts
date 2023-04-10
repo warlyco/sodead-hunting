@@ -2,6 +2,7 @@
 import { BASE_URL, RPC_ENDPOINT } from "@/constants/constants";
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
 import { client } from "@/graphql/backend-client";
+import { ADD_PAYOUT } from "@/graphql/mutations/add-payout";
 import { REMOVE_FROM_HUNT } from "@/graphql/mutations/remove-from-hunt";
 import { GET_HUNT_BY_ID } from "@/graphql/queries/get-hunt-by-id";
 import { PublicKey } from "@metaplex-foundation/js";
@@ -43,36 +44,7 @@ export default async function handler(
     return;
   }
 
-  let removalsCount = 0;
   let rewardTxAddress: string | undefined;
-
-  try {
-    for (const mainCharacterId of mainCharacterIds) {
-      const {
-        update_sodead_activityInstances,
-      }: { update_sodead_activityInstances: any } = await client.request({
-        document: REMOVE_FROM_HUNT,
-        variables: {
-          activityId: huntId,
-          mainCharacterId,
-        },
-      });
-      removalsCount += 1;
-
-      // const {} = axios.get(`${BASE_URL}/api/get-nft-listings-by-wallet-address`, {
-      //   params: {
-      //     walletAddress,
-      //     firstVerifiedCreators: ["Bm1Dy1qjqBd9crwpunnve1RejrxVDtddvyCfqhAebDQ4"] // SoDead
-      //     // get start from activity instance
-      //     // startTime:
-      //   },
-      // });
-    }
-
-    console.log("amount of removals", removalsCount);
-  } catch (error) {
-    res.status(500).json({ error });
-  }
 
   // send reward
   try {
@@ -97,12 +69,7 @@ export default async function handler(
       throw new Error("No reward found");
     }
 
-    console.log({
-      amount,
-      item,
-      removalsCount,
-    });
-
+    const removalsCount = mainCharacterIds.length;
     const connection = new Connection(RPC_ENDPOINT);
 
     const rewardKeypair = Keypair.fromSecretKey(
@@ -170,7 +137,43 @@ export default async function handler(
       }
     );
 
-    console.log("rewardTxAddress", rewardTxAddress);
+    // add payout
+    const { insert_sodead_payouts_one }: { insert_sodead_payouts_one: any } =
+      await client.request({
+        document: ADD_PAYOUT,
+        variables: {
+          txAddress: rewardTxAddress,
+          amount: rewardAmount,
+          tokenId: item.token.id,
+          createdAtWithTimezone: new Date().toISOString(),
+        },
+      });
+
+    try {
+      for (const mainCharacterId of mainCharacterIds) {
+        console.log({
+          activityId: huntId,
+          mainCharacterId,
+          payoutId: insert_sodead_payouts_one.id,
+        });
+        const {
+          update_sodead_activityInstances,
+        }: { update_sodead_activityInstances: any } = await client.request({
+          document: REMOVE_FROM_HUNT,
+          variables: {
+            activityId: huntId,
+            mainCharacterId,
+            payoutId: insert_sodead_payouts_one.id,
+          },
+        });
+      }
+
+      console.log("amount of removals", mainCharacterIds.length);
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+
+    console.log("rewardTxAddress", rewardTxAddress, insert_sodead_payouts_one);
 
     res.status(200).json([sodead_activities_by_pk]);
   } catch (error) {

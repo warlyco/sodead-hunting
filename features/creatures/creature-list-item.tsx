@@ -6,10 +6,9 @@ import {
   getCreatureActiveInstance,
   getCreaturesNotInActivity,
 } from "@/utils/creatures";
-import { formatDate, formatDateTime } from "@/utils/date-time";
 import classNames from "classnames";
-import dayjs from "dayjs";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export const CreatureListItem = ({
@@ -31,7 +30,7 @@ export const CreatureListItem = ({
     if (!activity) return;
     setIsDebugMode(true);
     getCreaturesNotInActivity([creature], activity)[0];
-    setActivityInstance(getCreatureActiveInstance(creature, activity));
+    setActivityInstance(getCreatureActiveInstance(creature));
   }, [
     activity,
     creature,
@@ -68,6 +67,12 @@ export const CreatureListItem = ({
       </div>
       {!!isDebugMode && (
         <div className="p-2">
+          <Link
+            className="underline mb-2 text-center"
+            href={`/profile/${creature.id}`}
+          >
+            Profile page
+          </Link>
           {creature.traitInstances.map(({ id, value, trait }) => (
             <div key={id} className="flex w-full justify-between">
               <div>{trait.name}</div>
