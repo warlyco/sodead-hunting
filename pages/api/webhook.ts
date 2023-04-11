@@ -340,7 +340,8 @@ export default async function handler(
           fromTokenAccountAddress,
           toTokenAccountAddress,
           rewardPublicKey,
-          randomReward.amount
+          // has 9 decimals
+          randomReward.amount * 1000000000
         )
       );
 
