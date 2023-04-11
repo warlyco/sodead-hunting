@@ -124,16 +124,25 @@ export default async function handler(
     console.log("mints", mints);
     console.log("mints[0].mintAddress", mints[0].mintAddress);
 
-    const { sodead_burnAttempts }: { sodead_burnAttempts: BurnAttempt[] } =
-      await client.request(GET_BURN_ATTEMPT_BY_TOKEN_MINT_ADDRESS, {
-        tokenMintAddress: mints?.[0]?.mintAddress,
-      });
+    let burnAttempts;
 
-    console.log("sodead_burnAttempts", sodead_burnAttempts);
+    try {
+      const { sodead_burnAttempts }: { sodead_burnAttempts: BurnAttempt[] } =
+        await client.request(GET_BURN_ATTEMPT_BY_TOKEN_MINT_ADDRESS, {
+          tokenMintAddress: mints?.[0]?.mintAddress,
+        });
+      burnAttempts = sodead_burnAttempts;
+    } catch (error) {
+      console.log("sodead_burnAttempts error", error);
+      res.status(400).json({ success: false });
+      return;
+    }
+
+    console.log("sodead_burnAttempts", burnAttempts);
 
     const { sodead_lootBoxes_by_pk }: { sodead_lootBoxes_by_pk: LootBox } =
       await client.request(GET_LOOT_BOX_BY_ID, {
-        id: sodead_burnAttempts?.[0]?.lootBox?.id,
+        id: burnAttempts?.[0]?.lootBox?.id,
       });
 
     const lootBox = sodead_lootBoxes_by_pk;
