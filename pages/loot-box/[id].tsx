@@ -1,4 +1,4 @@
-import { BURNING_WALLET_ADDRESS } from "@/constants/constants";
+import { BASE_URL, BURNING_WALLET_ADDRESS } from "@/constants/constants";
 import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
 import { LootBoxRewards } from "@/features/loot-boxes/loot-box-rewards-list";
 import showToast from "@/features/toasts/show-toast";
@@ -28,6 +28,7 @@ import {
   Transaction,
   TransactionInstructionCtorFields,
 } from "@solana/web3.js";
+import axios from "axios";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
@@ -111,7 +112,7 @@ const LootBoxDetailPage: NextPage = () => {
         amount: costAmount,
         imageUrl,
       } = sodead_lootBoxes_by_pk?.costCollections?.[0]?.itemCollection;
-      
+
       setCostItem(costItem);
       setCostItemMintAddress(costItem.token.mintAddress);
       setCostAmount(costAmount);
@@ -140,10 +141,13 @@ const LootBoxDetailPage: NextPage = () => {
   });
 
   const handleTransferCostTokens = useCallback(async () => {
-
-    
-    if (!wallet?.publicKey || !wallet?.signTransaction || !costItem?.token?.mintAddress) return;
-    const {mintAddress} = costItem.token;
+    if (
+      !wallet?.publicKey ||
+      !wallet?.signTransaction ||
+      !costItem?.token?.mintAddress
+    )
+      return;
+    const { mintAddress } = costItem.token;
     console.log("cost token", mintAddress);
     setTransferInProgress(true);
     showToast({
@@ -225,7 +229,17 @@ const LootBoxDetailPage: NextPage = () => {
       hashListRewardCollectionId,
       lootBox?.id
     );
-  }, [wallet, costItem?.token, connection, costAmount, addBurnAttempt, nftMintAddressesToBurn, hashListRewardCollectionId, lootBox?.id, amountOfUserHeldCostTokens]);
+  }, [
+    wallet,
+    costItem?.token,
+    connection,
+    costAmount,
+    addBurnAttempt,
+    nftMintAddressesToBurn,
+    hashListRewardCollectionId,
+    lootBox?.id,
+    amountOfUserHeldCostTokens,
+  ]);
 
   const fetchUserHeldCostTokensViaMintAddress = useCallback(async () => {
     if (
@@ -234,25 +248,32 @@ const LootBoxDetailPage: NextPage = () => {
       !connection ||
       !costItemMintAddress ||
       hasFetchUserHeldCostTokens
-      )
+    )
       return;
 
-      const metaplex = Metaplex.make(connection);
+    const { data } = await axios.post(
+      `${BASE_URL}/api/get-token-balances-from-helius`,
+      {
+        mintAddresses: [costItemMintAddress],
+        walletAddress: wallet.publicKey.toBase58(),
+      }
+    );
 
-      const myNfts = await metaplex.nfts().findAllByOwner({
-        owner: wallet.publicKey
-      });
+    debugger;
 
-      console.log({
-        costMintAddress: costItemMintAddress,
-        myNfts
-      })
-
-
-    // let tokenAccount = await getAccount(connection, tokenAccountPubkey);
-    // const costTokens = await fetchTokenBalance()
-
-  }, [wallet.publicKey, user, connection, costItemMintAddress, hasFetchUserHeldCostTokens]);
+    if (data?.[0]?.amount) {
+      setAmountOfUserHeldCostTokens(data[0].amount);
+    } else {
+      setAmountOfUserHeldCostTokens(0);
+    }
+    setHasFetchUserHeldCostTokens(true);
+  }, [
+    wallet.publicKey,
+    user,
+    connection,
+    costItemMintAddress,
+    hasFetchUserHeldCostTokens,
+  ]);
 
   const fetchUserHeldCostTokensViaHashList = useCallback(async () => {
     if (
@@ -292,19 +313,25 @@ const LootBoxDetailPage: NextPage = () => {
       userHeldCostTokens: amountOfUserHeldCostTokens,
       costAmount,
     });
-    if (
-      !wallet?.publicKey ||
-      !user ||
-      !connection 
-    )
-      return;
+    if (!wallet?.publicKey || !user || !connection) return;
 
     // *** if cost is items ***
     fetchUserHeldCostTokensViaMintAddress();
 
     // *** if cost is NFTs ***
     // fetchUserHeldCostTokensViaHashList();
-  }, [rewardHashList, costHashList, wallet, user, connection, hashListCostCollectionId, hashListRewardCollectionId, costAmount, amountOfUserHeldCostTokens, fetchUserHeldCostTokensViaMintAddress]);
+  }, [
+    rewardHashList,
+    costHashList,
+    wallet,
+    user,
+    connection,
+    hashListCostCollectionId,
+    hashListRewardCollectionId,
+    costAmount,
+    amountOfUserHeldCostTokens,
+    fetchUserHeldCostTokensViaMintAddress,
+  ]);
 
   if (
     loadingUser ||
