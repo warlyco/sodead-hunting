@@ -28,7 +28,7 @@ export const CreatureListItem = ({
 
   useEffect(() => {
     if (!activity) return;
-    setIsDebugMode(true);
+    setIsDebugMode(false);
     getCreaturesNotInActivity([creature], activity)[0];
     setActivityInstance(getCreatureActiveInstance(creature));
   }, [
@@ -42,16 +42,19 @@ export const CreatureListItem = ({
     <>
       <div
         className={classNames([
-          "border-rounded-2xl rounded-lg overflow-hidden",
+          "rounded-2xl overflow-hidden border-4",
           isSelected
-            ? "border-yellow-500 shadow-yellow-500 shadow-inner border-8"
-            : "border-red-800 border-4",
+            ? "border-red-800 shadow-red-800 shadow-inner border-6 border-opacity-80"
+            : " border-transparent",
         ])}
       >
         <Image
           src={creature.imageUrl}
           alt={creature.name}
-          className="w-full h-full object-cover"
+          className={classNames([
+            "w-full h-full object-cover",
+            isSelected ? "rounded" : "rounded-2xl",
+          ])}
           width={500}
           height={500}
         />

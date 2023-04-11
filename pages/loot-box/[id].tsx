@@ -14,10 +14,12 @@ import { useUser } from "@/hooks/user";
 import { fetchNftsByHashList } from "@/utils/nfts/fetch-nfts-by-hash-list";
 import { executeTransaction } from "@/utils/transactions/execute-transaction";
 import { useMutation, useQuery } from "@apollo/client";
+import { Metaplex } from "@metaplex-foundation/js";
 import {
   createAssociatedTokenAccountInstruction,
   createCloseAccountInstruction,
   createTransferInstruction,
+  getAccount,
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
@@ -52,6 +54,9 @@ const LootBoxDetailPage: NextPage = () => {
     null
   );
   const [costItem, setCostItem] = useState<any | null>(null);
+  const [costItemMintAddress, setCostItemMintAddress] = useState<string | null>(
+    null
+  );
   const [amountOfUserHeldCostTokens, setAmountOfUserHeldCostTokens] =
     useState<number>(0);
   const [hasFetchUserHeldCostTokens, setHasFetchUserHeldCostTokens] =
@@ -106,11 +111,14 @@ const LootBoxDetailPage: NextPage = () => {
         amount: costAmount,
         imageUrl,
       } = sodead_lootBoxes_by_pk?.costCollections?.[0]?.itemCollection;
+      
       setCostItem(costItem);
+      setCostItemMintAddress(costItem.token.mintAddress);
       setCostAmount(costAmount);
       setCostTokenImageUrl(imageUrl);
-      setAmountOfUserHeldCostTokens(666); // FAKE THIS FOR NOW
-      setHasFetchUserHeldCostTokens(true);
+      fetchUserHeldCostTokensViaMintAddress();
+      // setAmountOfUserHeldCostTokens(666); // FAKE THIS FOR NOW
+      // setHasFetchUserHeldCostTokens(true);
 
       // *** hashlist based rewards and costs ***
       // const hashListRewardCollectionId =
@@ -131,10 +139,12 @@ const LootBoxDetailPage: NextPage = () => {
     },
   });
 
-  const handleTransferNfts = useCallback(async () => {
-    console.log("handleTransferNfts", nftMintAddressesToBurn);
+  const handleTransferCostTokens = useCallback(async () => {
 
-    if (!wallet?.publicKey || !wallet?.signTransaction) return;
+    
+    if (!wallet?.publicKey || !wallet?.signTransaction || !costItem?.token?.mintAddress) return;
+    const {mintAddress} = costItem.token;
+    console.log("cost token", mintAddress);
     setTransferInProgress(true);
     showToast({
       primaryMessage: "Sending NFTs to the furnace",
@@ -143,17 +153,17 @@ const LootBoxDetailPage: NextPage = () => {
     const instructions: TransactionInstructionCtorFields[] = [];
 
     const fromTokenAccountAddress = await getAssociatedTokenAddress(
-      new PublicKey(nftMintAddressesToBurn[0]),
+      new PublicKey(mintAddress),
       wallet.publicKey
     );
 
     const toTokenAccountAddress = await getAssociatedTokenAddress(
-      new PublicKey(nftMintAddressesToBurn[0]),
+      new PublicKey(mintAddress),
       new PublicKey(BURNING_WALLET_ADDRESS)
     );
 
     const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
-      new PublicKey(nftMintAddressesToBurn[0]),
+      new PublicKey(mintAddress),
       new PublicKey(BURNING_WALLET_ADDRESS)
     );
 
@@ -167,7 +177,7 @@ const LootBoxDetailPage: NextPage = () => {
           wallet.publicKey,
           associatedDestinationTokenAddr,
           new PublicKey(BURNING_WALLET_ADDRESS),
-          new PublicKey(nftMintAddressesToBurn[0])
+          new PublicKey(mintAddress)
         )
       );
     }
@@ -177,17 +187,18 @@ const LootBoxDetailPage: NextPage = () => {
         fromTokenAccountAddress,
         toTokenAccountAddress,
         wallet.publicKey,
-        1
+        costAmount
       )
     );
 
-    instructions.push(
-      createCloseAccountInstruction(
-        fromTokenAccountAddress,
-        wallet.publicKey,
-        wallet.publicKey
-      )
-    );
+    // Does not apply to spl
+    // instructions.push(
+    //   createCloseAccountInstruction(
+    //     fromTokenAccountAddress,
+    //     wallet.publicKey,
+    //     wallet.publicKey
+    //   )
+    // );
 
     const latestBlockhash = await connection.getLatestBlockhash();
     const transaction = new Transaction({ ...latestBlockhash });
@@ -214,21 +225,34 @@ const LootBoxDetailPage: NextPage = () => {
       hashListRewardCollectionId,
       lootBox?.id
     );
-  }, [
-    nftMintAddressesToBurn,
-    wallet,
-    connection,
-    addBurnAttempt,
-    hashListRewardCollectionId,
-    costAmount,
-    amountOfUserHeldCostTokens,
-    lootBox?.id,
-  ]);
+  }, [wallet, costItem?.token, connection, costAmount, addBurnAttempt, nftMintAddressesToBurn, hashListRewardCollectionId, lootBox?.id, amountOfUserHeldCostTokens]);
 
-  // const fetchUserHeldCostTokensViaMintAddress = useCallback(async () => {
-  //   if (!wallet?.publicKey || !user || !connection || !!costItem?.id) return;
+  const fetchUserHeldCostTokensViaMintAddress = useCallback(async () => {
+    if (
+      !wallet?.publicKey ||
+      !user ||
+      !connection ||
+      !costItemMintAddress ||
+      hasFetchUserHeldCostTokens
+      )
+      return;
 
-  // }, [wallet?.publicKey, user, connection, costItem?.id]);
+      const metaplex = Metaplex.make(connection);
+
+      const myNfts = await metaplex.nfts().findAllByOwner({
+        owner: wallet.publicKey
+      });
+
+      console.log({
+        costMintAddress: costItemMintAddress,
+        myNfts
+      })
+
+
+    // let tokenAccount = await getAccount(connection, tokenAccountPubkey);
+    // const costTokens = await fetchTokenBalance()
+
+  }, [wallet.publicKey, user, connection, costItemMintAddress, hasFetchUserHeldCostTokens]);
 
   const fetchUserHeldCostTokensViaHashList = useCallback(async () => {
     if (
@@ -271,29 +295,16 @@ const LootBoxDetailPage: NextPage = () => {
     if (
       !wallet?.publicKey ||
       !user ||
-      !connection ||
-      !hashListCostCollectionId ||
-      !hashListRewardCollectionId ||
-      !costHashList.length
+      !connection 
     )
       return;
 
     // *** if cost is items ***
-    // fetchUserHeldCostTokensViaItemId();
+    fetchUserHeldCostTokensViaMintAddress();
 
     // *** if cost is NFTs ***
     // fetchUserHeldCostTokensViaHashList();
-  }, [
-    rewardHashList,
-    costHashList,
-    wallet,
-    user,
-    connection,
-    hashListCostCollectionId,
-    hashListRewardCollectionId,
-    costAmount,
-    amountOfUserHeldCostTokens,
-  ]);
+  }, [rewardHashList, costHashList, wallet, user, connection, hashListCostCollectionId, hashListRewardCollectionId, costAmount, amountOfUserHeldCostTokens, fetchUserHeldCostTokensViaMintAddress]);
 
   if (
     loadingUser ||
@@ -373,7 +384,7 @@ const LootBoxDetailPage: NextPage = () => {
         <SubmitButton
           className="text-2xl tracking-widest font-strange-dreams"
           isSubmitting={transferInProgress}
-          onClick={handleTransferNfts}
+          onClick={handleTransferCostTokens}
           disabled={!(amountOfUserHeldCostTokens >= costAmount)}
         >
           Claim

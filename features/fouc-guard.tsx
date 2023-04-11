@@ -16,10 +16,11 @@ export const FoucGuard = () => {
     return null;
   }
   return (
-    <style
-      dangerouslySetInnerHTML={{
-        __html: ` *, *::before, *::after { transition: none!important; } `,
-      }}
-    />
+    <></>
+    // <style
+    //   dangerouslySetInnerHTML={{
+    //     __html: ` *, *::before, *::after { transition: none!important; } `,
+    //   }}
+    // />
   );
 };

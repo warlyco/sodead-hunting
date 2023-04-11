@@ -1,3 +1,5 @@
+import { PrimaryButton } from "@/features/UI/buttons/primary-button";
+import { SecondaryButton } from "@/features/UI/buttons/secondary-button";
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
 import {
   convertSecondsToDaysAndHoursAndMinutesString,
@@ -21,30 +23,36 @@ export const HuntDetailsInfoBox = ({
     gateCollections,
     restrictionCollections,
     durationInSeconds,
+    name
   } = hunt;
 
   return (
     <div
       className={classNames([
-        "border-2 rounded-2xl border-red-500 p-4 w-full max-w-sm space-y-2 bg-stone-900 flex flex-col justify-center",
+        "rounded-2xl p-4 w-full space-y-2 bg-black flex flex-col justify-between bg-opacity-50 font-strange-dreams py-6",
         className,
       ])}
     >
-      <div className="flex justify-between">
-        <div>Start time:</div>
-        <div>{formatDateTime(startTime)}</div>
+      <div>
+        <h2 className="text-5xl tracking-widest mb-6 ">{name}</h2>
+        {!!rewardCollections?.[0] && (
+          <div className=" flex w-full justify-end pb-4 tracking-widest space-x-2">
+            <div>Reward:</div>
+            <div>
+              {rewardCollections?.[0]?.itemCollection?.amount}x{" "}
+              {rewardCollections?.[0]?.itemCollection?.item?.name}
+              {rewardCollections?.[0]?.itemCollection?.amount > 1 ? "s" : ""}
+            </div>
+          </div>
+        )}
       </div>
-      <div className="flex justify-between">
-        <div>End time:</div>
-        <div>{formatDateTime(endTime)}</div>
-      </div>
-      <div className="flex justify-between">
+      {/* <div className="flex justify-between pb-2">
         <div>Duration:</div>
         <div>
           {convertSecondsToDaysAndHoursAndMinutesString(durationInSeconds)}
         </div>
-      </div>
-      <div className="flex justify-between">
+      </div> */}
+      {/* <div className="flex justify-between">
         <div>Max concurrent hunters:</div>
         <div>
           {maxConcurrentParticipants > 10000
@@ -57,22 +65,10 @@ export const HuntDetailsInfoBox = ({
         <div>
           {maxTotalParticipants > 10000 ? "Unlimited" : maxTotalParticipants}
         </div>
-      </div>
-      <div className="flex justify-between">
-        <div className="w-1/2">Requirement:</div>
-        <div className="w-1/2 text-right">
-          {!!gateCollections.length
-            ? gateCollections?.map((gateCollection, i) => (
-                <div key={gateCollection.id}>
-                  {gateCollection.traitCollection?.name}
-                </div>
-              ))
-            : "None"}
-        </div>
-      </div>
-      <div className="flex justify-between">
+      </div> */}
+      {/* <div className="flex justify-between">
         <div className="w-1/2">Restrictions:</div>
-        <div className="w-1/2 text-right">
+        <div className="w-1/2 ">
           {!!restrictionCollections?.length
             ? restrictionCollections?.map((restirctionCollection, i) => (
                 <div key={restirctionCollection.id}>
@@ -81,17 +77,23 @@ export const HuntDetailsInfoBox = ({
               ))
             : "None"}
         </div>
-      </div>
-      {!!rewardCollections?.[0] && (
-        <div className="flex justify-between">
-          <div>Reward:</div>
-          <div>
-            {rewardCollections?.[0]?.itemCollection?.amount}x{" "}
-            {rewardCollections?.[0]?.itemCollection?.item?.name}
-            {rewardCollections?.[0]?.itemCollection?.amount > 1 ? "s" : ""}
-          </div>
+      </div> */}
+      {/* <div className=" flex w-full justify-end tracking-widest">
+        <div className="mr-4">Requirement:</div>
+        <div className="text-red-500 font-bold">
+          {!!gateCollections.length
+            ? gateCollections?.map((gateCollection, i) => (
+                <div key={gateCollection.id}>
+                  {gateCollection.traitCollection?.name}
+                </div>
+              ))
+            : "None"}
         </div>
-      )}
+      </div> */}
+
+      <div className="flex justify-end">
+      <SecondaryButton className="text-2xl py-3 w-1/3 tracking-widest">Hunt</SecondaryButton>
+      </div>
     </div>
   );
 };

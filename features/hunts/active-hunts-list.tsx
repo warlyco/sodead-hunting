@@ -31,11 +31,11 @@ export const ActiveHuntsList = () => {
             <Link
               href={`/hunt/${hunt.id}`}
               key={hunt.id}
-              className="w-full flex flex-col justify-center border-2 border-red-500 rounded-2xl hover:scale-[1.01] transition-all duration-300 bg-top relative"
+              className="w-full flex flex-col justify-center bg-black rounded-2xl hover:scale-[1.01] transition-all duration-300 bg-top relative"
             >
               <div className="flex w-full">
                 <div
-                  className="w-full h-72 rounded-2xl"
+                  className="w-full h-72 rounded-2xl mb-4"
                   style={{
                     backgroundImage: `url(${hunt.imageUrl})`,
                     backgroundSize: "cover",
@@ -46,9 +46,6 @@ export const ActiveHuntsList = () => {
                   hunt={hunt}
                   className="hidden md:flex h-full"
                 />
-              </div>
-              <div className="text-3xl font-strange-dreams tracking-widest p-2 mb-4 md:mb-0 px-4 md:absolute md:bottom-0 bg-black rounded-tr-2xl rounded-b-2xl md:rounded-bl-2xl md:rounded-br-none">
-                {hunt.name}
               </div>
               <HuntDetailsInfoBox
                 hunt={hunt}

@@ -20,6 +20,7 @@ export const GET_ACTIVE_HUNTS = gql`
       description
       maxTotalParticipants
       maxConcurrentParticipants
+      
       gateCollections {
         id
         traitCollection {

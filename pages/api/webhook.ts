@@ -144,10 +144,19 @@ export default async function handler(
       return;
     }
 
+    // hashlist based costs
+    // const costs = lootBox?.costCollections?.map((costCollection) => {
+    //   return {
+    //     rawHashList: costCollection.hashListCollection.hashList.rawHashList,
+    //     amount: costCollection.hashListCollection.amount,
+    //   };
+    // });
+
+    // item based costs
     const costs = lootBox?.costCollections?.map((costCollection) => {
       return {
-        rawHashList: costCollection.hashListCollection.hashList.rawHashList,
-        amount: costCollection.hashListCollection.amount,
+        item: costCollection.itemCollection.item,
+        amount: costCollection.itemCollection.amount,
       };
     });
 
@@ -163,9 +172,12 @@ export default async function handler(
       return;
     }
 
-    const paymentAmount = costs[0]?.amount;
+    const { rawHashList: rewardsRawHashList, amount: rewardsAmount } =
+    rewards?.[0];
+    
+    const { item: costItem, amount: paymentAmount } = costs?.[0];
 
-    console.log("paymentAmount", paymentAmount);
+    console.log("paymentAmount", {paymentAmount, costItem});
 
     // add burn count per user to db
     const { fromUserAccount } = tokenTransfers[0];
@@ -239,10 +251,6 @@ export default async function handler(
       // );
 
       // console.log("burned", { burnTxAddress });
-
-      const { rawHashList: rewardsRawHashList, amount: rewardsAmount } =
-        rewards?.[0];
-      const { rawHashList: costsRawHashList, amount: costsAmount } = costs?.[0];
 
       // Send reward
       // Will need refactor for multiple rewards
