@@ -49,6 +49,7 @@ import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
 import { GET_BURN_ATTEMPT_BY_TOKEN_MINT_ADDRESS } from "@/graphql/queries/get-burn-attempt-by-token-mint-address";
 import { fetchNftsByHashList } from "@/utils/nfts/fetch-nfts-by-hash-list";
 import { ADD_PAYOUT } from "@/graphql/mutations/add-payout";
+import { ADD_LOOTBOX_PAYOUT } from "@/graphql/mutations/add-lootbox-payout";
 
 const selectRandomRewardMintAddress = async (
   rawHashList: string[],
@@ -417,13 +418,15 @@ export default async function handler(
 
       const { insert_sodead_payouts_one }: { insert_sodead_payouts_one: any } =
         await client.request({
-          document: ADD_PAYOUT,
+          document: ADD_LOOTBOX_PAYOUT,
           variables: {
             txAddress: rewardTxAddress,
             // has 9 decimals
             amount: randomReward.amount * 1000000000,
             tokenId: randomReward.item.token.id,
             createdAtWithTimezone: new Date().toISOString(),
+            walletId,
+            lootBoxId: lootBox.id,
           },
         });
 
