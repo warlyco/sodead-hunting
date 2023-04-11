@@ -210,7 +210,7 @@ export default async function handler(
       res.status(400).json({ success: false });
       return;
     }
-    const currentCount = sodead_burnAttempts?.length || 0;
+    const currentCount = burnAttempts?.length || 0;
     console.log("currentCount", currentCount);
 
     if (currentCount < paymentAmount) {
