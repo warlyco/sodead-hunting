@@ -1,5 +1,6 @@
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
 import { HuntDetailsInfoBox } from "@/features/hunts/hunt-details-info-box";
+import { SecondaryButton } from "@/features/UI/buttons/secondary-button";
 import Spinner from "@/features/UI/spinner";
 import { GET_ACTIVE_HUNTS } from "@/graphql/queries/get-active-hunts";
 import { useQuery } from "@apollo/client";
@@ -31,7 +32,7 @@ export const ActiveHuntsList = () => {
             <Link
               href={`/hunt/${hunt.id}`}
               key={hunt.id}
-              className="w-full flex flex-col justify-center bg-black rounded-2xl hover:scale-[1.01] transition-all duration-300 bg-top relative"
+              className="w-full flex flex-col justify-center bg-black rounded-2xl hover:scale-[1.01] transition-all duration-300 bg-top relative font-strange-dreams"
             >
               <div className="flex w-full">
                 <div
@@ -45,12 +46,36 @@ export const ActiveHuntsList = () => {
                 <HuntDetailsInfoBox
                   hunt={hunt}
                   className="hidden md:flex h-full"
-                />
+                >
+                  <div className="flex justify-end">
+                    <SecondaryButton className="text-2xl py-3 w-1/3 tracking-widest">
+                      Hunt
+                    </SecondaryButton>
+                  </div>
+                </HuntDetailsInfoBox>
               </div>
-              <HuntDetailsInfoBox
-                hunt={hunt}
-                className="md:hidden w-full mx-auto mb-4"
-              />
+              <div className="bg-black flex flex-col justify-between bg-opacity-50 md:hidden w-full mx-auto mb-4">
+                <h2 className="text-5xl tracking-widest mb-6 md:text-right">
+                  {hunt.name}
+                </h2>
+                {!!hunt.rewardCollections?.[0] && (
+                  <div className=" flex w-full md:justify-end pb-8 tracking-widest space-x-2">
+                    <div>Reward:</div>
+                    <div>
+                      {hunt.rewardCollections?.[0]?.itemCollection?.amount}x{" "}
+                      {hunt.rewardCollections?.[0]?.itemCollection?.item?.name}
+                      {hunt.rewardCollections?.[0]?.itemCollection?.amount > 1
+                        ? "s"
+                        : ""}
+                    </div>
+                  </div>
+                )}
+                <div className="flex justify-end">
+                  <SecondaryButton className="text-2xl py-3 w-full md:w-1/3 tracking-widest">
+                    Hunt
+                  </SecondaryButton>
+                </div>
+              </div>
             </Link>
           ))}
       </div>

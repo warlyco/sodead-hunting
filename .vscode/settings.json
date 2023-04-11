@@ -1,2 +1,31 @@
-{
+{}{
+    "editor.inlineSuggest.enabled": true,
+    "workbench.colorTheme": "Default Dark+ Experimental",
+    "workbench.iconTheme": "Monokai Pro Icons",
+    "editor.fontFamily": "Operator Mono Lig",
+    "editor.fontWeight": "normal",
+    "editor.fontLigatures": true,
+    "editor.formatOnSave": true,
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "[typescript]": {
+        "editor.defaultFormatter": "prettier"
+    },
+    "window.commandCenter": true,
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "prettier"
+    },
+    "tailwind-fold.autoFold": false,
+    "[json]": {
+        "editor.defaultFormatter": "prettier"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "prettier"
+    },
+    "eslint.format.enable": true,
+    "[vue]": {
+        "editor.defaultFormatter": "prettier"
+    }
 }

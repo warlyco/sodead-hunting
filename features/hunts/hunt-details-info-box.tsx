@@ -10,9 +10,13 @@ import classNames from "classnames";
 export const HuntDetailsInfoBox = ({
   hunt,
   className,
+  showExpandedInfo = false,
+  children,
 }: {
   hunt: Hunt;
   className?: string;
+  showExpandedInfo?: boolean;
+  children?: React.ReactNode;
 }) => {
   const {
     startTime,
@@ -23,7 +27,7 @@ export const HuntDetailsInfoBox = ({
     gateCollections,
     restrictionCollections,
     durationInSeconds,
-    name
+    name,
   } = hunt;
 
   return (
@@ -34,7 +38,7 @@ export const HuntDetailsInfoBox = ({
       ])}
     >
       <div>
-        <h2 className="text-5xl tracking-widest mb-6 ">{name}</h2>
+        <h2 className="text-5xl tracking-widest mb-6  md:text-right">{name}</h2>
         {!!rewardCollections?.[0] && (
           <div className=" flex w-full justify-end pb-4 tracking-widest space-x-2">
             <div>Reward:</div>
@@ -46,54 +50,57 @@ export const HuntDetailsInfoBox = ({
           </div>
         )}
       </div>
-      {/* <div className="flex justify-between pb-2">
-        <div>Duration:</div>
-        <div>
-          {convertSecondsToDaysAndHoursAndMinutesString(durationInSeconds)}
-        </div>
-      </div> */}
-      {/* <div className="flex justify-between">
-        <div>Max concurrent hunters:</div>
-        <div>
-          {maxConcurrentParticipants > 10000
-            ? "Unlimited"
-            : maxConcurrentParticipants}
-        </div>
-      </div>
-      <div className="flex justify-between">
-        <div>Max total hunters:</div>
-        <div>
-          {maxTotalParticipants > 10000 ? "Unlimited" : maxTotalParticipants}
-        </div>
-      </div> */}
-      {/* <div className="flex justify-between">
-        <div className="w-1/2">Restrictions:</div>
-        <div className="w-1/2 ">
-          {!!restrictionCollections?.length
-            ? restrictionCollections?.map((restirctionCollection, i) => (
-                <div key={restirctionCollection.id}>
-                  {restirctionCollection.traitCollection?.name}
-                </div>
-              ))
-            : "None"}
-        </div>
-      </div> */}
-      {/* <div className=" flex w-full justify-end tracking-widest">
-        <div className="mr-4">Requirement:</div>
-        <div className="text-red-500 font-bold">
-          {!!gateCollections.length
-            ? gateCollections?.map((gateCollection, i) => (
-                <div key={gateCollection.id}>
-                  {gateCollection.traitCollection?.name}
-                </div>
-              ))
-            : "None"}
-        </div>
-      </div> */}
-
-      <div className="flex justify-end">
-      <SecondaryButton className="text-2xl py-3 w-1/3 tracking-widest">Hunt</SecondaryButton>
-      </div>
+      {!!showExpandedInfo && (
+        <>
+          <div className="flex justify-between pb-2">
+            <div>Duration:</div>
+            <div>
+              {convertSecondsToDaysAndHoursAndMinutesString(durationInSeconds)}
+            </div>
+          </div>
+          <div className="flex justify-between">
+            <div>Max concurrent hunters:</div>
+            <div>
+              {maxConcurrentParticipants > 10000
+                ? "Unlimited"
+                : maxConcurrentParticipants}
+            </div>
+          </div>
+          <div className="flex justify-between">
+            <div>Max total hunters:</div>
+            <div>
+              {maxTotalParticipants > 10000
+                ? "Unlimited"
+                : maxTotalParticipants}
+            </div>
+          </div>
+          <div className="flex justify-between">
+            <div className="w-1/2">Restrictions:</div>
+            <div className="w-1/2 ">
+              {!!restrictionCollections?.length
+                ? restrictionCollections?.map((restirctionCollection, i) => (
+                    <div key={restirctionCollection.id}>
+                      {restirctionCollection.traitCollection?.name}
+                    </div>
+                  ))
+                : "None"}
+            </div>
+          </div>
+          <div className=" flex w-full justify-end tracking-widest">
+            <div className="mr-4">Requirement:</div>
+            <div className="text-red-500 font-bold">
+              {!!gateCollections.length
+                ? gateCollections?.map((gateCollection, i) => (
+                    <div key={gateCollection.id}>
+                      {gateCollection.traitCollection?.name}
+                    </div>
+                  ))
+                : "None"}
+            </div>
+          </div>
+        </>
+      )}
+      {!!children && <>{children}</>}
     </div>
   );
 };
