@@ -48,6 +48,7 @@ import { Wallet } from "@/pages/me";
 import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
 import { GET_BURN_ATTEMPT_BY_TOKEN_MINT_ADDRESS } from "@/graphql/queries/get-burn-attempt-by-token-mint-address";
 import { fetchNftsByHashList } from "@/utils/nfts/fetch-nfts-by-hash-list";
+import { ADD_PAYOUT } from "@/graphql/mutations/add-payout";
 
 const selectRandomRewardMintAddress = async (
   rawHashList: string[],
@@ -173,7 +174,7 @@ export default async function handler(
       return {
         item: rewardCollection.itemCollection.item,
         amount: rewardCollection.itemCollection.amount,
-        payoutChance: rewardCollection.payoutChance,
+        payoutChance: rewardCollection.payoutChance || 1,
       };
     });
 
@@ -186,12 +187,10 @@ export default async function handler(
     // const { item, amount: rewardsAmount } = rewards?.[0];
     // random number between 0 and 1
     const randomNumber = Math.random();
-    const payoutChance = rewards?.[0]?.payoutChance || 0;
 
-    // const randomReward = rewards?.find((reward) => {
-    //   return randomNumber <= payoutChance;
-    // });
-    const randomReward = rewards[0];
+    const randomReward = rewards?.find((reward) => {
+      return randomNumber <= reward.payoutChance;
+    });
 
     const { item: costItem, amount: paymentAmount } = costs?.[0];
 
@@ -415,6 +414,18 @@ export default async function handler(
       );
 
       console.log("rewarded", { rewardTxAddress });
+
+      const { insert_sodead_payouts_one }: { insert_sodead_payouts_one: any } =
+        await client.request({
+          document: ADD_PAYOUT,
+          variables: {
+            txAddress: rewardTxAddress,
+            // has 9 decimals
+            amount: randomReward.amount * 1000000000,
+            tokenId: randomReward.item.token.id,
+            createdAtWithTimezone: new Date().toISOString(),
+          },
+        });
 
       // const payload = {
       //   burnTxAddress,

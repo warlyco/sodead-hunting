@@ -26,6 +26,7 @@ export type ItemCollection = {
     name: string;
     imageUrl: string;
     token: {
+      id: string;
       mintAddress: string;
     };
   };
