@@ -259,8 +259,6 @@ const LootBoxDetailPage: NextPage = () => {
       }
     );
 
-    debugger;
-
     if (data?.[0]?.amount) {
       setAmountOfUserHeldCostTokens(data[0].amount);
     } else {

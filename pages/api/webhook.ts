@@ -162,8 +162,8 @@ export default async function handler(
 
     const rewards = lootBox?.rewardCollections?.map((rewardCollection) => {
       return {
-        rawHashList: rewardCollection.hashListCollection.hashList.rawHashList,
-        amount: rewardCollection.hashListCollection.amount,
+        item: rewardCollection.itemCollection.item,
+        amount: rewardCollection.itemCollection.amount,
       };
     });
 
@@ -172,8 +172,8 @@ export default async function handler(
       return;
     }
 
-    const { rawHashList: rewardsRawHashList, amount: rewardsAmount } =
-    rewards?.[0];
+    const {  item, amount: rewardsAmount, 
+    } =  rewards?.[0];
     
     const { item: costItem, amount: paymentAmount } = costs?.[0];
 
@@ -252,16 +252,17 @@ export default async function handler(
 
       // console.log("burned", { burnTxAddress });
 
-      // Send reward
-      // Will need refactor for multiple rewards
-      const rewardMintAddress = new PublicKey(
-        selectRandomRewardMintAddress(
-          JSON.parse(rewardsRawHashList),
-          rewardsAmount,
-          rewardPublicKey.toString(),
-          connection
-        )
-      );
+      // Send reward from random pool
+      // const rewardMintAddress = new PublicKey(
+      //   selectRandomRewardMintAddress(
+      //     JSON.parse(rewardsRawHashList),
+      //     rewardsAmount,
+      //     rewardPublicKey.toString(),
+      //     connection
+      //   )
+      // );
+
+      const rewardMintAddress = new PublicKey(item.token.mintAddress);
 
       console.log("webhook 4", rewardMintAddress);
 
