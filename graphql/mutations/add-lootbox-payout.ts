@@ -6,7 +6,7 @@ export const ADD_LOOTBOX_PAYOUT = gql`
     $amount: numeric!
     $tokenId: uuid!
     $createdAtWithTimezone: timestamptz!
-    $walletAddress: String!
+    $walletId: uuid!
     $lootBoxId: uuid!
   ) {
     insert_sodead_payouts_one(
@@ -15,7 +15,7 @@ export const ADD_LOOTBOX_PAYOUT = gql`
         amount: $amount
         tokenId: $tokenId
         createdAtWithTimezone: $createdAtWithTimezone
-        walletAddress: $walletAddress
+        walletId: $walletId
         lootBoxId: $lootBoxId
       }
     ) {
