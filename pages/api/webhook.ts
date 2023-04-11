@@ -164,6 +164,7 @@ export default async function handler(
       return {
         item: rewardCollection.itemCollection.item,
         amount: rewardCollection.itemCollection.amount,
+        payoutChance: rewardCollection.payoutChance,
       };
     });
 
@@ -172,12 +173,20 @@ export default async function handler(
       return;
     }
 
-    const {  item, amount: rewardsAmount, 
-    } =  rewards?.[0];
-    
+    // select random reward based on associated chance
+    // const { item, amount: rewardsAmount } = rewards?.[0];
+    // random number between 0 and 1
+    const randomNumber = Math.random();
+    const payoutChance = rewards?.[0]?.payoutChance || 0;
+
+    // const randomReward = rewards?.find((reward) => {
+    //   return randomNumber <= payoutChance;
+    // });
+    const randomReward = rewards[0];
+
     const { item: costItem, amount: paymentAmount } = costs?.[0];
 
-    console.log("paymentAmount", {paymentAmount, costItem});
+    console.log("paymentAmount", { paymentAmount, costItem });
 
     // add burn count per user to db
     const { fromUserAccount } = tokenTransfers[0];
@@ -262,7 +271,14 @@ export default async function handler(
       //   )
       // );
 
-      const rewardMintAddress = new PublicKey(item.token.mintAddress);
+      if (!randomReward) {
+        res.status(400).json({ success: false });
+        return;
+      }
+
+      const rewardMintAddress = new PublicKey(
+        randomReward.item.token.mintAddress
+      );
 
       console.log("webhook 4", rewardMintAddress);
 
@@ -315,7 +331,7 @@ export default async function handler(
           fromTokenAccountAddress,
           toTokenAccountAddress,
           rewardPublicKey,
-          1
+          randomReward.amount
         )
       );
 

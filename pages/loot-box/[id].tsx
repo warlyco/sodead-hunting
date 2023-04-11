@@ -217,7 +217,6 @@ const LootBoxDetailPage: NextPage = () => {
           showToast({
             primaryMessage: "Success, your claim will be in your wallet soon",
           });
-          setNftMintAddressesToBurn([]);
           setAmountOfUserHeldCostTokens(
             amountOfUserHeldCostTokens - costAmount
           );
@@ -225,7 +224,7 @@ const LootBoxDetailPage: NextPage = () => {
       },
       wallet,
       addBurnAttempt,
-      nftMintAddressesToBurn,
+      costItem.token.mintAddress,
       hashListRewardCollectionId,
       lootBox?.id
     );
@@ -235,7 +234,6 @@ const LootBoxDetailPage: NextPage = () => {
     connection,
     costAmount,
     addBurnAttempt,
-    nftMintAddressesToBurn,
     hashListRewardCollectionId,
     lootBox?.id,
     amountOfUserHeldCostTokens,
