@@ -388,10 +388,8 @@ const HuntDetailPage: NextPage = () => {
         <div className="absolute w-full h-full bg-gradient-to-t from-black to-transparent via-transparent top-16" />
         <div className="absolute w-full h-full top-16 flex">
           <div className="w-1/2"></div>
-          <div className="w-1/2">
-            <div className="flex-col items-center justify-center pt-0 hidden md:flex h-full max-w-3xl mx-auto">
-              <HuntDetails hunt={hunt} />
-            </div>
+          <div className="hidden md:block w-1/2 md:mt-8">
+            <HuntDetails hunt={hunt} />
           </div>
         </div>
       </div>
@@ -428,7 +426,7 @@ const HuntDetailPage: NextPage = () => {
               Vamps on Hunt
             </div>
             {selectedActivityCompleteCreatures.length > 0 && (
-              <div className="mx-auto pb-8">
+              <div className="mx-auto pb-8 flex w-full justify-center">
                 <SubmitButton isSubmitting={false} onClick={removeFromHunt}>
                   Remove Selected from hunt
                 </SubmitButton>
