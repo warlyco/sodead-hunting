@@ -4,10 +4,19 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useUser } from "@/hooks/user";
 import { UserWithoutAccountBlocker } from "@/features/UI/user-without-account-blocker";
 import Image from "next/image";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();
   const { user } = useUser();
+
+  useEffect(
+    () => {
+      if (publicKey && user?.accounts?.length) {
+        window.location.href = "/hunt/active";
+      }
+    }
+  )
 
   return (
     <>

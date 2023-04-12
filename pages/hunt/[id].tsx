@@ -373,7 +373,7 @@ const HuntDetailPage: NextPage = () => {
 
   return (
     <>
-      <div className="w-full relative h-[60vh] md:h-[75vh] mx-auto max-w-[5120px] transition-all duration-300 pointer-events-none">
+      <div className="w-full relative h-[60vh] md:h-[85vh] mx-auto max-w-[5120px] transition-all duration-300 pointer-events-none">
         <div
           className={classNames(
             "w-full h-full absolute top-16",
