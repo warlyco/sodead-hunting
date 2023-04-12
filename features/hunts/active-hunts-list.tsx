@@ -44,11 +44,11 @@ export const ActiveHuntsList = () => {
                   }}
                 />
                 <div className="bg-black hidden md:flex flex-col justify-between bg-opacity-50 w-full mx-auto mb-4">
-                  <h2 className="text-5xl tracking-widest mb-6 md:text-right">
+                  <h2 className="text-5xl tracking-widest mb-6 md:text-right small-caps">
                     {hunt.name}
                   </h2>
                   {!!hunt.rewardCollections?.[0] && (
-                    <div className=" flex w-full md:justify-end pb-8 tracking-widest space-x-2 text-xl">
+                    <div className=" flex w-full md:justify-end pb-8 tracking-widest space-x-2 text-2xl small-caps">
                       <div>Reward:</div>
                       <div>
                         {hunt.rewardCollections?.[0]?.itemCollection?.amount}x{" "}
@@ -70,11 +70,11 @@ export const ActiveHuntsList = () => {
                 </div>
               </div>
               <div className="bg-black flex flex-col justify-between bg-opacity-50 md:hidden w-full mx-auto mb-4">
-                <h2 className="text-5xl tracking-widest mb-6 md:text-right">
+                <h2 className="text-5xl tracking-widest mb-6 md:text-right small-caps">
                   {hunt.name}
                 </h2>
                 {!!hunt.rewardCollections?.[0] && (
-                  <div className="flex w-full md:justify-end pb-8 tracking-widest space-x-2 text-xl">
+                  <div className="flex w-full md:justify-end pb-8 tracking-widest space-x-2 text-2xl small-caps">
                     <div>Reward:</div>
                     <div>
                       {hunt.rewardCollections?.[0]?.itemCollection?.amount}x{" "}

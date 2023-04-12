@@ -10,7 +10,10 @@ import { UserWithoutAccountBlocker } from "@/features/UI/user-without-account-bl
 import { ADD_BURN_ATTEMPT } from "@/graphql/mutations/add-burn-attempt";
 import { GET_HASH_LIST_BY_ID } from "@/graphql/queries/get-hash-list-by-id";
 import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
+import { GET_LOOT_BOX_PAYOUTS_BY_WALLET_ADDRESS } from "@/graphql/queries/get-loot-box-payouts-by-wallet-address";
 import { useUser } from "@/hooks/user";
+import { Payout } from "@/pages/profile/[id]";
+import { formatDateTime } from "@/utils/date-time";
 import { fetchNftsByHashList } from "@/utils/nfts/fetch-nfts-by-hash-list";
 import { executeTransaction } from "@/utils/transactions/execute-transaction";
 import { useMutation, useQuery } from "@apollo/client";
@@ -68,6 +71,7 @@ const LootBoxDetailPage: NextPage = () => {
   >([]);
   const [transferInProgress, setTransferInProgress] = useState<boolean>(false);
   const [addBurnAttempt, { data, error }] = useMutation(ADD_BURN_ATTEMPT);
+  const [userPayouts, setUserPayouts] = useState<Payout[]>([]);
 
   const { loading: loadingRewardHashList } = useQuery(GET_HASH_LIST_BY_ID, {
     variables: {
@@ -90,6 +94,20 @@ const LootBoxDetailPage: NextPage = () => {
       setCostHashList(rawHashList);
     },
   });
+
+  const { loading: loadingPayouts } = useQuery(
+    GET_LOOT_BOX_PAYOUTS_BY_WALLET_ADDRESS,
+    {
+      variables: {
+        lootBoxId: id,
+        walletAddress: wallet?.publicKey?.toString(),
+      },
+      skip: !wallet?.publicKey?.toString() || !id,
+      onCompleted: ({ sodead_payouts }) => {
+        setUserPayouts(sodead_payouts);
+      },
+    }
+  );
 
   const { loading: loadingLootBox } = useQuery(GET_LOOT_BOX_BY_ID, {
     variables: { id },
@@ -413,6 +431,26 @@ const LootBoxDetailPage: NextPage = () => {
           Claim
         </SubmitButton>
       </div>
+      <div className="text-2xl font-strange-dreams tracking-widest text-center mb-4">
+        Your Payouts
+      </div>
+      {!!userPayouts?.length ? (
+        <div className="flex flex-col justify-center items-center space-y-2 pb-16">
+          {userPayouts.map((payout) => (
+            <div
+              key={payout.id}
+              className="flex items-center justify-center space-x-12 text-lg"
+            >
+              <div>{formatDateTime(payout.createdAtWithTimezone)}</div>
+              <div className="uppercase">
+                {payout.amount / 1000000000} ${payout.token.name}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center pb-16">You have no payouts yet</div>
+      )}
     </ContentWrapper>
   );
 };

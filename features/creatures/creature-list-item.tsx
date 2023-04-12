@@ -42,9 +42,9 @@ export const CreatureListItem = ({
     <>
       <div
         className={classNames([
-          "rounded-2xl overflow-hidden border-4",
+          "rounded-2xl overflow-hidden border-8",
           isSelected
-            ? "border-red-800 shadow-red-800 shadow-inner border-6 border-opacity-80"
+            ? "border-red-800 shadow-red-800 shadow-inner border-6"
             : " border-transparent",
         ])}
       >
