@@ -5,6 +5,10 @@ import { ADD_ITEM } from "@/graphql/mutations/add-item";
 import { client } from "@/graphql/backend-client";
 
 export type Item = {
+  rarity: {
+    id: string;
+    name: string;
+  };
   costs: {
     amount: number;
     id: string;

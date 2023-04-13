@@ -18,6 +18,11 @@ export type Payout = {
   amount: number;
   txAddress: string;
   createdAtWithTimezone: string;
+  item: {
+    id: string;
+    name: string;
+    imageUrl: string;
+  };
   token: {
     id: string;
     name: string;

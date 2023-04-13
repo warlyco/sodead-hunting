@@ -4,6 +4,10 @@ export const GET_ITEM_BY_ID = gql`
   query GET_ITEM_BY_ID($id: uuid!) {
     sodead_items_by_pk(id: $id) {
       description
+      rarity {
+        id
+        name
+      }
       baseStatModifier {
         id
         name

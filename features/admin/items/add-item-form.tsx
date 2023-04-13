@@ -76,7 +76,10 @@ export const AddItemForm = () => {
           onChange={formik.handleChange}
         />
       </div>
-      <SubmitButton isSubmitting={formik.isSubmitting} />
+      <SubmitButton
+        isSubmitting={formik.isSubmitting}
+        onClick={formik.handleSubmit}
+      />
     </FormWrapper>
   );
 };

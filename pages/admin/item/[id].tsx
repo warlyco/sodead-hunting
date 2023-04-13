@@ -140,8 +140,14 @@ const ItemDetailPage = () => {
                     {item.description}
                   </div>
                 )}
+                {!!item.rarity && (
+                  <div className="text-xl mb-2 flex items-center space-x-4">
+                    <div>Rarity:</div>
+                    <div>{item.rarity.name}</div>
+                  </div>
+                )}
                 {!!item.token && (
-                  <div className="text-xl mb-4 flex items-center space-x-4">
+                  <div className="text-xl mb-2 flex items-center space-x-4">
                     <div>Bound to token:</div>
                     <a
                       className="text-xl underline"
@@ -173,8 +179,9 @@ const ItemDetailPage = () => {
                           onChange={formik.handleChange}
                         />
                         <div className="space-x-2 flex">
-                          <SubmitButton isSubmitting={formik.isSubmitting}
-                          onClick={formik.handleSubmit}
+                          <SubmitButton
+                            isSubmitting={formik.isSubmitting}
+                            onClick={formik.handleSubmit}
                           >
                             <PlusCircleIcon className="h-6 w-6" />
                           </SubmitButton>

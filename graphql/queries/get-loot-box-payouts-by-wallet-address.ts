@@ -10,6 +10,7 @@ export const GET_LOOT_BOX_PAYOUTS_BY_WALLET_ADDRESS = gql`
         lootBoxId: { _eq: $lootBoxId }
         _and: { wallet: { address: { _eq: $walletAddress } } }
       }
+      order_by: { createdAtWithTimezone: desc }
     ) {
       id
       amount
@@ -21,6 +22,11 @@ export const GET_LOOT_BOX_PAYOUTS_BY_WALLET_ADDRESS = gql`
       token {
         name
         id
+        items {
+          id
+          name
+          imageUrl
+        }
       }
       wallet {
         id

@@ -1,7 +1,6 @@
 import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
 import { getAbbreviatedAddress } from "@/utils/formatting";
-import Image from "next/image";
 
 import Link from "next/link";
 
@@ -17,15 +16,7 @@ export type Token = {
     id: string;
     name: string;
   };
-  mounts: {
-    id: string;
-    name: string;
-  };
   nftCollection: {
-    id: string;
-    name: string;
-  };
-  vampires: {
     id: string;
     name: string;
   };

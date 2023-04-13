@@ -96,7 +96,7 @@ const LootBoxDetailPage: NextPage = () => {
     },
   });
 
-  const { loading: loadingPayouts } = useQuery(
+  const { loading: loadingPayouts, refetch: refetchPayouts } = useQuery(
     GET_LOOT_BOX_PAYOUTS_BY_WALLET_ADDRESS,
     {
       variables: {
@@ -170,7 +170,7 @@ const LootBoxDetailPage: NextPage = () => {
     console.log("cost token", mintAddress);
     setTransferInProgress(true);
     showToast({
-      primaryMessage: "Sending NFTs to the furnace",
+      primaryMessage: "Inserting the key...",
     });
 
     const instructions: TransactionInstructionCtorFields[] = [];
@@ -242,39 +242,53 @@ const LootBoxDetailPage: NextPage = () => {
       burnTxAddress = await executeTransaction(
         connection,
         transaction,
-        {
-          callback: () => setTransferInProgress(false),
-          successCallback: () => {
-            showToast({
-              primaryMessage: "Success, your claim will be in your wallet soon",
-            });
-            setAmountOfUserHeldCostTokens(
-              amountOfUserHeldCostTokens - costAmount
-            );
-          },
-        },
+        {},
         wallet
       );
     } catch (error) {
       console.log(error);
     }
 
-    axios.post(`${BASE_URL}/api/handle-loot-box-claim`, {
+    showToast({
+      primaryMessage: "Opening lootbox...",
+      secondaryMessage: "Please do not close this window.",
+    });
+
+    const { data } = await axios.post(`${BASE_URL}/api/handle-loot-box-claim`, {
       lootBoxId: lootBox?.id,
       burnTxAddress,
     });
 
+    setAmountOfUserHeldCostTokens(amountOfUserHeldCostTokens - costAmount);
+    setTransferInProgress(false);
+
+    const VAMP_TOKEN_ID = "ea9672fe-0e09-4883-a625-9267d1d1de82";
+
+    showToast({
+      primaryMessage: "Success!",
+      secondaryMessage:
+        VAMP_TOKEN_ID === data?.reward?.item?.token?.id
+          ? `You received ${data?.reward.amount / 1000000000} ${
+              data?.reward?.item?.name
+            }!`
+          : `You received ${data?.reward?.item?.name}!`,
+    });
+
+    refetchPayouts();
+
     console.log({
       burnTxAddress,
       lootBoxId: lootBox?.id,
+      data,
     });
   }, [
     wallet,
     costItem?.token,
-    connection,
     costAmount,
+    connection,
     lootBox?.id,
     amountOfUserHeldCostTokens,
+    refetchPayouts,
   ]);
 
   const fetchUserHeldCostTokensViaMintAddress = useCallback(async () => {
@@ -463,7 +477,8 @@ const LootBoxDetailPage: NextPage = () => {
             >
               <div>{formatDateTime(payout.createdAtWithTimezone)}</div>
               <div className="uppercase">
-                {payout.amount / 1000000000} ${payout.token.name}
+                {payout.amount == 1 ? "" : payout.amount / 1000000000}{" "}
+                {payout.token.name}
               </div>
             </div>
           ))}

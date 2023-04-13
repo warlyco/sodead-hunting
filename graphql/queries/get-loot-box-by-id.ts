@@ -27,6 +27,26 @@ export const GET_LOOT_BOX_BY_ID = gql`
             rawHashList
           }
         }
+        childRewardCollections {
+          id
+          payoutChance
+          name
+          itemCollection {
+            imageUrl
+            id
+            amount
+            imageUrl
+            name
+            item {
+              id
+              name
+              token {
+                id
+                mintAddress
+              }
+            }
+          }
+        }
         itemCollection {
           imageUrl
           id
