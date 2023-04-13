@@ -22,12 +22,8 @@ export const executeTransaction = async (
     successCallback?: () => void;
   },
   wallet?: any,
-  addBurnAttempt?: any,
-  mintIds?: string[],
-  hashListId?: string | null,
-  lootBoxId?: string | null
 ): Promise<string> => {
-  let txid = "";
+  let txId = "";
   try {
     transaction.feePayer = wallet.publicKey;
     const signedTx = await wallet.signTransaction(transaction);
@@ -43,25 +39,18 @@ export const executeTransaction = async (
     };
 
     const result = await connection.confirmTransaction(confirmStrategy);
-
-    console.log("Successful tx", signature);
-    if (!!addBurnAttempt && !!wallet) {
-      addBurnAttempt({
-        variables: {
-          txAddress: signature,
-          walletAddress: wallet.publicKey,
-          mintIds,
-          hashListId,
-          lootBoxId,
-        },
-      });
+    if (result.value.err) {
+      throw new Error(
+        "failed to confirm transaction " + signature + ": " + result.value.err,
+      );
     }
-
+    
+    txId = signature;
     config.successCallback && config.successCallback();
   } catch (error) {
     console.error("error sending reward to burning wallet", { error });
   } finally {
     config.callback && config.callback();
   }
-  return txid;
+  return txId;
 };

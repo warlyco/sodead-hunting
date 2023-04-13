@@ -7,15 +7,12 @@ export const HuntDetails = ({ hunt }: { hunt: Hunt }) => {
 
   return (
     <>
-      <h1 className="text-5xl lg:text-6xl lg:mb-8 text-center font-strange-dreams tracking-wider small-caps">
+      <h1 className="text-5xl lg:text-6xl lg:mb-12 text-center font-strange-dreams tracking-wider small-caps">
         {name}
       </h1>
-      <div className="text-xl xl:text-2xl tracking-wider mb-8 leading-8 xl:leading-relaxed px-8 py-4 bg-stone-900 rounded-2xl small-caps italic">
-        {description}
-      </div>
       <>
         {!!rewardCollections?.[0] && (
-          <div className="flex w-full px-8 pb-8 tracking-widest space-x-2 font-strange-dreams text-3xl small-caps">
+          <div className="flex w-full px-8 mb-16 tracking-widest space-x-2 font-strange-dreams text-3xl small-caps justify-center">
             <div>Reward:</div>
             <div>
               {rewardCollections?.[0]?.itemCollection?.amount}x{" "}
@@ -25,7 +22,7 @@ export const HuntDetails = ({ hunt }: { hunt: Hunt }) => {
           </div>
         )}
       </>
-      <div className="px-4 w-full">
+      <div className="px-4 w-full mx-auto max-w-lg">
         <HuntDetailsInfoBox hunt={hunt} />
       </div>
     </>

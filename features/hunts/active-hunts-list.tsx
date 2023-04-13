@@ -43,7 +43,7 @@ export const ActiveHuntsList = () => {
                     backgroundRepeat: "no-repeat",
                   }}
                 />
-                <div className="bg-black hidden md:flex flex-col justify-between bg-opacity-50 w-full mx-auto mb-4">
+                <div className="bg-black hidden md:flex flex-col justify-between bg-opacity-50 w-full mx-auto mb-4 rounded-2xl p-4">
                   <h2 className="text-5xl tracking-widest mb-6 md:text-right small-caps">
                     {hunt.name}
                   </h2>

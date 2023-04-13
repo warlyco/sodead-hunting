@@ -20,6 +20,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { Metaplex } from "@metaplex-foundation/js";
 import {
   createAssociatedTokenAccountInstruction,
+  createBurnCheckedInstruction,
   createCloseAccountInstruction,
   createTransferInstruction,
   getAccount,
@@ -179,41 +180,51 @@ const LootBoxDetailPage: NextPage = () => {
       wallet.publicKey
     );
 
-    const toTokenAccountAddress = await getAssociatedTokenAddress(
-      new PublicKey(mintAddress),
-      new PublicKey(BURNING_WALLET_ADDRESS)
-    );
+    // const toTokenAccountAddress = await getAssociatedTokenAddress(
+    //   new PublicKey(mintAddress),
+    //   new PublicKey(BURNING_WALLET_ADDRESS)
+    // );
 
-    const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
-      new PublicKey(mintAddress),
-      new PublicKey(BURNING_WALLET_ADDRESS)
-    );
+    // const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
+    //   new PublicKey(mintAddress),
+    //   new PublicKey(BURNING_WALLET_ADDRESS)
+    // );
 
-    const receiverAccount = await connection.getAccountInfo(
-      associatedDestinationTokenAddr
-    );
+    // const receiverAccount = await connection.getAccountInfo(
+    //   associatedDestinationTokenAddr
+    // );
 
-    if (!receiverAccount) {
-      instructions.push(
-        createAssociatedTokenAccountInstruction(
-          wallet.publicKey,
-          associatedDestinationTokenAddr,
-          new PublicKey(BURNING_WALLET_ADDRESS),
-          new PublicKey(mintAddress)
-        )
-      );
-    }
+    // if (!receiverAccount) {
+    //   instructions.push(
+    //     createAssociatedTokenAccountInstruction(
+    //       wallet.publicKey,
+    //       associatedDestinationTokenAddr,
+    //       new PublicKey(BURNING_WALLET_ADDRESS),
+    //       new PublicKey(mintAddress)
+    //     )
+    //   );
+    // }
+
+    // instructions.push(
+    //   createTransferInstruction(
+    //     fromTokenAccountAddress,
+    //     toTokenAccountAddress,
+    //     wallet.publicKey,
+    //     costAmount
+    //   )
+    // );
 
     instructions.push(
-      createTransferInstruction(
+      createBurnCheckedInstruction(
         fromTokenAccountAddress,
-        toTokenAccountAddress,
+        new PublicKey(mintAddress),
         wallet.publicKey,
-        costAmount
+        costAmount,
+        0
       )
     );
 
-    // Does not apply to spl
+    // only apples to NFTs
     // instructions.push(
     //   createCloseAccountInstruction(
     //     fromTokenAccountAddress,
@@ -226,33 +237,42 @@ const LootBoxDetailPage: NextPage = () => {
     const transaction = new Transaction({ ...latestBlockhash });
     transaction.add(...instructions);
 
-    executeTransaction(
-      connection,
-      transaction,
-      {
-        callback: () => setTransferInProgress(false),
-        successCallback: () => {
-          showToast({
-            primaryMessage: "Success, your claim will be in your wallet soon",
-          });
-          setAmountOfUserHeldCostTokens(
-            amountOfUserHeldCostTokens - costAmount
-          );
+    let burnTxAddress;
+    try {
+      burnTxAddress = await executeTransaction(
+        connection,
+        transaction,
+        {
+          callback: () => setTransferInProgress(false),
+          successCallback: () => {
+            showToast({
+              primaryMessage: "Success, your claim will be in your wallet soon",
+            });
+            setAmountOfUserHeldCostTokens(
+              amountOfUserHeldCostTokens - costAmount
+            );
+          },
         },
-      },
-      wallet,
-      addBurnAttempt,
-      costItem.token.mintAddress,
-      hashListRewardCollectionId,
-      lootBox?.id
-    );
+        wallet
+      );
+    } catch (error) {
+      console.log(error);
+    }
+
+    axios.post(`${BASE_URL}/api/handle-loot-box-claim`, {
+      lootBoxId: lootBox?.id,
+      burnTxAddress,
+    });
+
+    console.log({
+      burnTxAddress,
+      lootBoxId: lootBox?.id,
+    });
   }, [
     wallet,
     costItem?.token,
     connection,
     costAmount,
-    addBurnAttempt,
-    hashListRewardCollectionId,
     lootBox?.id,
     amountOfUserHeldCostTokens,
   ]);

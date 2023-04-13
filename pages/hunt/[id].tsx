@@ -398,6 +398,9 @@ const HuntDetailPage: NextPage = () => {
           <HuntDetails hunt={hunt} />
         </div>
         <div className="flex w-full flex-wrap">
+          <div className="text-xl xl:text-2xl tracking-wider mb-12 leading-8 xl:leading-relaxed px-8 py-4 bg-stone-900 bg-opacity-50 rounded-2xl small-caps italic mx-8">
+            {hunt.description}
+          </div>
           <div className="w-full lg:w-1/2 px-4 flex flex-col">
             <div className="text-4xl font-strange-dreams text-center mb-12 tracking-wider">
               Your Vamps
