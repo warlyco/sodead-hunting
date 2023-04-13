@@ -8,15 +8,16 @@ import { useEffect } from "react";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();
-  const { user } = useUser();
+  const { user, setUser } = useUser();
 
-  useEffect(
-    () => {
-      if (publicKey && user?.accounts?.length) {
-        window.location.href = "/hunt/active";
-      }
+  useEffect(() => {
+    if (user && !publicKey) {
+      setUser(null);
     }
-  )
+    if (publicKey && user?.accounts?.length) {
+      window.location.href = "/hunt/active";
+    }
+  });
 
   return (
     <>

@@ -23,11 +23,10 @@ import {
   getCreaturesInActivity,
   getCreaturesNotInActivity,
 } from "@/utils/creatures";
-import { NON_PAYMENT_PAYOUT_ID } from "@/constants/constants";
 import dayjs from "dayjs";
 
 const HuntDetailPage: NextPage = () => {
-  const { user, loadingUser } = useUser();
+  const { user, loadingUser, setUser } = useUser();
   const { publicKey } = useWallet();
   const { connection } = useConnection();
   const [isLoading, setIsLoading] = useState(false);
@@ -324,6 +323,9 @@ const HuntDetailPage: NextPage = () => {
   ]);
 
   useEffect(() => {
+    if (user && !publicKey) {
+      setUser(null);
+    }
     if (!publicKey || !user || nfts.length) return;
     fetchCollection();
   }, [connection, fetchCollection, publicKey, nfts, user]);

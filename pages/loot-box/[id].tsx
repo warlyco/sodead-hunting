@@ -40,7 +40,7 @@ import { useCallback, useEffect, useState } from "react";
 const LootBoxDetailPage: NextPage = () => {
   const wallet = useWallet();
   const { connection } = useConnection();
-  const { user, loadingUser } = useUser();
+  const { user, loadingUser, setUser } = useUser();
   const router = useRouter();
   const { id } = router.query;
   const [lootBox, setLootBox] = useState<LootBox | null>(null);
@@ -361,6 +361,9 @@ const LootBoxDetailPage: NextPage = () => {
       userHeldCostTokens: amountOfUserHeldCostTokens,
       costAmount,
     });
+    if (user && !wallet?.publicKey) {
+      setUser(null);
+    }
     if (!wallet?.publicKey || !user || !connection) return;
 
     // *** if cost is items ***
@@ -379,6 +382,7 @@ const LootBoxDetailPage: NextPage = () => {
     costAmount,
     amountOfUserHeldCostTokens,
     fetchUserHeldCostTokensViaMintAddress,
+    setUser,
   ]);
 
   if (
