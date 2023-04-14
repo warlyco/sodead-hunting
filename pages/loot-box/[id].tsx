@@ -122,8 +122,8 @@ const LootBoxDetailPage: NextPage = () => {
 
       // *** item based rewards and costs ***
       if (
-        !sodead_lootBoxes_by_pk?.rewardCollections?.[0]?.itemCollection?.item ||
-        !sodead_lootBoxes_by_pk?.costCollections?.[0]?.itemCollection?.item
+        !sodead_lootBoxes_by_pk?.rewardCollections?.length ||
+        !sodead_lootBoxes_by_pk?.costCollections?.length
       )
         return;
       const {

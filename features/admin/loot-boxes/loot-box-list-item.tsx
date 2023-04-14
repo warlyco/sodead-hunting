@@ -41,6 +41,7 @@ export type LootBox = {
   rarity: {
     name: string;
     id: string;
+    sortOrder: number;
   };
   rewardCollections?: {
     id: string;

@@ -2,7 +2,10 @@ import { gql } from "@apollo/client";
 
 export const GET_ENABLED_LOOT_BOXES_WITH_DETAILS = gql`
   query GET_ENABLED_LOOT_BOXES_WITH_DETAILS {
-    sodead_lootBoxes(where: { isEnabled: { _eq: true } }) {
+    sodead_lootBoxes(
+      where: { isEnabled: { _eq: true } }
+      order_by: { rarity: { sortOrder: asc } }
+    ) {
       id
       description
       createdAt

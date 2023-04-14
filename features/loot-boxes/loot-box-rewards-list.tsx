@@ -62,7 +62,7 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
                               {!!itemCollection?.id && (
                                 <div
                                   key={itemCollection?.id}
-                                  className="p-2 rounded-lg"
+                                  className="mb-2 rounded-lg"
                                 >
                                   <div>{itemCollection?.name}</div>
                                 </div>
@@ -71,7 +71,7 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
                               {!!hashListCollection?.id && (
                                 <div
                                   key={hashListCollection?.id}
-                                  className="p-2 rounded-lg"
+                                  className="mb-2 rounded-lg"
                                 >
                                   <div>{hashListCollection?.name}</div>
                                 </div>
