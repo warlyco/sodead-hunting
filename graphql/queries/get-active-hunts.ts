@@ -7,6 +7,7 @@ export const GET_ACTIVE_HUNTS = gql`
         category: { id: { _eq: "5ab3b7bd-a20b-469b-8274-62991c57c526" } }
         _and: { isActive: { _eq: true } }
       }
+      order_by: { rarity: { sortOrder: asc } }
     ) {
       createdAt
       id
@@ -20,7 +21,10 @@ export const GET_ACTIVE_HUNTS = gql`
       description
       maxTotalParticipants
       maxConcurrentParticipants
-      
+      rarity {
+        id
+        sortOrder
+      }
       gateCollections {
         id
         traitCollection {

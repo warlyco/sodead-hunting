@@ -17,6 +17,11 @@ export type Hunt = {
   description: string;
   maxConcurrentParticipants: number;
   maxTotalParticipants: number;
+  rarity: {
+    id: string;
+    name: string;
+    sortOrder: number;
+  };
   rewardCollections: {
     id: string;
     name: string;
