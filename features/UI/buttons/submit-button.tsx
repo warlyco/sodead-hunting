@@ -27,11 +27,12 @@ export const SubmitButton = ({
       }}
       disabled={isSubmitting || disabled}
       className={classNames([
+        "font-strange-dreams tracking-widest",
         isSubmitting
           ? "opacity-50 cursor-not-allowed"
           : "opacity-100 cursor-pointer",
         disabled
-          ? "opacity-50 cursor-not-allowed bg-stone-500 hover:bg-stone-500 font-strange-dreams tracking-widest text-3xl"
+          ? "opacity-50 cursor-not-allowed bg-stone-500 hover:bg-stone-500"
           : "",
         className,
       ])}

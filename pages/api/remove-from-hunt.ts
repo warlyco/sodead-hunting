@@ -9,6 +9,7 @@ import { client } from "@/graphql/backend-client";
 import { ADD_PAYOUT } from "@/graphql/mutations/add-payout";
 import { REMOVE_FROM_HUNT } from "@/graphql/mutations/remove-from-hunt";
 import { GET_HUNT_BY_ID } from "@/graphql/queries/get-hunt-by-id";
+import { Item } from "@/pages/api/add-item";
 import { PublicKey } from "@metaplex-foundation/js";
 import {
   createAssociatedTokenAccountInstruction,
@@ -23,10 +24,28 @@ import {
   sendAndConfirmTransaction,
 } from "@solana/web3.js";
 import base58 from "bs58";
+import { Token } from "graphql";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+export type RemoveFromHuntResponse = {
+  rewardTxAddress: string;
+  reward: {
+    amount: number;
+    mintAddress: string;
+    item: {
+      name: string;
+      imageUrl: string;
+    };
+  };
+};
+
+type InvalidationResponse = {
+  success: boolean;
+};
+
 type Data =
-  | Hunt[]
+  | RemoveFromHuntResponse
+  | InvalidationResponse
   | {
       error: unknown;
     };
@@ -69,7 +88,9 @@ export default async function handler(
         },
       });
     }
-    return res.status(200).json([]);
+    return res.status(200).json({
+      success: true,
+    });
   }
 
   let rewardTxAddress: string | undefined;
@@ -204,7 +225,17 @@ export default async function handler(
 
     console.log("rewardTxAddress", rewardTxAddress, insert_sodead_payouts_one);
 
-    res.status(200).json([sodead_activities_by_pk]);
+    res.status(200).json({
+      rewardTxAddress: rewardTxAddress,
+      reward: {
+        amount: rewardAmount,
+        mintAddress: item.token.mintAddress,
+        item: {
+          name: item.name,
+          imageUrl: item.imageUrl,
+        },
+      },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error });

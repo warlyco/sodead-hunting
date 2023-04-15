@@ -70,18 +70,18 @@ export const HuntDetailsInfoBox = ({
               : "None"}
           </div>
         </div> */}
-        <div className="flex justify-between">
-          <div className="mr-4">Requirement:</div>
-          <div className="text-red-500 font-bold">
-            {!!gateCollections.length
-              ? gateCollections?.map((gateCollection, i) => (
-                  <div key={gateCollection.id}>
-                    {gateCollection.traitCollection?.name}
-                  </div>
-                ))
-              : "None"}
+        {!!gateCollections.length && (
+          <div className="flex justify-between">
+            <div className="mr-4">Requirement:</div>
+            <div className="text-red-500 font-bold">
+              {gateCollections?.map((gateCollection, i) => (
+                <div key={gateCollection.id}>
+                  {gateCollection.traitCollection?.name}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </>
       {!!children && <>{children}</>}
     </div>

@@ -17,7 +17,6 @@ const ShowCounter = ({ days, hours, minutes, seconds }: Props) => {
         type={days === 1 ? "Day" : "Days"}
         isDanger={days <= 3}
       />
-
       <DateTimeDisplay value={hours} type={"Hr"} isDanger={false} />
       <DateTimeDisplay value={minutes} type={"Min"} isDanger={false} />
       <DateTimeDisplay value={seconds} type={"Sec"} isDanger={false} />

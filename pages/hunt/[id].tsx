@@ -24,6 +24,7 @@ import {
   getCreaturesNotInActivity,
 } from "@/utils/creatures";
 import dayjs from "dayjs";
+import { RemoveFromHuntResponse } from "@/pages/api/remove-from-hunt";
 
 const HuntDetailPage: NextPage = () => {
   const { user, loadingUser, setUser } = useUser();
@@ -244,19 +245,42 @@ const HuntDetailPage: NextPage = () => {
     getCreaturesByTokenMintAddress();
   }, [publicKey, hunt, connection, getCreaturesByTokenMintAddress]);
 
+  const selectAllComplete = () => {
+    // bug: selects any creature that has completed this activity previously
+    const allCompleteCreatures = creaturesInActivity.filter(
+      ({ mainCharacterActivityInstances }) =>
+        mainCharacterActivityInstances.find(
+          ({ activity, isComplete }) => activity.id === id && isComplete
+        )
+    );
+    !!allCompleteCreatures &&
+      setSelectedActivityCompleteCreatures(allCompleteCreatures);
+  };
+
   const removeFromHunt = useCallback(async () => {
     if (!publicKey || !hunt) return;
 
     setIsLoading(true);
 
     try {
-      await axios.post(`${BASE_URL}/api/remove-from-hunt`, {
-        huntId: hunt.id,
-        mainCharacterIds: selectedActivityCompleteCreatures.map(({ id }) => id),
-        walletAddress: publicKey.toString(),
-      });
+      const { data }: { data: RemoveFromHuntResponse } = await axios.post(
+        `${BASE_URL}/api/remove-from-hunt`,
+        {
+          huntId: hunt.id,
+          mainCharacterIds: selectedActivityCompleteCreatures.map(
+            ({ id }) => id
+          ),
+          walletAddress: publicKey.toString(),
+        }
+      );
+      const { reward, rewardTxAddress } = data;
       showToast({
-        primaryMessage: "Vampire removed from hunt!",
+        primaryMessage: "Hunt successful!",
+        secondaryMessage: `You received ${reward.amount} ${reward.item.name}.`,
+        link: {
+          url: `https://explorer.solana.com/tx/${rewardTxAddress}`,
+          title: "View Transaction",
+        },
       });
       setCreaturesInActivity(
         creaturesInActivity.filter(
@@ -328,6 +352,7 @@ const HuntDetailPage: NextPage = () => {
     }
     if (!publicKey || !user || nfts.length) return;
     fetchCollection();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connection, fetchCollection, publicKey, nfts, user]);
 
   const { data: hunts, loading: loadingHunts } = useQuery(GET_HUNT_BY_ID, {
@@ -407,17 +432,17 @@ const HuntDetailPage: NextPage = () => {
             <div className="text-4xl font-strange-dreams text-center mb-12 tracking-wider">
               Your Vamps
             </div>
-            {selectedCreatures.length > 0 && (
-              <div className="mx-auto pb-8">
-                <SubmitButton
-                  className="shadow-2xl"
-                  isSubmitting={false}
-                  onClick={addToHunt}
-                >
-                  Send Selected on hunt
-                </SubmitButton>
-              </div>
-            )}
+            <div className="mx-auto pb-8">
+              <SubmitButton
+                className="shadow-2xl"
+                isSubmitting={false}
+                onClick={addToHunt}
+                disabled={!selectedCreatures.length}
+              >
+                Send Selected on hunt
+              </SubmitButton>
+            </div>
+
             <CreatureList
               activity={hunt}
               creatures={eligibleCreatures}
@@ -430,13 +455,15 @@ const HuntDetailPage: NextPage = () => {
             <div className="text-4xl font-strange-dreams text-center mb-12 tracking-wider">
               Vamps on Hunt
             </div>
-            {selectedActivityCompleteCreatures.length > 0 && (
-              <div className="mx-auto pb-8 flex w-full justify-center">
-                <SubmitButton isSubmitting={false} onClick={removeFromHunt}>
-                  Remove Selected from hunt
-                </SubmitButton>
-              </div>
-            )}
+            <div className="mx-auto pb-8 flex w-full justify-center space-x-4">
+              <SubmitButton
+                isSubmitting={false}
+                onClick={removeFromHunt}
+                disabled={!selectedActivityCompleteCreatures.length}
+              >
+                Claim Rewards
+              </SubmitButton>
+            </div>
             <CreatureList
               activity={hunt}
               creatures={creaturesInActivity}
