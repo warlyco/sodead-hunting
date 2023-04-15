@@ -19,9 +19,7 @@ const ShowCounter = ({ days, hours, minutes, seconds }: Props) => {
       />
 
       <DateTimeDisplay value={hours} type={"Hr"} isDanger={false} />
-
       <DateTimeDisplay value={minutes} type={"Min"} isDanger={false} />
-
       <DateTimeDisplay value={seconds} type={"Sec"} isDanger={false} />
     </div>
   );
