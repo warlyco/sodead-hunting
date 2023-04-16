@@ -85,7 +85,7 @@ const DiscordRedirect = () => {
         const { data } = await axios.post("/api/add-user", {
           walletAddress,
         });
-        newUser = data;
+        newUser = data?.user;
       } catch (error: any) {
         console.error({ error });
       }
