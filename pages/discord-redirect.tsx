@@ -119,8 +119,7 @@ const DiscordRedirect = () => {
           showToast({
             primaryMessage: "Discord info saved!",
           });
-          await fetchUser();
-          router.push("/me");
+          router.push("/");
         } else {
           showToast({
             primaryMessage: "Unable to save Discord info",
