@@ -36,7 +36,9 @@ const Home: NextPage = () => {
   const { user, setUser } = useUser();
   const { publicKey } = useWallet();
   const [userFetched, setUserFetched] = useState(false);
-  const [discordAccount, setDiscordAccount] = useState<Account | null>(null);
+  const [discordAccount, setDiscordAccount] = useState<
+    Account | undefined | null
+  >(undefined);
 
   const [fetchUser, { refetch }] = useLazyQuery(GET_USER_BY_WALLET_ADDRESS, {
     variables: { address: publicKey?.toString() },
@@ -49,18 +51,9 @@ const Home: NextPage = () => {
         setUser(user);
       } else {
         setUser(null);
-        addUser();
       }
     },
   });
-
-  const addUser = useCallback(async () => {
-    const { data: newUser } = await axios.post("/api/add-user", {
-      walletAddress: publicKey?.toString(),
-    });
-
-    refetch();
-  }, [publicKey, refetch]);
 
   useEffect(() => {
     if (!publicKey) return;
@@ -93,11 +86,8 @@ const Home: NextPage = () => {
               height={200}
             />
           )}
-          {!user?.primaryWallet?.address ? (
-            <div className="text-center mb-4">
-              <WalletButton />
-            </div>
-          ) : (
+
+          {!!user && !user?.accounts?.[0] ? (
             <>
               <div className="flex w-full justify-between text-xl mb-2">
                 <div className="w-1/3">Name:</div>
@@ -116,9 +106,18 @@ const Home: NextPage = () => {
                     </div>
                   </div>
                 ))}
-              <div className="text-center py-4">
-                <LoginWithDiscord user={user} />
-              </div>
+            </>
+          ) : (
+            <>
+              {!!publicKey ? (
+                <div className="text-center py-4">
+                  <LoginWithDiscord user={user || undefined} />
+                </div>
+              ) : (
+                <div className="text-center mb-4">
+                  <WalletButton />
+                </div>
+              )}
             </>
           )}
         </>

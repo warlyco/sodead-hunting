@@ -36,6 +36,7 @@ const DiscordRedirect = () => {
   const [error, setError] = useState<string | null>(null);
   const { publicKey } = useWallet();
   const router = useRouter();
+  const [isSaving, setIsSaving] = useState(false);
 
   const [fetchUser] = useLazyQuery(GET_USER_BY_WALLET_ADDRESS, {
     variables: { address: publicKey?.toString() },
@@ -47,28 +48,69 @@ const DiscordRedirect = () => {
   });
 
   const saveUser = useCallback(
-    async (user: DiscordUser) => {
-      const savedUserId = localStorage.getItem("userId");
-      if (!user) return;
+    async ({
+      accessToken,
+      tokenType,
+    }: {
+      accessToken: string;
+      tokenType: string;
+    }) => {
+      if (isSaving) return;
+      setIsSaving(true);
 
-      if (!publicKey) {
-        console.error("No public key found");
+      const { data: discordUser } = await axios.get(
+        `https://discord.com/api/users/@me`,
+        {
+          headers: {
+            authorization: `${tokenType} ${accessToken}`,
+          },
+        }
+      );
+
+      await fetchUser();
+      if (user) return;
+
+      console.log("saving user", { discordUser });
+      const walletAddress = localStorage.getItem("walletAddress");
+      if (!walletAddress) {
+        showToast({
+          primaryMessage: "Unable to save Discord info",
+        });
+        router.push("/");
         return;
       }
 
-      console.log("saving user", { user });
+      let newUser;
+      try {
+        const { data } = await axios.post("/api/add-user", {
+          walletAddress,
+        });
+        newUser = data;
+      } catch (error: any) {
+        console.error({ error });
+      }
+      debugger;
+
+      if (!discordUser || !newUser) {
+        showToast({
+          primaryMessage: "Unable to save Discord info",
+        });
+        router.push("/");
+      }
+
+      console.log("saving user", { discordUser });
 
       try {
         const res = await axios.post(`${BASE_URL}/api/add-account`, {
-          imageUrl: user?.avatar
-            ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+          imageUrl: discordUser?.avatar
+            ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
             : null,
-          email: user.email,
+          email: discordUser.email,
           providerId: "eea4c92e-4ac4-4203-8c19-cba7f7b8d4f6", // Discord
-          providerAccountId: user.id,
-          username: `${user.username}#${user.discriminator}`,
-          userId: savedUserId,
-          walletAddress: publicKey,
+          providerAccountId: discordUser.id,
+          username: `${discordUser.username}#${discordUser.discriminator}`,
+          userId: newUser.id,
+          walletAddress: publicKey?.toString(),
           accessToken,
           tokenType,
         });
@@ -87,6 +129,9 @@ const DiscordRedirect = () => {
         }
       } catch (error: any) {
         console.error(error);
+        if (!error.response) {
+          return;
+        }
         const { message } = error.response.data.error.response.errors[0];
         if (message.includes("Uniqueness violation")) {
           showToast({
@@ -94,36 +139,12 @@ const DiscordRedirect = () => {
           });
           router.push("/");
         }
+      } finally {
+        localStorage.removeItem("walletAddress");
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [accessToken, publicKey, router, tokenType]
-  );
-
-  const fetchDiscordUser = useCallback(
-    async ({
-      accessToken,
-      tokenType,
-    }: {
-      accessToken: string;
-      tokenType: string;
-    }) => {
-      try {
-        const { data: user } = await axios.get(
-          `https://discord.com/api/users/@me`,
-          {
-            headers: {
-              authorization: `${tokenType} ${accessToken}`,
-            },
-          }
-        );
-
-        saveUser(user);
-      } catch (error: any) {
-        setError(error.message);
-      }
-    },
-    [saveUser]
   );
 
   useEffect(() => {
@@ -138,8 +159,9 @@ const DiscordRedirect = () => {
     }
     setAccessToken(accessToken);
     setTokenType(tokenType);
-    fetchDiscordUser({ accessToken, tokenType });
-  }, [fetchDiscordUser, router]);
+    saveUser({ accessToken, tokenType });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex w-full h-full items-center justify-center">

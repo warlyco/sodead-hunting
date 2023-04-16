@@ -5,7 +5,6 @@ import { REMOVE_PAYOUTS_BY_WALLET_ID } from "@/graphql/mutations/remove-payouts-
 import { REMOVE_PRIMARY_WALLET } from "@/graphql/mutations/remove-primary-wallet";
 import { REMOVE_USER } from "@/graphql/mutations/remove-user";
 import { REMOVE_WALLET } from "@/graphql/mutations/remove-wallet";
-import { GET_PAYOUTS_BY_WALLET_ID } from "@/graphql/queries/get-payouts-by-wallet-id";
 import { GET_USER_BY_ID } from "@/graphql/queries/get-user-by-id";
 import { Account } from "@/pages/api/add-account";
 import { Wallet } from "@/pages/me";
@@ -45,7 +44,6 @@ export default async function handler(
       return;
     }
 
-    // remove primary wallet
     console.log(" removing wallet");
     if (user.primaryWallet?.id) {
       const { update_sodead_users_by_pk }: { update_sodead_users_by_pk: User } =
@@ -55,18 +53,6 @@ export default async function handler(
             id,
           },
         });
-      // remove wallet
-    }
-
-    for (let wallet of user.wallets) {
-      const {
-        delete_sodead_wallets_by_pk,
-      }: { delete_sodead_wallets_by_pk: Wallet } = await client.request({
-        document: REMOVE_WALLET,
-        variables: {
-          id: wallet.id,
-        },
-      });
     }
 
     // remove account
@@ -91,7 +77,17 @@ export default async function handler(
         },
       });
 
-    // remove user
+    for (let wallet of user.wallets) {
+      const {
+        delete_sodead_wallets_by_pk,
+      }: { delete_sodead_wallets_by_pk: Wallet } = await client.request({
+        document: REMOVE_WALLET,
+        variables: {
+          id: wallet.id,
+        },
+      });
+    }
+
     const {
       delete_sodead_users_by_pk,
     }: { delete_sodead_users_by_pk: Account } = await client.request({

@@ -5,14 +5,16 @@ import { User } from "@/features/admin/users/users-list-item";
 import { useEffect, useState } from "react";
 import { Account } from "@/pages/api/add-account";
 import { getUserDiscordAccount } from "@/utils/user";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 /* eslint-disable @next/next/no-img-element */
-const LoginWithDiscord = ({ user }: { user: User }) => {
+const LoginWithDiscord = ({ user }: { user?: User }) => {
+  const { publicKey } = useWallet();
   const [discordAccount, setDiscordAccount] = useState<Account | null>(null);
 
   useEffect(() => {
     if (!!discordAccount) return;
-    if (user?.accounts?.length > 0) {
+    if (!!user?.accounts && user?.accounts?.length > 0) {
       const discordAccount = getUserDiscordAccount(user);
       if (discordAccount) {
         setDiscordAccount(discordAccount);
@@ -35,7 +37,8 @@ const LoginWithDiscord = ({ user }: { user: User }) => {
   }
 
   const handleConnectWithDiscord = () => {
-    localStorage.setItem("userId", user.id);
+    if (!publicKey) return;
+    localStorage.setItem("walletAddress", publicKey.toString());
     axios.post(`${BASE_URL}/api/add-account`, {
       noop: true,
     });

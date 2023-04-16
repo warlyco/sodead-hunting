@@ -60,6 +60,17 @@ export default async function handler(
       noop: true,
     });
 
+  console.log({
+    accessToken,
+    tokenType,
+    imageUrl,
+    email,
+    providerId,
+    providerAccountId,
+    username,
+    userId,
+  });
+
   if (!imageUrl || !email || !providerId || !providerAccountId || !username) {
     res.status(500).json({ error: "Required fields not set" });
     return;
