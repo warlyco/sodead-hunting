@@ -11,11 +11,6 @@ export const GET_USER_BY_ID = gql`
           name
         }
       }
-      claims {
-        amount
-        id
-        txAddress
-      }
       email
       id
       imageUrl

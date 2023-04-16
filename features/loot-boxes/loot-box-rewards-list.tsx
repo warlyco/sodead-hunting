@@ -49,12 +49,13 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
                     <div>{!!payoutChance && payoutChance * 100}%</div>
                   </>
                 )}
-                {/* Parent name */}
                 {!!parentName && !itemCollection?.name && (
                   <>
-                    <div>{parentName}</div>
-                    <div>{!!payoutChance && payoutChance * 100}%</div>
-                    <div>
+                    <div className="w-1/3">{parentName}</div>
+                    <div className="w-1/3 flex justify-center">
+                      {!!payoutChance && payoutChance * 100}%
+                    </div>
+                    <div className="w-1/3">
                       {!!childRewardCollections &&
                         childRewardCollections.map(
                           ({ itemCollection, hashListCollection }) => (
@@ -64,7 +65,9 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
                                   key={itemCollection?.id}
                                   className="mb-2 rounded-lg"
                                 >
-                                  <div>{itemCollection?.name}</div>
+                                  <div>
+                                    {itemCollection?.name.replace("1", "")}
+                                  </div>
                                 </div>
                               )}
                               {JSON.stringify(hashListCollection)}
