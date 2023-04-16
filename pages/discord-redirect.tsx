@@ -119,13 +119,8 @@ const DiscordRedirect = () => {
           showToast({
             primaryMessage: "Discord info saved!",
           });
-          router.push("/");
-        } else {
-          showToast({
-            primaryMessage: "Unable to save Discord info",
-          });
-          router.push("/");
         }
+        router.push("/");
       } catch (error: any) {
         console.error(error);
         if (!error.response) {
