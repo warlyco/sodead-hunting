@@ -245,42 +245,48 @@ const LootBoxDetailPage: NextPage = () => {
         {},
         wallet
       );
+      if (!burnTxAddress) {
+        setTransferInProgress(false);
+        return;
+      }
+      showToast({
+        primaryMessage: "Opening lootbox...",
+        secondaryMessage: "Please do not close this window.",
+      });
+
+      const { data } = await axios.post(
+        `${BASE_URL}/api/handle-loot-box-claim`,
+        {
+          lootBoxId: lootBox?.id,
+          burnTxAddress,
+        }
+      );
+
+      setAmountOfUserHeldCostTokens(amountOfUserHeldCostTokens - costAmount);
+      setTransferInProgress(false);
+
+      const VAMP_TOKEN_ID = "ea9672fe-0e09-4883-a625-9267d1d1de82";
+
+      showToast({
+        primaryMessage: "Success!",
+        secondaryMessage:
+          VAMP_TOKEN_ID === data?.reward?.item?.token?.id
+            ? `You received ${data?.reward.amount / 1000000000} ${
+                data?.reward?.item?.name
+              }!`
+            : `You received ${data?.reward?.item?.name}!`,
+      });
+
+      refetchPayouts();
+
+      console.log({
+        burnTxAddress,
+        lootBoxId: lootBox?.id,
+        data,
+      });
     } catch (error) {
       console.log(error);
     }
-
-    showToast({
-      primaryMessage: "Opening lootbox...",
-      secondaryMessage: "Please do not close this window.",
-    });
-
-    const { data } = await axios.post(`${BASE_URL}/api/handle-loot-box-claim`, {
-      lootBoxId: lootBox?.id,
-      burnTxAddress,
-    });
-
-    setAmountOfUserHeldCostTokens(amountOfUserHeldCostTokens - costAmount);
-    setTransferInProgress(false);
-
-    const VAMP_TOKEN_ID = "ea9672fe-0e09-4883-a625-9267d1d1de82";
-
-    showToast({
-      primaryMessage: "Success!",
-      secondaryMessage:
-        VAMP_TOKEN_ID === data?.reward?.item?.token?.id
-          ? `You received ${data?.reward.amount / 1000000000} ${
-              data?.reward?.item?.name
-            }!`
-          : `You received ${data?.reward?.item?.name}!`,
-    });
-
-    refetchPayouts();
-
-    console.log({
-      burnTxAddress,
-      lootBoxId: lootBox?.id,
-      data,
-    });
   }, [
     wallet,
     costItem?.token,

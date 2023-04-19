@@ -51,11 +51,8 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
                 )}
                 {!!parentName && !itemCollection?.name && (
                   <>
-                    <div className="w-1/3">{parentName}</div>
-                    <div className="w-1/3 flex justify-center">
-                      {!!payoutChance && payoutChance * 100}%
-                    </div>
-                    <div className="w-1/3">
+                    <div className="w-2/5">{parentName}</div>
+                    <div className="flex justify-end w-2/5 flex-wrap">
                       {!!childRewardCollections &&
                         childRewardCollections.map(
                           ({ itemCollection, hashListCollection }) => (
@@ -63,7 +60,7 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
                               {!!itemCollection?.id && (
                                 <div
                                   key={itemCollection?.id}
-                                  className="mb-2 rounded-lg"
+                                  className="mb-2 rounded-lg text-right"
                                 >
                                   <div>
                                     {itemCollection?.name.replace("1", "")}
@@ -82,6 +79,9 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
                             </>
                           )
                         )}
+                    </div>
+                    <div className="w-1/5 flex justify-end">
+                      {!!payoutChance && payoutChance * 100}%
                     </div>
                   </>
                 )}
