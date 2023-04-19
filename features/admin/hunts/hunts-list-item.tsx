@@ -17,7 +17,7 @@ export type Hunt = {
   description: string;
   maxConcurrentParticipants: number;
   maxTotalParticipants: number;
-  isEnabled: boolean;
+  isActive: boolean;
   rarity: {
     id: string;
     name: string;

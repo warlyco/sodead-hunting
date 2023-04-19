@@ -14,7 +14,7 @@ export const GET_HUNT_BY_ID = gql`
       description
       maxTotalParticipants
       maxConcurrentParticipants
-      isEnabled
+      isActive
       gateCollections {
         id
         traitCollection {
