@@ -125,27 +125,41 @@ export default async function handler(
   );
 
   console.log("possible rewards", rewards);
-  console.log("randomReward", randomReward);
 
   if (!randomReward) {
     res.status(400).json({ error: "No reward found" });
     return;
   }
 
-  if (!randomReward.childRewardCollection.length) {
+  let childReward: any;
+  if (randomReward.childRewardCollection.length) {
     // is parent reward collection, need to select child reward
-    const childReward = getWeightedRandomReward(
+    const { itemCollection } = getWeightedRandomReward(
       randomReward.childRewardCollection,
       randomReward.childRewardCollection.map(
         (childReward: any) => childReward.payoutChance
       )
     );
+    childReward = itemCollection;
   }
+
+  const childRewardMintAddress = childReward?.item?.token?.mintAddress;
+  const randomRewardMintAddress = randomReward?.item?.token?.mintAddress;
+
+  console.log({
+    childReward: JSON.stringify(childReward),
+    childRewardMintAddress,
+    randomReward: JSON.stringify(randomReward),
+    randomRewardMintAddress,
+  });
+
+  let rewardMintAddress = childRewardMintAddress
+    ? new PublicKey(childRewardMintAddress)
+    : new PublicKey(randomRewardMintAddress);
 
   let rewardAmount = randomReward?.amount || 1;
 
   let rewardTxAddress: string;
-  const rewardMintAddress = new PublicKey(randomReward.item.token.mintAddress);
   const fromUserAccount = new PublicKey(burnTxInfo?.feePayer);
 
   const fromTokenAccountAddress = await getAssociatedTokenAddress(
@@ -218,7 +232,9 @@ export default async function handler(
         variables: {
           txAddress: rewardTxAddress,
           amount: rewardAmount,
-          tokenId: randomReward.item.token.id,
+          tokenId: childRewardMintAddress
+            ? childReward?.item?.token?.id
+            : randomReward?.item?.token?.id,
           createdAtWithTimezone: new Date().toISOString(),
           walletId,
           lootBoxId,
@@ -229,6 +245,7 @@ export default async function handler(
       .status(200)
       .json({ ...insert_sodead_payouts_one, reward: randomReward });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error });
   }
 }
