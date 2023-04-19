@@ -285,7 +285,13 @@ const LootBoxDetailPage: NextPage = () => {
         data,
       });
     } catch (error) {
+      showToast({
+        primaryMessage: "Error",
+        secondaryMessage: "Something went wrong.",
+      });
       console.log(error);
+    } finally {
+      setTransferInProgress(false);
     }
   }, [
     wallet,

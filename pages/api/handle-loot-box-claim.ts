@@ -243,7 +243,10 @@ export default async function handler(
 
     res
       .status(200)
-      .json({ ...insert_sodead_payouts_one, reward: randomReward });
+      .json({
+        ...insert_sodead_payouts_one,
+        reward: childRewardMintAddress ? childReward : randomReward,
+      });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error });
