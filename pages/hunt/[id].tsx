@@ -375,6 +375,14 @@ const HuntDetailPage: NextPage = () => {
       </ContentWrapper>
     );
 
+  if (!!hunt?.id && !hunt?.isEnabled) {
+    return (
+      <ContentWrapper className="flex flex-col items-center">
+        <div className="pt-48">No hunt found</div>
+      </ContentWrapper>
+    );
+  }
+
   if (!user?.accounts?.length)
     return (
       <ContentWrapper className="flex flex-col items-center">
