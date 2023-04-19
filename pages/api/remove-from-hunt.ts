@@ -1,15 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import {
-  BASE_URL,
-  NON_PAYMENT_PAYOUT_ID,
-  RPC_ENDPOINT,
-} from "@/constants/constants";
+import { NON_PAYMENT_PAYOUT_ID, RPC_ENDPOINT } from "@/constants/constants";
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
 import { client } from "@/graphql/backend-client";
+import { ADD_ITEM_PAYOUT } from "@/graphql/mutations/add-item-payout";
 import { ADD_PAYOUT } from "@/graphql/mutations/add-payout";
 import { REMOVE_FROM_HUNT } from "@/graphql/mutations/remove-from-hunt";
 import { GET_HUNT_BY_ID } from "@/graphql/queries/get-hunt-by-id";
-import { Item } from "@/pages/api/add-item";
 import { PublicKey } from "@metaplex-foundation/js";
 import {
   createAssociatedTokenAccountInstruction,
@@ -24,7 +20,6 @@ import {
   sendAndConfirmTransaction,
 } from "@solana/web3.js";
 import base58 from "bs58";
-import { Token } from "graphql";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export type RemoveFromHuntResponse = {
@@ -186,15 +181,35 @@ export default async function handler(
       }
     );
 
+    let document;
+    if (item.id) {
+      console.log("item payout");
+      document = ADD_ITEM_PAYOUT;
+    } else {
+      console.log("non-item payout");
+      document = ADD_PAYOUT;
+    }
+
+    let variables: any = {
+      txAddress: rewardTxAddress,
+      amount: rewardAmount,
+      tokenId: item.token.id,
+      createdAtWithTimezone: new Date().toISOString(),
+    };
+
+    if (item.id) {
+      variables = {
+        ...variables,
+        itemId: item.id,
+      };
+    }
+
+    console.log({ variables });
+
     const { insert_sodead_payouts_one }: { insert_sodead_payouts_one: any } =
       await client.request({
-        document: ADD_PAYOUT,
-        variables: {
-          txAddress: rewardTxAddress,
-          amount: rewardAmount,
-          tokenId: item.token.id,
-          createdAtWithTimezone: new Date().toISOString(),
-        },
+        document,
+        variables,
       });
 
     try {

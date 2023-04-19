@@ -272,7 +272,7 @@ const LootBoxDetailPage: NextPage = () => {
         secondaryMessage:
           VAMP_TOKEN_ID === data?.reward?.item?.token?.id
             ? `You received ${data?.reward.amount / 1000000000} ${
-                data?.reward?.item?.name
+                data?.reward?.name
               }!`
             : `You received ${data?.reward?.item?.name}!`,
       });
@@ -412,6 +412,14 @@ const LootBoxDetailPage: NextPage = () => {
     );
   }
 
+  if (!!lootBox?.id && !lootBox?.isEnabled) {
+    return (
+      <ContentWrapper className="flex flex-col items-center">
+        <div className="pt-48">No lootbox found</div>
+      </ContentWrapper>
+    );
+  }
+
   if (!user?.accounts?.length)
     return (
       <ContentWrapper className="flex flex-col items-center">
@@ -494,7 +502,7 @@ const LootBoxDetailPage: NextPage = () => {
               <div>{formatDateTime(payout.createdAtWithTimezone)}</div>
               <div className="uppercase">
                 {payout.amount == 1 ? "" : payout.amount / 1000000000}{" "}
-                {payout.token.name}
+                {payout?.item?.name ? payout?.item?.name : payout?.token?.name}
               </div>
             </div>
           ))}

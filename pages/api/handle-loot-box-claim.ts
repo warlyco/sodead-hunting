@@ -28,6 +28,7 @@ import { sleep } from "@/utils/data-flow";
 import { ADD_LOOTBOX_PAYOUT } from "@/graphql/mutations/add-lootbox-payout";
 import { Wallet } from "@/pages/me";
 import { GET_WALLET_BY_ADDRESS } from "@/graphql/queries/get-wallet-by-address";
+import { ADD_LOOTBOX_ITEM_PAYOUT } from "@/graphql/mutations/add-lootbox-item-payout";
 
 const getWeightedRandomReward = (items: any[], weights: any[]) => {
   var i;
@@ -225,28 +226,42 @@ export default async function handler(
     return;
   }
 
+  let document;
+  if (childReward?.item || randomReward?.item) {
+    document = ADD_LOOTBOX_ITEM_PAYOUT;
+  } else {
+    document = ADD_LOOTBOX_PAYOUT;
+  }
+
+  let variables: any = {
+    txAddress: rewardTxAddress,
+    amount: rewardAmount,
+    tokenId: childRewardMintAddress
+      ? childReward?.item?.token?.id
+      : randomReward?.item?.token?.id,
+    createdAtWithTimezone: new Date().toISOString(),
+    walletId,
+    lootBoxId,
+  };
+
+  if (childReward?.item || randomReward?.item) {
+    variables = {
+      ...variables,
+      itemId: childReward?.item?.id || randomReward?.item?.id,
+    };
+  }
+
   try {
     const { insert_sodead_payouts_one }: { insert_sodead_payouts_one: Payout } =
       await client.request({
-        document: ADD_LOOTBOX_PAYOUT,
-        variables: {
-          txAddress: rewardTxAddress,
-          amount: rewardAmount,
-          tokenId: childRewardMintAddress
-            ? childReward?.item?.token?.id
-            : randomReward?.item?.token?.id,
-          createdAtWithTimezone: new Date().toISOString(),
-          walletId,
-          lootBoxId,
-        },
+        document,
+        variables,
       });
 
-    res
-      .status(200)
-      .json({
-        ...insert_sodead_payouts_one,
-        reward: childRewardMintAddress ? childReward : randomReward,
-      });
+    res.status(200).json({
+      ...insert_sodead_payouts_one,
+      reward: childRewardMintAddress ? childReward : randomReward,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error });

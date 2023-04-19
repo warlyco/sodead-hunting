@@ -19,6 +19,10 @@ export const GET_LOOT_BOX_PAYOUTS_BY_WALLET_ADDRESS = gql`
         id
       }
       name
+      item {
+        id
+        name
+      }
       token {
         name
         id

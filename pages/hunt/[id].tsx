@@ -274,6 +274,7 @@ const HuntDetailPage: NextPage = () => {
         }
       );
       const { reward, rewardTxAddress } = data;
+
       showToast({
         primaryMessage: "Hunt successful!",
         secondaryMessage: `You received ${reward.amount} ${reward.item.name}.`,
