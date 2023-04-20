@@ -1,12 +1,7 @@
-import { RarityBadge } from "@/features/UI/badges/rarity-badge";
-import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
 import { Payout } from "@/pages/profile/[id]";
 import { formatDateTime } from "@/utils/date-time";
 import { getAbbreviatedAddress } from "@/utils/formatting";
-import { GiftIcon } from "@heroicons/react/24/outline";
-
-import Link from "next/link";
 
 export const PayoutListItem = ({ payout }: { payout: Payout }) => {
   return (

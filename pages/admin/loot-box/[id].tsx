@@ -67,9 +67,17 @@ const LootBoxDetailPage = () => {
                   />
                 </div>
                 <h1 className="text-3xl mb-6">{lootBox.name}</h1>
-                <div className="mb-8">
-                  <RarityBadge rarity={lootBox.rarity} />
-                </div>
+                <a
+                  className="uppercase mb-8 underline"
+                  href={`/admin/loot-box/${id}/payouts`}
+                >
+                  View Payouts
+                </a>
+                {!!lootBox.rarity && (
+                  <div className="mb-8">
+                    <RarityBadge rarity={lootBox.rarity} />
+                  </div>
+                )}
                 <div className="text-center uppercase text-lg">Rewards</div>
                 <LootBoxRewards lootBox={lootBox} />
                 <div className="mb-4 w-full">

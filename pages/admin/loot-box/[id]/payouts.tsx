@@ -1,4 +1,5 @@
 import { ContentWrapper } from "@/features/UI/content-wrapper";
+import { AggregatePayoutStats } from "@/features/admin/payouts/aggregate-payout-stats";
 import { PayoutList } from "@/features/admin/payouts/payout-list";
 import { GET_LOOT_BOX_PAYOUTS_BY_LOOT_BOX_ID } from "@/graphql/queries/get-loot-box-payouts-by-loot-box-id";
 import { Payout } from "@/pages/profile/[id]";
@@ -29,7 +30,14 @@ const PayoutsPage = () => {
     <ContentWrapper className="flex flex-col items-center">
       <h1 className="text-3xl mb-8">Payouts</h1>
       {payoutsLoading && <p>Loading payouts...</p>}
-      {payouts && <PayoutList payouts={payouts} />}
+      {payouts && (
+        <>
+          <div className="mb-8">
+            <AggregatePayoutStats payouts={payouts} />
+          </div>
+          <PayoutList payouts={payouts} />
+        </>
+      )}
     </ContentWrapper>
   );
 };
