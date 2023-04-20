@@ -23,10 +23,15 @@ export type Payout = {
     name: string;
     imageUrl: string;
   };
+  wallet: {
+    id: string;
+    address: string;
+  };
   token: {
     id: string;
     name: string;
     imageUrl: string;
+    mintAddress: string;
     items: {
       id: string;
       name: string;
