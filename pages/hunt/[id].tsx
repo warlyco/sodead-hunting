@@ -331,12 +331,10 @@ const HuntDetailPage: NextPage = () => {
         )
       );
       setSelectedCreatures([]);
-      fetchCollection();
+      await fetchCollection();
     } catch (error) {
       console.log(error);
     }
-
-    setIsLoading(false);
   }, [
     publicKey,
     hunt,
