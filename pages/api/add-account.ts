@@ -31,9 +31,13 @@ export type NoopResponse = {
   noop: true;
 };
 
+export type UserAndAccountResponse = {
+  account: Account;
+  user: User;
+};
+
 type Data =
-  | Account
-  | User
+  | UserAndAccountResponse
   | NoopResponse
   | {
       error: unknown;
@@ -88,13 +92,14 @@ export default async function handler(
   };
 
   try {
-    const { insert_sodead_accounts_one }: { insert_sodead_accounts_one: Data } =
-      await client.request({
-        document: ADD_ACCOUNT,
-        variables,
-      });
+    const {
+      insert_sodead_accounts_one,
+    }: { insert_sodead_accounts_one: Account } = await client.request({
+      document: ADD_ACCOUNT,
+      variables,
+    });
 
-    const { update_sodead_users_by_pk }: { update_sodead_users_by_pk: Data } =
+    const { update_sodead_users_by_pk }: { update_sodead_users_by_pk: User } =
       await client.request({
         document: UPDATE_USER,
         variables: {
@@ -109,7 +114,10 @@ export default async function handler(
 
     console.log("insert_sodead_accounts_one: ", insert_sodead_accounts_one);
 
-    res.status(200).json(insert_sodead_accounts_one);
+    res.status(200).json({
+      account: insert_sodead_accounts_one,
+      user: update_sodead_users_by_pk,
+    });
   } catch (error) {
     res.status(500).json({ error });
   }

@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useUser } from "@/hooks/user";
 import { useLazyQuery } from "@apollo/client";
 import { GET_USER_BY_WALLET_ADDRESS } from "@/graphql/queries/get-user-by-wallet-address";
+import { UserAndWalletResponse } from "@/pages/api/add-user";
 
 export type DiscordUser = {
   accent_color: number | null;
@@ -87,18 +88,20 @@ const DiscordRedirect = () => {
 
       console.log("discord user info", { discordUser });
 
-      let newUser;
       try {
         console.log("5: creating user", { walletAddress });
-        const { data } = await axios.post("/api/add-user", {
-          walletAddress,
-          discordUser: {
-            ...discordUser,
-          },
-          tokenType,
-          accessToken,
-        });
-        newUser = data?.user;
+        const { data }: { data: UserAndWalletResponse } = await axios.post(
+          "/api/add-user",
+          {
+            walletAddress,
+            discordUser: {
+              ...discordUser,
+            },
+            tokenType,
+            accessToken,
+          }
+        );
+        setUser(data?.user);
         showToast({
           primaryMessage: "Registeration Successful",
         });

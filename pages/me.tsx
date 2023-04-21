@@ -89,7 +89,7 @@ const Home: NextPage = () => {
               </div>
               <div className="flex w-full justify-between text-xl mb-2">
                 <div>Wallet:</div>
-                {getAbbreviatedAddress(user.primaryWallet.address)}
+                {getAbbreviatedAddress(user?.primaryWallet?.address)}
               </div>
               {!!user.email ||
                 (!!discordAccount?.email && (

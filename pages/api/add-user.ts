@@ -9,8 +9,9 @@ import { client } from "@/graphql/backend-client";
 import { GET_WALLET_BY_ADDRESS } from "@/graphql/queries/get-wallet-by-address";
 import { User } from "@/features/admin/users/users-list-item";
 import { BIND_WALLET_TO_USER } from "@/graphql/mutations/bind-wallet-to-user";
+import { UserAndAccountResponse } from "@/pages/api/add-account";
 
-type UserAndWalletResponse = {
+export type UserAndWalletResponse = {
   wallet: Wallet;
   user: User;
 };
@@ -99,21 +100,22 @@ export default async function handler(
 
   // create account entry
   try {
-    const { data } = await axios.post(`${BASE_URL}/api/add-account`, {
-      imageUrl: discordUser?.avatar
-        ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
-        : null,
-      email: discordUser.email,
-      providerId: "eea4c92e-4ac4-4203-8c19-cba7f7b8d4f6", // Discord
-      providerAccountId: discordUser.id,
-      username: `${discordUser.username}#${discordUser.discriminator}`,
-      userId: newUser.id,
-      accessToken,
-      tokenType,
-      walletAddress,
-    });
+    const { data: userAndAccount }: { data: UserAndAccountResponse } =
+      await axios.post(`${BASE_URL}/api/add-account`, {
+        imageUrl: discordUser?.avatar
+          ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
+          : null,
+        email: discordUser.email,
+        providerId: "eea4c92e-4ac4-4203-8c19-cba7f7b8d4f6", // Discord
+        providerAccountId: discordUser.id,
+        username: `${discordUser.username}#${discordUser.discriminator}`,
+        userId: newUser.id,
+        accessToken,
+        tokenType,
+        walletAddress,
+      });
 
-    res.status(200).json({ wallet, user: newUser });
+    res.status(200).json({ wallet, user: userAndAccount?.user });
   } catch (error: any) {
     try {
       axios.post(`${BASE_URL}/api/remove-user`, { id: newUser.id });
