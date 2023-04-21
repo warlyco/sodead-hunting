@@ -58,6 +58,24 @@ const DiscordRedirect = () => {
       if (isSaving) return;
       setIsSaving(true);
 
+      console.log("1: checking if user exists");
+      await fetchUser();
+      if (user) return;
+
+      const walletAddress = localStorage.getItem("walletAddress");
+      console.log("2: user does not exist, save", { walletAddress });
+      localStorage.removeItem("walletAddress");
+
+      if (!walletAddress) {
+        // showToast({
+        //   primaryMessage: "There was an error saving your user info",
+        // });
+        // router.push("/");
+        return;
+      }
+
+      // fetch discord user info
+      console.log("looking up discord user info");
       const { data: discordUser } = await axios.get(
         `https://discord.com/api/users/@me`,
         {
@@ -67,74 +85,28 @@ const DiscordRedirect = () => {
         }
       );
 
-      await fetchUser();
-      if (user) return;
-
-      console.log("saving user", { discordUser });
-      const walletAddress = localStorage.getItem("walletAddress");
-      if (!walletAddress) {
-        showToast({
-          primaryMessage: "Unable to save Discord info",
-        });
-        router.push("/");
-        return;
-      }
+      console.log("discord user info", { discordUser });
 
       let newUser;
       try {
+        console.log("5: creating user", { walletAddress });
         const { data } = await axios.post("/api/add-user", {
           walletAddress,
+          discordUser: {
+            ...discordUser,
+          },
+          tokenType,
+          accessToken,
         });
         newUser = data?.user;
+        showToast({
+          primaryMessage: "Registeration Successful",
+        });
+        setTimeout(() => {
+          router.push("/hunt/active");
+        }, 500);
       } catch (error: any) {
         console.error({ error });
-      }
-      debugger;
-
-      if (!discordUser || !newUser) {
-        showToast({
-          primaryMessage: "Unable to save Discord info",
-        });
-        router.push("/");
-      }
-
-      console.log("saving user", { discordUser });
-
-      try {
-        const res = await axios.post(`${BASE_URL}/api/add-account`, {
-          imageUrl: discordUser?.avatar
-            ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
-            : null,
-          email: discordUser.email,
-          providerId: "eea4c92e-4ac4-4203-8c19-cba7f7b8d4f6", // Discord
-          providerAccountId: discordUser.id,
-          username: `${discordUser.username}#${discordUser.discriminator}`,
-          userId: newUser.id,
-          walletAddress: publicKey?.toString(),
-          accessToken,
-          tokenType,
-        });
-
-        if (res.data) {
-          showToast({
-            primaryMessage: "Discord info saved!",
-          });
-        }
-        router.push("/");
-      } catch (error: any) {
-        console.error(error);
-        if (!error.response) {
-          return;
-        }
-        const { message } = error.response.data.error.response.errors[0];
-        if (message.includes("Uniqueness violation")) {
-          showToast({
-            primaryMessage: "This Discord account is linked to another user",
-          });
-          router.push("/");
-        }
-      } finally {
-        localStorage.removeItem("walletAddress");
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

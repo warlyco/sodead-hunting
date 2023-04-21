@@ -26,13 +26,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { walletAddress } = req.body;
+  const { walletAddress, discordUser, tokenType, accessToken } = req.body;
 
-  if (!walletAddress) {
+  if (!walletAddress || !discordUser || !tokenType || !accessToken) {
     res.status(500).json({ error: "Required fields not set" });
     return;
   }
 
+  // check if wallet exists
   const { sodead_wallets }: { sodead_wallets: Wallet[] } = await client.request(
     {
       document: GET_WALLET_BY_ADDRESS,
@@ -42,14 +43,15 @@ export default async function handler(
 
   const existingWallet = sodead_wallets?.[0];
 
-  console.log("existingWallet", existingWallet);
-  let wallet: Wallet = existingWallet;
+  console.log("if wallet has a user and an account, user is created");
 
-  if (existingWallet?.user?.id) {
+  if (existingWallet?.user?.id && existingWallet?.user?.accounts?.length) {
     res.status(200).json(existingWallet);
     return;
   }
 
+  // create user entry
+  let wallet: Wallet = existingWallet;
   const {
     insert_sodead_users_one: newUser,
   }: { insert_sodead_users_one: User } = await client.request({
@@ -59,18 +61,8 @@ export default async function handler(
     },
   });
 
-  if (existingWallet) {
-    const {
-      update_sodead_wallets_by_pk: updatedWallet,
-    }: { update_sodead_wallets_by_pk: Wallet } = await client.request({
-      document: BIND_WALLET_TO_USER,
-      variables: {
-        walletId: existingWallet.id,
-        userId: newUser.id,
-      },
-    });
-    wallet = updatedWallet;
-  } else {
+  // create wallet entry
+  if (!wallet) {
     try {
       const { data: newWallet }: { data: Wallet } = await axios.post(
         `${BASE_URL}/api/add-wallet`,
@@ -79,42 +71,66 @@ export default async function handler(
           userId: newUser.id,
         }
       );
-      const {
-        update_sodead_wallets_by_pk: updatedWallet,
-      }: { update_sodead_wallets_by_pk: Wallet } = await client.request({
-        document: BIND_WALLET_TO_USER,
-        variables: {
-          walletId: newWallet.id,
-          userId: newUser.id,
-        },
-      });
-      wallet = updatedWallet;
-      console.log("updatedWallet", updatedWallet);
-
-      if (!updatedWallet) {
-        res.status(500).json({ error: "Error creating wallet" });
-        return;
-      }
-    } catch (error) {
-      res.status(500).json({ error: "Adding wallet error" });
+      wallet = newWallet;
+    } catch (e) {
+      axios.post(`${BASE_URL}/api/remove-user`, { id: newUser.id });
+      return res.status(500).json({ error: "Error creating wallet" });
     }
   }
 
-  // const {
-  //   insert_sodead_users_one: newUser,
-  // }: { insert_sodead_users_one: User } = await client.request({
-  //   document: ADD_USER,
-  //   variables: {
-  //     name: walletAddress,
-  //   },
-  // });
+  // bind wallet to user
+  try {
+    const {
+      update_sodead_wallets_by_pk,
+    }: { update_sodead_wallets_by_pk: Wallet } = await client.request({
+      document: BIND_WALLET_TO_USER,
+      variables: {
+        walletId: wallet.id,
+        userId: newUser.id,
+      },
+    });
+  } catch (error) {
+    try {
+      axios.post(`${BASE_URL}/api/remove-user`, { id: newUser.id });
+    } catch (error) {
+      return res.status(500).json({ error: "Error binding wallet to user" });
+    }
+  }
 
-  // console.log("insert_sodead_users_one", insert_sodead_users_one);
-  res.status(200).json({
-    wallet,
-    user: {
-      ...newUser,
-      wallets: [wallet],
-    },
-  });
+  // create account entry
+  try {
+    const { data } = await axios.post(`${BASE_URL}/api/add-account`, {
+      imageUrl: discordUser?.avatar
+        ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
+        : null,
+      email: discordUser.email,
+      providerId: "eea4c92e-4ac4-4203-8c19-cba7f7b8d4f6", // Discord
+      providerAccountId: discordUser.id,
+      username: `${discordUser.username}#${discordUser.discriminator}`,
+      userId: newUser.id,
+      accessToken,
+      tokenType,
+      walletAddress,
+    });
+
+    res.status(200).json({ wallet, user: newUser });
+  } catch (error: any) {
+    try {
+      axios.post(`${BASE_URL}/api/remove-user`, { id: newUser.id });
+    } catch (error) {
+      return res.status(500).json({ error: "Error binding wallet to user" });
+    }
+
+    let returnMessage = "Error adding account";
+
+    if (
+      error?.response?.data?.error?.response?.errors?.[0]?.message?.includes(
+        "Uniqueness violation"
+      )
+    ) {
+      returnMessage = "Wallet bound to another discord account";
+    }
+
+    return res.status(500).json({ error: returnMessage });
+  }
 }

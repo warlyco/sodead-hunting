@@ -5,25 +5,19 @@ import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import SharedHead from "@/features/UI/head";
 import { Panel } from "@/features/UI/panel";
 import LoginWithDiscord from "@/features/UI/buttons/login-with-discord";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { GET_USER_BY_WALLET_ADDRESS } from "@/graphql/queries/get-user-by-wallet-address";
 import { User } from "@/features/admin/users/users-list-item";
 import { Account } from "@/pages/api/add-account";
 import { getUserDiscordAccount } from "@/utils/user";
 import dynamic from "next/dynamic";
-import axios from "axios";
 import { useLazyQuery } from "@apollo/client";
 import { useUser } from "@/hooks/user";
 
 export type Wallet = {
   address: string;
   id: string;
-  user?: {
-    id: string;
-    name: string;
-    imageUrl: string;
-    email: string;
-  };
+  user: User;
 };
 
 const Home: NextPage = () => {

@@ -68,24 +68,26 @@ export default async function handler(
       });
     }
 
-    // remove payouts
-    const { delete_sodead_payouts }: { delete_sodead_payouts: Payout[] } =
-      await client.request({
-        document: REMOVE_PAYOUTS_BY_WALLET_ID,
-        variables: {
-          id: user.wallets?.[0]?.id,
-        },
-      });
+    if (user.wallets?.length) {
+      // remove payouts
+      const { delete_sodead_payouts }: { delete_sodead_payouts: Payout[] } =
+        await client.request({
+          document: REMOVE_PAYOUTS_BY_WALLET_ID,
+          variables: {
+            id: user.wallets?.[0]?.id,
+          },
+        });
 
-    for (let wallet of user.wallets) {
-      const {
-        delete_sodead_wallets_by_pk,
-      }: { delete_sodead_wallets_by_pk: Wallet } = await client.request({
-        document: REMOVE_WALLET,
-        variables: {
-          id: wallet.id,
-        },
-      });
+      for (let wallet of user.wallets) {
+        const {
+          delete_sodead_wallets_by_pk,
+        }: { delete_sodead_wallets_by_pk: Wallet } = await client.request({
+          document: REMOVE_WALLET,
+          variables: {
+            id: wallet.id,
+          },
+        });
+      }
     }
 
     const {

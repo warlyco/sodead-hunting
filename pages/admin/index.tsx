@@ -163,8 +163,9 @@ const Admin: NextPage = () => {
       case "tokens":
         return "/admin/token/create";
       case "items":
-      default:
         return "/admin/item/create";
+      default:
+        return "";
     }
   };
 
@@ -240,11 +241,14 @@ const Admin: NextPage = () => {
       {activeSubTab.value === "users" && <UsersList />}
       {activeSubTab.value === "communities" && <CommunitiesList />}
       {activeSubTab.value === "nft-collections" && <NftCollectionssList />}
-      <Link href={getCreateLink()}>
-        <button className="bottom-4 right-4">
-          <PlusCircleIcon className="w-12 h-12 absolute bottom-8 right-16 text-stone-300 hover:text-stone-900 hover:bg-stone-300 rounded-full bg-stone-900 shadow-deep hover:shadow-deep-float" />
-        </button>
-      </Link>
+      {activeSubTab.value === "tokens" ||
+        (activeSubTab.value === "items" && (
+          <Link href={getCreateLink()}>
+            <button className="bottom-4 right-4">
+              <PlusCircleIcon className="w-12 h-12 absolute bottom-8 right-16 text-stone-300 hover:text-stone-900 hover:bg-stone-300 rounded-full bg-stone-900 shadow-deep hover:shadow-deep-float" />
+            </button>
+          </Link>
+        ))}
     </ContentWrapper>
   );
 };

@@ -10,6 +10,9 @@ export const GET_WALLET_BY_ADDRESS = gql`
         name
         imageUrl
         email
+        accounts {
+          id
+        }
       }
     }
   }
