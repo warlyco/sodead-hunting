@@ -444,7 +444,7 @@ const HuntDetailPage: NextPage = () => {
                 className="shadow-2xl"
                 isSubmitting={false}
                 onClick={addToHunt}
-                disabled={!selectedCreatures.length}
+                disabled={!selectedCreatures.length || isLoading}
               >
                 Send Selected on hunt
               </SubmitButton>
@@ -466,7 +466,9 @@ const HuntDetailPage: NextPage = () => {
               <SubmitButton
                 isSubmitting={false}
                 onClick={removeFromHunt}
-                disabled={!selectedActivityCompleteCreatures.length}
+                disabled={
+                  !selectedActivityCompleteCreatures.length || isLoading
+                }
               >
                 Claim Rewards
               </SubmitButton>

@@ -4,8 +4,10 @@ import { Creature } from "@/features/creatures/creature-list";
 import { GET_CREATURE_BY_ID } from "@/graphql/queries/get-creature-by-id";
 import { GET_PAYOUTS_BY_CREATURE_ID } from "@/graphql/queries/get-payouts-by-creature-id";
 import { useUser } from "@/hooks/user";
+import { Trait } from "@/pages/api/add-creatures-from-nfts";
 import { formatDateTime } from "@/utils/date-time";
 import { getAbbreviatedAddress } from "@/utils/formatting";
+import { getHashForTraitCombination } from "@/utils/nfts/get-hash-for-trait-combination";
 import { useQuery } from "@apollo/client";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { NextPage } from "next";
@@ -52,6 +54,10 @@ const ProfilePage: NextPage = () => {
   const { id } = router.query;
   const [creature, setCreature] = useState<Creature | null>(null);
   const [payouts, setPayouts] = useState<Payout[] | null>(null);
+  const [traits, setTraits] = useState<Trait[]>([]);
+  const [traitCombinationHash, setTraitCombinationHash] = useState<
+    string | null
+  >(null);
 
   const { loading } = useQuery(GET_CREATURE_BY_ID, {
     variables: {
@@ -59,9 +65,14 @@ const ProfilePage: NextPage = () => {
     },
     skip: !id,
     fetchPolicy: "network-only",
-    onCompleted: ({ sodead_creatures_by_pk }) => {
+    onCompleted: async ({ sodead_creatures_by_pk }) => {
       console.log({ sodead_creatures_by_pk });
       setCreature(sodead_creatures_by_pk);
+      setTraits(sodead_creatures_by_pk?.traitInstances || []);
+
+      setTraitCombinationHash(
+        await getHashForTraitCombination(sodead_creatures_by_pk?.traitInstances)
+      );
     },
   });
 
@@ -112,10 +123,17 @@ const ProfilePage: NextPage = () => {
         <h1 className="text-4xl font-strange-dreams text-center mb-4 tracking-wider">
           {name}
         </h1>
-        <div className="flex w-full justify-between mb-16 max-w-xs text-2xl font-strange-dreams">
-          <div>Mint </div>
+        <div className="flex w-full justify-between mb-4 max-w-xs text-2xl font-strange-dreams">
+          <div>Mint</div>
           <div className="break-all">
             {getAbbreviatedAddress(creature.token.mintAddress)}
+          </div>
+        </div>
+        <div className="flex flex-wrap w-full justify-between mb-16 max-w-xs text-2xl font-strange-dreams">
+          <div>Trait Hash</div>
+          <div className="break-all">
+            {!!traitCombinationHash &&
+              getAbbreviatedAddress(traitCombinationHash)}
           </div>
         </div>
       </div>
