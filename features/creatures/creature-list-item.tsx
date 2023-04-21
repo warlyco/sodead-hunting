@@ -28,7 +28,7 @@ export const CreatureListItem = ({
 
   useEffect(() => {
     if (!activity) return;
-    setIsDebugMode(false);
+    setIsDebugMode(true);
     getCreaturesNotInActivity([creature], activity)[0];
     setActivityInstance(getCreatureActiveInstance(creature));
   }, [
@@ -70,21 +70,21 @@ export const CreatureListItem = ({
       </div>
       {!!isDebugMode && (
         <div className="p-2">
-          <Link
+          {/* <Link
             className="underline mb-2 text-center"
             href={`/profile/${creature.id}`}
           >
             Profile page
-          </Link>
-          {creature.traitInstances.map(({ id, value, trait }) => (
+          </Link> */}
+          {/* {creature.traitInstances.map(({ id, value, trait }) => (
             <div key={id} className="flex w-full justify-between">
               <div>{trait.name}</div>
               <div>{value}</div>
             </div>
-          ))}
-          <div className="flex w-full justify-between">
-            <div>Mint </div>
-            <div className="w-3/4 break-all">{creature.token.mintAddress}</div>
+          ))} */}
+          <div className="flex flex-col w-full justify-between">
+            <div className="font-bold">Mint:</div>
+            <div className="break-all">{creature.token.mintAddress}</div>
           </div>
         </div>
       )}
