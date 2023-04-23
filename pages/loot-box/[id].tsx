@@ -447,7 +447,7 @@ const LootBoxDetailPage: NextPage = () => {
             {lootBox?.description}
           </div>
         </div>
-        <div className="w-full px-8 md:px-0 md:w-1/2">
+        <div className="w-full px-2 md:px-0 md:w-1/2">
           <div className="flex flex-col w-full mx-auto text-xl border-2 border-red-500 rounded-2xl p-6">
             <div className="text-center uppercase text-3xl font-strange-dreams mb-2 tracking-widest">
               Possible Rewards

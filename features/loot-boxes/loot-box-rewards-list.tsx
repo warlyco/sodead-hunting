@@ -35,11 +35,11 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
             i
           ) => (
             <Fragment key={itemCollection?.id}>
-              <div className="flex w-full flex-1 justify-between rounded-lg p-2">
+              <div className="flex flex-wrap w-full flex-1 justify-between rounded-lg p-2">
                 {/* Top level name */}
                 {!!itemCollection?.name && (
                   <>
-                    <div>{itemCollection?.name}</div>
+                    <div className="font-bold">{itemCollection?.name}</div>
                     <div>{!!payoutChance && payoutChance * 100}%</div>
                   </>
                 )}
@@ -51,8 +51,13 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
                 )}
                 {!!parentName && !itemCollection?.name && (
                   <>
-                    <div className="w-2/5">{parentName}</div>
-                    <div className="flex justify-end w-2/5 flex-wrap">
+                    <div className="w-full flex justify-between lg:w-2/5 font-bold mb-2">
+                      <div>{parentName}</div>
+                      <div className="lg:hidden">
+                        {!!payoutChance && payoutChance * 100}%
+                      </div>
+                    </div>
+                    <div className="flex flex-col justify-end w-full lg:w-2/5 flex-wrap">
                       {!!childRewardCollections &&
                         childRewardCollections.map(
                           ({ itemCollection, hashListCollection }) => (
@@ -60,7 +65,7 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
                               {!!itemCollection?.id && (
                                 <div
                                   key={itemCollection?.id}
-                                  className="mb-2 rounded-lg text-right"
+                                  className="mb-2 rounded-lg lg:text-right"
                                 >
                                   <div>
                                     {itemCollection?.name.replace("1", "")}
@@ -80,7 +85,7 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
                           )
                         )}
                     </div>
-                    <div className="w-1/5 flex justify-end">
+                    <div className="w-full hidden lg:w-1/5 lg:flex justify-end order-1">
                       {!!payoutChance && payoutChance * 100}%
                     </div>
                   </>
