@@ -102,7 +102,7 @@ const DiscordRedirect = () => {
         );
         setUser(data?.user);
         showToast({
-          primaryMessage: "Registeration Successful",
+          primaryMessage: "Registration Successful",
         });
         setTimeout(() => {
           router.push("/hunt/active");
