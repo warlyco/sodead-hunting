@@ -271,9 +271,7 @@ const LootBoxDetailPage: NextPage = () => {
         primaryMessage: "Success!",
         secondaryMessage:
           VAMP_TOKEN_ID === data?.reward?.item?.token?.id
-            ? `You received ${data?.reward.amount / 1000000000} ${
-                data?.reward?.name
-              }!`
+            ? `You received ${data?.reward.amount / 1000000000} $VAMP!`
             : `You received ${data?.reward?.item?.name}!`,
       });
 
