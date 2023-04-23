@@ -1,15 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import request from "graphql-request";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Creature } from "@/features/creatures/creature-list";
 import { client } from "@/graphql/backend-client";
-import { ADD_TOKEN } from "@/graphql/mutations/add-token";
-import { ADD_CREATURE } from "@/graphql/mutations/add-creature";
-import { ADD_TRAIT_INSTANCE } from "@/graphql/mutations/add-trait-instance";
-import { Token } from "@/features/admin/tokens/tokens-list-item";
-import { GET_TRAIT_BY_NAME } from "@/graphql/queries/get-trait-by-name";
 import { GET_CREATURE_BY_TOKEN_MINT_ADDRESS } from "@/graphql/queries/get-creature-by-token-mint-address";
-import { Trait } from "@/pages/api/add-creatures-from-nfts";
 import { UPDATE_CREATURE } from "@/graphql/mutations/update-creature";
 import { Metaplex } from "@metaplex-foundation/js";
 import { RPC_ENDPOINT } from "@/constants/constants";

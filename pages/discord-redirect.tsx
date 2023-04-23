@@ -1,6 +1,5 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import axios from "axios";
-import { BASE_URL } from "@/constants/constants";
 import showToast from "@/features/toasts/show-toast";
 import Spinner from "@/features/UI/spinner";
 import { useRouter } from "next/router";

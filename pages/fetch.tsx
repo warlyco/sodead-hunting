@@ -16,7 +16,7 @@ export default function FetchPage() {
     const START = 6000;
     const END = collectionHashList.length;
     // const selection = collectionHashList.slice(START, END);
-    const selection = ["f3d3apZ27uXEUuUKykCwq6hatM2HY3pr1MevFzcdLS5"];
+    const selection = ["4d63Sz7MgFoFjhebwpZ2Z175BUJvA3LC4StWRveRhAT8"];
     console.log({
       selection: selection.length,
 
@@ -57,7 +57,7 @@ export default function FetchPage() {
   }, [publicKey, connection]);
 
   useEffect(() => {
-    // fetchCollection();
+    fetchCollection();
   }, [connection, fetchCollection, publicKey]);
 
   return (

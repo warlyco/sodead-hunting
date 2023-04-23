@@ -8,7 +8,6 @@ import {
 } from "@/utils/creatures";
 import classNames from "classnames";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export const CreatureListItem = ({
@@ -22,21 +21,15 @@ export const CreatureListItem = ({
   isSelected?: boolean;
   activity?: Hunt;
 }) => {
-  const { isDebugMode, setIsDebugMode } = useDebugMode();
+  const { isDebugMode } = useDebugMode();
   const [activityInstance, setActivityInstance] =
     useState<Creature["mainCharacterActivityInstances"][0]>();
 
   useEffect(() => {
     if (!activity) return;
-    setIsDebugMode(true);
     getCreaturesNotInActivity([creature], activity)[0];
     setActivityInstance(getCreatureActiveInstance(creature));
-  }, [
-    activity,
-    creature,
-    creature.mainCharacterActivityInstances,
-    setIsDebugMode,
-  ]);
+  }, [activity, creature, creature.mainCharacterActivityInstances]);
 
   return (
     <>

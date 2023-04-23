@@ -15,8 +15,6 @@ export const PLATFORM_TOKEN_MINT_ADDRESS =
 export const REWARD_TOKEN_MINT_ADDRESS =
   process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT_ADDRESS || "";
 
-export const NON_PAYMENT_PAYOUT_ID = "a5f35bd8-6445-4804-8b8a-261c33ccfc64";
-
 export const HASH_LISTS = {
   "Lady Vampires": "51777308-8f32-4af5-aead-835862f066ce",
   "Lady Vampire Tribes": "f7accf17-1703-4a76-9798-6634a6774a5b",

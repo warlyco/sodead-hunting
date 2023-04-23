@@ -1,9 +1,9 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { NON_PAYMENT_PAYOUT_ID, RPC_ENDPOINT } from "@/constants/constants";
+import { RPC_ENDPOINT } from "@/constants/constants";
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
 import { client } from "@/graphql/backend-client";
 import { ADD_ITEM_PAYOUT } from "@/graphql/mutations/add-item-payout";
 import { ADD_PAYOUT } from "@/graphql/mutations/add-payout";
+import { INVALIDATE_FROM_HUNT } from "@/graphql/mutations/invalidate-from-hunt";
 import { REMOVE_FROM_HUNT } from "@/graphql/mutations/remove-from-hunt";
 import { GET_HUNT_BY_ID } from "@/graphql/queries/get-hunt-by-id";
 import { PublicKey } from "@metaplex-foundation/js";
@@ -71,15 +71,13 @@ export default async function handler(
 
   if (shouldInvalidate) {
     for (const mainCharacterId of mainCharacterIds) {
-      // TODO: add user or wallet to payout
       const {
         update_sodead_activityInstances,
       }: { update_sodead_activityInstances: any } = await client.request({
-        document: REMOVE_FROM_HUNT,
+        document: INVALIDATE_FROM_HUNT,
         variables: {
           activityId: huntId,
           mainCharacterId,
-          payoutId: NON_PAYMENT_PAYOUT_ID,
         },
       });
     }
@@ -220,7 +218,6 @@ export default async function handler(
           payoutId: insert_sodead_payouts_one.id,
         });
 
-        // TODO: add user or wallet to payout
         const {
           update_sodead_activityInstances,
         }: { update_sodead_activityInstances: any } = await client.request({
