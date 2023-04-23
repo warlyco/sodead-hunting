@@ -39,49 +39,53 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
                 {/* Top level name */}
                 {!!itemCollection?.name && (
                   <>
-                    <div>{itemCollection?.name}</div>
+                    <div className="font-bold">{itemCollection?.name}</div>
                     <div>{!!payoutChance && payoutChance * 100}%</div>
                   </>
                 )}
                 {!!hashListCollection?.id && (
                   <>
-                    <div>{hashListCollection?.name}</div>
+                    <div className="font-bold">{hashListCollection?.name}</div>
                     <div>{!!payoutChance && payoutChance * 100}%</div>
                   </>
                 )}
                 {!!parentName && !itemCollection?.name && (
                   <>
-                    <div className="w-2/5">{parentName}</div>
-                    <div className="flex justify-end w-2/5 flex-wrap">
-                      {!!childRewardCollections &&
-                        childRewardCollections.map(
-                          ({ itemCollection, hashListCollection }) => (
-                            <>
-                              {!!itemCollection?.id && (
-                                <div
-                                  key={itemCollection?.id}
-                                  className="mb-2 rounded-lg text-right"
-                                >
-                                  <div>
-                                    {itemCollection?.name.replace("1", "")}
-                                  </div>
-                                </div>
-                              )}
-                              {JSON.stringify(hashListCollection)}
-                              {!!hashListCollection?.id && (
-                                <div
-                                  key={hashListCollection?.id}
-                                  className="mb-2 rounded-lg"
-                                >
-                                  <div>{hashListCollection?.name}</div>
-                                </div>
-                              )}
-                            </>
-                          )
-                        )}
+                    <div className="w-full lg:w-2/5 font-bold">
+                      {parentName}
                     </div>
-                    <div className="w-1/5 flex justify-end">
-                      {!!payoutChance && payoutChance * 100}%
+                    <div className="flex w-full lg:w-3/5 flex-wrap">
+                      <div className="flex justify-end w-full lg:w-2/5 flex-wrap order-2 lg:order-1">
+                        {!!childRewardCollections &&
+                          childRewardCollections.map(
+                            ({ itemCollection, hashListCollection }) => (
+                              <>
+                                {!!itemCollection?.id && (
+                                  <div
+                                    key={itemCollection?.id}
+                                    className="mb-2 rounded-lg text-right"
+                                  >
+                                    <div>
+                                      {itemCollection?.name.replace("1", "")}
+                                    </div>
+                                  </div>
+                                )}
+                                {JSON.stringify(hashListCollection)}
+                                {!!hashListCollection?.id && (
+                                  <div
+                                    key={hashListCollection?.id}
+                                    className="mb-2 rounded-lg"
+                                  >
+                                    <div>{hashListCollection?.name}</div>
+                                  </div>
+                                )}
+                              </>
+                            )
+                          )}
+                      </div>
+                      <div className="flex justify-end w-full lg:w-1/5 mb-2">
+                        {!!payoutChance && payoutChance * 100}%
+                      </div>
                     </div>
                   </>
                 )}

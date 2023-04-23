@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { BackButton } from "@/features/UI/buttons/back-button";
@@ -11,6 +11,11 @@ import { GET_HUNT_BY_ID } from "@/graphql/queries/get-hunt-by-id";
 import { Panel } from "@/features/UI/panel";
 import { formatDateTime } from "@/utils/date-time";
 import { formatNumberWithCommas } from "@/utils/formatting";
+import axios from "axios";
+import { BASE_URL } from "@/constants/constants";
+import { PrimaryButton } from "@/features/UI/buttons/primary-button";
+import { SecondaryButton } from "@/features/UI/buttons/secondary-button";
+import showToast from "@/features/toasts/show-toast";
 
 const HuntDetailPage = () => {
   const router = useRouter();
@@ -19,7 +24,7 @@ const HuntDetailPage = () => {
   const [hunt, setHunt] = useState<Hunt | null>(null);
   const { isAdmin } = useAdmin();
 
-  const { loading, error } = useQuery(GET_HUNT_BY_ID, {
+  const { loading, error, refetch } = useQuery(GET_HUNT_BY_ID, {
     variables: { id },
     skip: !id,
     onCompleted: ({ sodead_activities_by_pk }) => {
@@ -27,6 +32,18 @@ const HuntDetailPage = () => {
       setHasBeenFetched(true);
     },
   });
+
+  const toggleIsActive = async () => {
+    if (!hunt) return;
+    await axios.post(`${BASE_URL}/api/enable-disable-activity`, {
+      id: hunt.id,
+      enable: !hunt.isActive,
+    });
+    await refetch();
+    showToast({
+      primaryMessage: `Hunt ${hunt.isActive ? "disabled" : "enabled"}`,
+    });
+  };
 
   if (!isAdmin) return <NotAdminBlocker />;
 
@@ -37,7 +54,7 @@ const HuntDetailPage = () => {
       {!hunt && hasBeenFetched && <div>Item not found</div>}
       {!!hunt && (
         <>
-          <ContentWrapper>
+          <ContentWrapper className="pb-16">
             <div className="flex w-full mb-8 px-4">
               <BackButton />
             </div>
@@ -53,6 +70,13 @@ const HuntDetailPage = () => {
                   />
                 </div>
                 <h1 className="text-3xl mb-6">{hunt.name}</h1>
+                <div className="flex w-48 justify-between mb-4">
+                  <div>Status:</div>
+                  <div>{hunt.isActive ? "Active" : "Inactive"}</div>
+                </div>
+                <SecondaryButton onClick={toggleIsActive} className="mb-8">
+                  {hunt.isActive ? "Disable" : "Enable"}
+                </SecondaryButton>
                 <div className="text-lg italic mb-8">{hunt.description}</div>
                 <div className="flex w-full justify-between mb-4">
                   <div>Start time:</div>

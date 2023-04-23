@@ -88,7 +88,7 @@ export const CreatureList = ({
               <div
                 onClick={() => selectCreature(creature)}
                 key={creature.id}
-                className="w-1/2 md:w-1/3 p-2 cursor-pointer hover:scale-[1.04] transition-all duration-300"
+                className="w-full sm:w-1/2 md:w-1/3 p-2 cursor-pointer hover:scale-[1.04] transition-all duration-300"
               >
                 <CreatureListItem
                   activity={activity}

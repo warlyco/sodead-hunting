@@ -13,6 +13,10 @@ import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
 import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
 import { RarityBadge } from "@/features/UI/badges/rarity-badge";
 import { LootBoxRewards } from "@/features/loot-boxes/loot-box-rewards-list";
+import { SecondaryButton } from "@/features/UI/buttons/secondary-button";
+import { BASE_URL } from "@/constants/constants";
+import axios from "axios";
+import showToast from "@/features/toasts/show-toast";
 
 const LootBoxDetailPage = () => {
   const router = useRouter();
@@ -24,7 +28,7 @@ const LootBoxDetailPage = () => {
     LootBox["rewardCollections"]
   >([]);
 
-  const { loading, error } = useQuery(GET_LOOT_BOX_BY_ID, {
+  const { loading, error, refetch } = useQuery(GET_LOOT_BOX_BY_ID, {
     variables: { id },
     skip: !id,
     onCompleted: ({
@@ -41,6 +45,18 @@ const LootBoxDetailPage = () => {
       setHasBeenFetched(true);
     },
   });
+
+  const toggleIsEnabled = async () => {
+    if (!lootBox) return;
+    await axios.post(`${BASE_URL}/api/enable-disable-loot-box`, {
+      id: lootBox.id,
+      enable: !lootBox.isEnabled,
+    });
+    await refetch();
+    showToast({
+      primaryMessage: `Lootbox ${lootBox.isEnabled ? "disabled" : "enabled"}`,
+    });
+  };
 
   if (!isAdmin) return <NotAdminBlocker />;
 
@@ -67,6 +83,13 @@ const LootBoxDetailPage = () => {
                   />
                 </div>
                 <h1 className="text-3xl mb-6">{lootBox.name}</h1>
+                <div className="flex w-48 justify-between mb-4">
+                  <div>Status:</div>
+                  <div>{lootBox.isEnabled ? "Enabled" : "Disabled"}</div>
+                </div>
+                <SecondaryButton onClick={toggleIsEnabled} className="mb-8">
+                  {lootBox.isEnabled ? "Disable" : "Enable"}
+                </SecondaryButton>
                 <a
                   className="uppercase mb-8 underline"
                   href={`/admin/loot-box/${id}/payouts`}
