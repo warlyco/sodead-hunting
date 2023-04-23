@@ -49,6 +49,7 @@
     "react": "^18.2.0",
     "react-dom": "18.2.0",
     "react-hot-toast": "^2.4.0",
+    "react-scrolllock": "^5.0.1",
     "tailwindcss-opentype": "^1.1.0",
     "typescript": "4.9.5"
   },

@@ -1,5 +1,7 @@
+import Sidebar from "@/features/navigation/sidebar";
 import classnames from "classnames";
 import dynamic from "next/dynamic";
+import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 
 type Props = {
@@ -8,14 +10,18 @@ type Props = {
 };
 
 export default function MainLayout({ children, centered }: Props) {
-  const Navbar = dynamic(() => import("@/features/navbar/navbar"), {
+  const Navbar = dynamic(() => import("@/features/navigation/navbar"), {
     ssr: false,
   });
 
+  const [isOpenSidebar, setIsOpenSidebar] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsOpenSidebar(!isOpenSidebar);
+  };
+
   return (
     <div className="bg-stone-900" suppressHydrationWarning={true}>
-      <Navbar />
-      <Toaster />
       <div>
         <main
           className={classnames([
@@ -26,6 +32,9 @@ export default function MainLayout({ children, centered }: Props) {
           {children}
         </main>
       </div>
+      <Navbar toggleSidebar={toggleSidebar} />
+      <Toaster />
+      <Sidebar isOpenSidebar={isOpenSidebar} toggleSidebar={toggleSidebar} />
     </div>
   );
 }
