@@ -2,13 +2,14 @@ import { ContentWrapper } from "@/features/UI/content-wrapper";
 import Spinner from "@/features/UI/spinner";
 import { Creature } from "@/features/creatures/creature-list";
 import { GET_CREATURE_BY_ID } from "@/graphql/queries/get-creature-by-id";
+import { GET_CREATURE_BY_TOKEN_MINT_ADDRESS } from "@/graphql/queries/get-creature-by-token-mint-address";
 import { GET_PAYOUTS_BY_CREATURE_ID } from "@/graphql/queries/get-payouts-by-creature-id";
 import { useUser } from "@/hooks/user";
 import { Trait } from "@/pages/api/add-creatures-from-nfts";
 import { formatDateTime } from "@/utils/date-time";
 import { getAbbreviatedAddress } from "@/utils/formatting";
 import { getHashForTraitCombination } from "@/utils/nfts/get-hash-for-trait-combination";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { NextPage } from "next";
 import Image from "next/image";
@@ -76,6 +77,26 @@ const ProfilePage: NextPage = () => {
     },
   });
 
+  // const { loading: loadingByMintAddress } = useQuery(
+  //   GET_CREATURE_BY_TOKEN_MINT_ADDRESS,
+  //   {
+  //     variables: {
+  //       mintAddress: wallet.publicKey?.toBase58(),
+  //     },
+  //     skip: !id || id.includes("-"),
+  //     fetchPolicy: "network-only",
+  //     onCompleted: async ({ sodead_creatures }) => {
+  //       console.log({ sodead_creatures });
+  //       setCreature(sodead_creatures[0]);
+  //       setTraits(sodead_creatures[0]?.traitInstances || []);
+
+  //       setTraitCombinationHash(
+  //         await getHashForTraitCombination(sodead_creatures[0]?.traitInstances)
+  //       );
+  //     },
+  //   }
+  // );
+
   const { loading: payoutsLoading } = useQuery(GET_PAYOUTS_BY_CREATURE_ID, {
     variables: {
       id,
@@ -87,7 +108,7 @@ const ProfilePage: NextPage = () => {
     },
   });
 
-  if (loading || loadingUser)
+  if (loading || loadingUser || payoutsLoading)
     return (
       <ContentWrapper>
         <div className="flex s-full justify-center">
@@ -128,6 +149,19 @@ const ProfilePage: NextPage = () => {
           <div className="break-all">
             {getAbbreviatedAddress(creature.token.mintAddress)}
           </div>
+          <a
+            className="flex justify-center items-center underline"
+            href={`https://explorer.solana.com/address/${creature.token.mintAddress}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Image
+              src="/images/solana-logo.svg"
+              width={12}
+              height={12}
+              alt="Solana"
+            />
+          </a>
         </div>
         <div className="flex flex-wrap w-full justify-between mb-16 max-w-xs text-2xl font-strange-dreams">
           <div>Trait Hash</div>

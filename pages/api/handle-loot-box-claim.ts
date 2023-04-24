@@ -29,6 +29,7 @@ import { ADD_LOOTBOX_PAYOUT } from "@/graphql/mutations/add-lootbox-payout";
 import { Wallet } from "@/pages/me";
 import { GET_WALLET_BY_ADDRESS } from "@/graphql/queries/get-wallet-by-address";
 import { ADD_LOOTBOX_ITEM_PAYOUT } from "@/graphql/mutations/add-lootbox-item-payout";
+import { NoopResponse } from "@/pages/api/add-account";
 
 const getWeightedRandomReward = (items: any[], weights: any[]) => {
   var i;
@@ -53,6 +54,7 @@ const fetchInfoFromHelius = async (burnTxAddress: string) => {
 
 type Data =
   | Payout
+  | NoopResponse
   | any
   | {
       error: unknown;
@@ -62,7 +64,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { burnTxAddress, lootBoxId } = req.body;
+  const { burnTxAddress, lootBoxId, noop } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   if (!burnTxAddress || !lootBoxId || !process.env.REWARD_PRIVATE_KEY) {
     res.status(500).json({ error: "Required fields not set" });

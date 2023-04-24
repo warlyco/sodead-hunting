@@ -1,13 +1,14 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
 import { client } from "@/graphql/backend-client";
-import { ADD_CLAIM } from "@/graphql/mutations/add-claim";
 import { ADD_TO_HUNT } from "@/graphql/mutations/add-to-hunt";
 import { GET_HUNT_BY_ID } from "@/graphql/queries/get-hunt-by-id";
+import { NoopResponse } from "@/pages/api/add-account";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data =
   | Hunt[]
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -16,7 +17,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { huntId, mainCharacterIds } = req.body;
+  const { huntId, mainCharacterIds, noop } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   if (!huntId || !mainCharacterIds) {
     res.status(500).json({ error: "Required fields not set" });

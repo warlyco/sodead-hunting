@@ -9,6 +9,7 @@ import { ADD_TRAIT_INSTANCE } from "@/graphql/mutations/add-trait-instance";
 import { Token } from "@/features/admin/tokens/tokens-list-item";
 import { GET_TRAIT_BY_NAME } from "@/graphql/queries/get-trait-by-name";
 import { GET_CREATURE_BY_TOKEN_MINT_ADDRESS } from "@/graphql/queries/get-creature-by-token-mint-address";
+import { NoopResponse } from "@/pages/api/add-account";
 
 export type Trait = {
   id: string;
@@ -18,6 +19,8 @@ export type Trait = {
 
 type Data =
   | Creature[]
+  | NoopResponse
+  | { success: boolean; message: string }
   | {
       error: unknown;
     };
@@ -26,7 +29,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { nfts } = req.body;
+  const { nfts, noop } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   console.log({ nfts });
 
@@ -113,5 +121,10 @@ export default async function handler(
     }
   }
 
-  res.status(200).json(response);
+  if (!response?.length) {
+    res.status(200).json({ success: true, message: "Creature already exists" });
+    return;
+  }
+
+  res.status(200).json({ success: true, message: "Creature added" });
 }

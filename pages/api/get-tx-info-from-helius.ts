@@ -1,4 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { NoopResponse } from "@/pages/api/add-account";
 import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -40,6 +41,7 @@ export type EnhancedTransactionFromHelius = {
 
 type Data =
   | EnhancedTransactionFromHelius
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -48,7 +50,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { txAddress } = req.body;
+  const { txAddress, noop } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   if (!txAddress || !process.env.HELIUS_API_KEY) {
     res.status(500).json({ error: "Required fields not set" });

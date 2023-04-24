@@ -7,9 +7,11 @@ import axios from "axios";
 import { BASE_URL } from "@/constants/constants";
 import { GET_ITEM_BY_ID } from "@/graphql/queries/get-item-by-id";
 import { Item } from "@/pages/api/add-item";
+import { NoopResponse } from "@/pages/api/add-account";
 
 type Data =
   | Token
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -18,7 +20,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { mintAddress, itemId } = req.body;
+  const { mintAddress, itemId, noop } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   if (!itemId || !mintAddress) {
     res.status(500).json({ error: "Required fields not set" });
@@ -52,13 +59,11 @@ export default async function handler(
       token = newToken;
     } catch (error: any) {
       console.error({ error: error?.response?.data?.error?.response });
-      res
-        .status(500)
-        .json({
-          error:
-            error?.response?.data?.error?.response ||
-            "There was an unexpected error adding the token",
-        });
+      res.status(500).json({
+        error:
+          error?.response?.data?.error?.response ||
+          "There was an unexpected error adding the token",
+      });
       return;
     }
   }

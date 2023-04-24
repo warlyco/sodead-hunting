@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { client } from "@/graphql/backend-client";
 import { ADD_CLAIM } from "@/graphql/mutations/add-claim";
+import { NoopResponse } from "@/pages/api/add-account";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export type Claim = {
@@ -20,6 +21,7 @@ export type Claim = {
 
 type Data =
   | Claim
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -28,8 +30,13 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { amount, claimTime, lootBoxId, txAddress, userId, walletId } =
+  const { amount, claimTime, lootBoxId, txAddress, userId, walletId, noop } =
     req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   if (
     !amount ||

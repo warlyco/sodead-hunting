@@ -2,9 +2,11 @@ import { client } from "@/graphql/backend-client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Token } from "@/features/admin/tokens/tokens-list-item";
 import { UNBIND_ITEM_FROM_TOKEN } from "@/graphql/mutations/unbind-item-from-token";
+import { NoopResponse } from "@/pages/api/add-account";
 
 type Data =
   | Token
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -13,7 +15,13 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { id } = req.body;
+  const { id, noop } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
+
   console.log("unbind-token.ts", { id });
 
   if (!id) {

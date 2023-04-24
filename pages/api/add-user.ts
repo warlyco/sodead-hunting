@@ -9,7 +9,7 @@ import { client } from "@/graphql/backend-client";
 import { GET_WALLET_BY_ADDRESS } from "@/graphql/queries/get-wallet-by-address";
 import { User } from "@/features/admin/users/users-list-item";
 import { BIND_WALLET_TO_USER } from "@/graphql/mutations/bind-wallet-to-user";
-import { UserAndAccountResponse } from "@/pages/api/add-account";
+import { NoopResponse, UserAndAccountResponse } from "@/pages/api/add-account";
 
 export type UserAndWalletResponse = {
   wallet: Wallet;
@@ -19,6 +19,7 @@ export type UserAndWalletResponse = {
 type Data =
   | UserAndWalletResponse
   | Wallet
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -27,7 +28,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { walletAddress, discordUser, tokenType, accessToken } = req.body;
+  const { walletAddress, discordUser, tokenType, accessToken, noop } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   if (!walletAddress || !discordUser || !tokenType || !accessToken) {
     res.status(500).json({ error: "Required fields not set" });

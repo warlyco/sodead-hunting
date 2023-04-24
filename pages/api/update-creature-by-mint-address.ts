@@ -9,9 +9,11 @@ import { RPC_ENDPOINT } from "@/constants/constants";
 import { Connection } from "@solana/web3.js";
 import { fetchNftsWithMetadata } from "@/utils/nfts/fetch-nfts-with-metadata";
 import { addTraitsToDb } from "@/utils/nfts/add-traits-to-db";
+import { NoopResponse } from "@/pages/api/add-account";
 
 type Data =
   | any
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -20,7 +22,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { mintAddresses } = req.body;
+  const { mintAddresses, noop } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   console.log({ mintAddresses });
 

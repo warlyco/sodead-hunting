@@ -5,10 +5,13 @@ import Link from "next/link";
 import {
   Bars3CenterLeftIcon,
   Bars3Icon,
+  BugAntIcon,
   KeyIcon,
 } from "@heroicons/react/24/outline";
+import { useDebugMode } from "@/hooks/debug-mode";
 
 const Navbar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
+  const { isDebugMode, setIsDebugMode } = useDebugMode();
   const { isAdmin } = useAdmin();
 
   return (
@@ -36,11 +39,19 @@ const Navbar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
           <Link href="/hunt/active">Hunts</Link>
           <Link href="/loot-box/active">Lootboxes</Link>
         </div>
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-2">
           {isAdmin && (
-            <Link href="/admin" className="p-3 rounded-2xl hidden md:block">
-              <KeyIcon className="w-6 h-6 text-stone-300" />
-            </Link>
+            <>
+              <button
+                onClick={() => setIsDebugMode(!isDebugMode)}
+                className="p-3 rounded-2xl hidden md:block"
+              >
+                <BugAntIcon className="w-6 h-6 text-stone-300" />
+              </button>
+              <Link href="/admin" className="p-3 rounded-2xl hidden md:block">
+                <KeyIcon className="w-6 h-6 text-stone-300" />
+              </Link>
+            </>
           )}
           <div className="hidden md:block">
             <WalletMultiButton />

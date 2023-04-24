@@ -3,9 +3,11 @@ import { client } from "@/graphql/backend-client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { removeEmpty } from "@/utils/object";
 import { UPDATE_ITEM } from "@/graphql/mutations/update-item";
+import { NoopResponse } from "@/pages/api/add-account";
 
 type Data =
   | Item
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -14,7 +16,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { id, tokenMintAddress, nftMintAddress } = req.body;
+  const { id, tokenMintAddress, nftMintAddress, noop } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   if (!id || !(tokenMintAddress && nftMintAddress)) {
     res.status(500).json({ error: "Required fields not set" });

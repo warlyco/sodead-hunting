@@ -1,4 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { NoopResponse } from "@/pages/api/add-account";
 import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -10,6 +11,7 @@ const SO_DEAD_FIRST_VERIFIED_CREATORS = [
 
 type Data =
   | any
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -22,7 +24,13 @@ export default async function handler(
     walletAddress,
     firstVerifiedCreators = SO_DEAD_FIRST_VERIFIED_CREATORS,
     startTime,
+    noop,
   } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   if (
     !walletAddress ||

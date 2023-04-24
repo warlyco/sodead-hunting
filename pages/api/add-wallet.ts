@@ -3,11 +3,13 @@
 import { User } from "@/features/admin/users/users-list-item";
 import { client } from "@/graphql/backend-client";
 import { ADD_WALLET } from "@/graphql/mutations/add-wallet";
+import { NoopResponse } from "@/pages/api/add-account";
 import request from "graphql-request";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data =
   | User
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -16,7 +18,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { address } = req.body;
+  const { address, noop } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   console.log("~~adding wallet", address);
 

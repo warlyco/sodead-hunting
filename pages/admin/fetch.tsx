@@ -14,6 +14,7 @@ import { FormInputWithLabel } from "@/features/UI/forms/form-input-with-label";
 import { useFormik } from "formik";
 import { useUser } from "@/hooks/user";
 import { SubmitButton } from "@/features/UI/buttons/submit-button";
+import showToast from "@/features/toasts/show-toast";
 
 export default function FetchPage() {
   const { publicKey } = useWallet();
@@ -22,12 +23,14 @@ export default function FetchPage() {
   const router = useRouter();
   const [mintAddress, setMintAddress] = useState("");
   const { user, setUser } = useUser();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const fetchCollection = useCallback(async () => {
+  const fetchCollection = async (mintAddress: string) => {
     // get first 10 items from collectionHashList
     // const START = 6000;
     // const END = collectionHashList.length;
     // const selection = collectionHashList.slice(START, END);
+    if (!mintAddress.length) return;
     const selection = [mintAddress];
     if (!selection.length) return;
     console.log({
@@ -61,20 +64,39 @@ export default function FetchPage() {
     console.log({ nftsWithMetadata });
     console.log(nftMetasFromMetaplex.length, nftsWithMetadata.length);
 
-    const { data } = await axios.post("/api/add-creatures-from-nfts", {
-      nfts: nftsWithMetadata,
-    });
+    let returnData;
 
-    console.log(nftMetasFromMetaplex, nftsWithMetadata, data);
-  }, [mintAddress, publicKey, connection]);
+    try {
+      const { data } = await axios.post("/api/add-creatures-from-nfts", {
+        nfts: nftsWithMetadata,
+      });
+
+      returnData = data;
+
+      showToast({
+        primaryMessage: data?.message,
+      });
+      formik.setFieldValue("mintAddress", "");
+    } catch (error) {
+      console.log(error);
+      showToast({
+        primaryMessage: "Error adding creature to db",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+
+    console.log(nftMetasFromMetaplex, nftsWithMetadata, returnData);
+  };
 
   const formik = useFormik({
     initialValues: {
       mintAddress: "",
     },
     onSubmit: async ({ mintAddress }) => {
+      setIsLoading(true);
       setMintAddress(mintAddress);
-      fetchCollection();
+      await fetchCollection(mintAddress);
     },
   });
 
@@ -100,7 +122,7 @@ export default function FetchPage() {
       </FormWrapper>
       <div className="flex w-full justify-center mt-8">
         <SubmitButton
-          isSubmitting={formik.isSubmitting}
+          isSubmitting={formik.isSubmitting || isLoading}
           onClick={formik.handleSubmit}
           disabled={!formik.values.mintAddress}
         />

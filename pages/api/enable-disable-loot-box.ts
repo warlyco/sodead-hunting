@@ -3,10 +3,12 @@
 import { User } from "@/features/admin/users/users-list-item";
 import { client } from "@/graphql/backend-client";
 import { ENABLE_DISABLE_LOOT_BOX } from "@/graphql/mutations/enable-disable-loot-box";
+import { NoopResponse } from "@/pages/api/add-account";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data =
   | User
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -15,7 +17,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { id, enable } = req.body;
+  const { id, enable, noop } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   if (!id) {
     res.status(500).json({ error: "Required fields not set" });

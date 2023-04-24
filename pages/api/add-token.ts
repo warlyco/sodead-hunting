@@ -5,6 +5,7 @@ import { ADD_TOKEN } from "@/graphql/mutations/add-token";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { BASE_URL } from "@/constants/constants";
 import { client } from "@/graphql/backend-client";
+import { NoopResponse } from "@/pages/api/add-account";
 
 export type TokenMetadata = {
   image: string;
@@ -15,6 +16,7 @@ export type TokenMetadata = {
 
 type Data =
   | TokenMetadata
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -23,7 +25,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { mintAddress } = req.body;
+  const { mintAddress, noop } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   if (!mintAddress || !process.env.HELIUS_API_KEY) {
     res.status(500).json({ error: "Required fields not set" });

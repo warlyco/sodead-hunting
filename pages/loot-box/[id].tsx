@@ -11,6 +11,7 @@ import { ADD_BURN_ATTEMPT } from "@/graphql/mutations/add-burn-attempt";
 import { GET_HASH_LIST_BY_ID } from "@/graphql/queries/get-hash-list-by-id";
 import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
 import { GET_LOOT_BOX_PAYOUTS_BY_WALLET_ADDRESS } from "@/graphql/queries/get-loot-box-payouts-by-wallet-address";
+import { useAdmin } from "@/hooks/admin";
 import { useUser } from "@/hooks/user";
 import { Payout } from "@/pages/profile/[id]";
 import { formatDateTime } from "@/utils/date-time";
@@ -41,6 +42,7 @@ const LootBoxDetailPage: NextPage = () => {
   const wallet = useWallet();
   const { connection } = useConnection();
   const { user, loadingUser, setUser } = useUser();
+  const { isAdmin } = useAdmin();
   const router = useRouter();
   const { id } = router.query;
   const [lootBox, setLootBox] = useState<LootBox | null>(null);
@@ -410,7 +412,7 @@ const LootBoxDetailPage: NextPage = () => {
     );
   }
 
-  if (!!lootBox?.id && !lootBox?.isEnabled) {
+  if (!!lootBox?.id && !lootBox?.isEnabled && !isAdmin) {
     return (
       <ContentWrapper className="flex flex-col items-center">
         <div className="pt-48">No lootbox found</div>
@@ -432,6 +434,11 @@ const LootBoxDetailPage: NextPage = () => {
       <h1 className="text-5xl font-strange-dreams text-center mb-12 tracking-wider">
         {lootBox?.name}
       </h1>
+      {!lootBox?.isEnabled && isAdmin && (
+        <div className="text-2xl uppercase text-red-500 bg-stone-300 p-2 rounded-lg w-full text-center mb-16 max-w-md mx-auto">
+          disabled
+        </div>
+      )}
       <div className="flex items-center justify-center flex-wrap mb-16">
         <div className="flex-col flex w-full justify-center md:w-1/2 items-center mb-16 md:mb-0">
           <ImageWithFallback

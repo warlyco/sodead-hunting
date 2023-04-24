@@ -3,6 +3,7 @@ import request from "graphql-request";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ADD_ITEM } from "@/graphql/mutations/add-item";
 import { client } from "@/graphql/backend-client";
+import { NoopResponse } from "@/pages/api/add-account";
 
 export type Item = {
   rarity: {
@@ -68,6 +69,7 @@ export type Item = {
 
 type Data =
   | Item
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -83,7 +85,13 @@ export default async function handler(
     name,
     itemCategoryId,
     description,
+    noop,
   } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   if (!name) {
     res.status(500).json({ error: "Required fields not set" });

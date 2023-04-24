@@ -6,6 +6,7 @@ import { ADD_PAYOUT } from "@/graphql/mutations/add-payout";
 import { INVALIDATE_FROM_HUNT } from "@/graphql/mutations/invalidate-from-hunt";
 import { REMOVE_FROM_HUNT } from "@/graphql/mutations/remove-from-hunt";
 import { GET_HUNT_BY_ID } from "@/graphql/queries/get-hunt-by-id";
+import { NoopResponse } from "@/pages/api/add-account";
 import { PublicKey } from "@metaplex-foundation/js";
 import {
   createAssociatedTokenAccountInstruction,
@@ -41,6 +42,7 @@ type InvalidationResponse = {
 type Data =
   | RemoveFromHuntResponse
   | InvalidationResponse
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -54,10 +56,13 @@ export default async function handler(
     mainCharacterIds,
     walletAddress,
     shouldInvalidate = false,
+    noop,
   } = req.body;
 
-  // remove nulls from array
-  mainCharacterIds;
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   if (
     !huntId ||

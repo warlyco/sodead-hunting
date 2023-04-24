@@ -1,11 +1,14 @@
 import { PrimaryButton } from "@/features/UI/buttons/primary-button";
 import { SecondaryButton } from "@/features/UI/buttons/secondary-button";
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
+import { useAdmin } from "@/hooks/admin";
+import { useDebugMode } from "@/hooks/debug-mode";
 import {
   convertSecondsToDaysAndHoursAndMinutesString,
   formatDateTime,
 } from "@/utils/date-time";
 import classNames from "classnames";
+import { useEffect } from "react";
 
 export const HuntDetailsInfoBox = ({
   hunt,
@@ -18,6 +21,8 @@ export const HuntDetailsInfoBox = ({
   showExpandedInfo?: boolean;
   children?: React.ReactNode;
 }) => {
+  const { isDebugMode, setIsDebugMode } = useDebugMode();
+  const { isAdmin } = useAdmin();
   const {
     startTime,
     endTime,
@@ -44,36 +49,54 @@ export const HuntDetailsInfoBox = ({
             {convertSecondsToDaysAndHoursAndMinutesString(durationInSeconds)}
           </div>
         </div>
-        {/* <div className="flex justify-between">
-          <div>Max concurrent hunters:</div>
-          <div>
-            {maxConcurrentParticipants > 10000
-              ? "Unlimited"
-              : maxConcurrentParticipants}
-          </div>
-        </div>
-        <div className="flex justify-between">
-          <div>Max total hunters:</div>
-          <div>
-            {maxTotalParticipants > 10000 ? "Unlimited" : maxTotalParticipants}
-          </div>
-        </div> */}
-        {/* <div className="flex justify-between">
-          <div className="w-1/2">Restrictions:</div>
-          <div className="w-1/2 ">
-            {!!restrictionCollections?.length
-              ? restrictionCollections?.map((restirctionCollection, i) => (
-                  <div key={restirctionCollection.id}>
-                    {restirctionCollection.traitCollection?.name}
-                  </div>
-                ))
-              : "None"}
-          </div>
-        </div> */}
+        {!!isDebugMode && isAdmin && (
+          <>
+            <div className="flex justify-between pb-4">
+              <div>Max concurrent hunters:</div>
+              <div>
+                {maxConcurrentParticipants > 10000
+                  ? "Unlimited"
+                  : maxConcurrentParticipants}
+              </div>
+            </div>
+            <div className="flex justify-between pb-4">
+              <div>Max total hunters:</div>
+              <div>
+                {maxTotalParticipants > 10000
+                  ? "Unlimited"
+                  : maxTotalParticipants}
+              </div>
+            </div>
+            <div className="flex justify-between pb-4">
+              <div className="mr-4">Gates:</div>
+              <div className="text-red-500 font-bold text-right">
+                {!!gateCollections?.length
+                  ? gateCollections?.map((restirctionCollection, i) => (
+                      <div key={restirctionCollection.id}>
+                        {restirctionCollection.traitCollection?.name}
+                      </div>
+                    ))
+                  : "None"}
+              </div>
+            </div>
+            <div className="flex justify-between pb-4">
+              <div className="mr-4">Restrictions:</div>
+              <div className="text-red-500 font-bold text-right">
+                {!!restrictionCollections?.length
+                  ? restrictionCollections?.map((restirctionCollection, i) => (
+                      <div key={restirctionCollection.id}>
+                        {restirctionCollection.traitCollection?.name}
+                      </div>
+                    ))
+                  : "None"}
+              </div>
+            </div>
+          </>
+        )}
         {!!gateCollections.length && (
           <div className="flex justify-between">
             <div className="mr-4">Requirement:</div>
-            <div className="text-red-500 font-bold">
+            <div className="text-red-500 font-bold text-right">
               {gateCollections?.map((gateCollection, i) => (
                 <div key={gateCollection.id}>
                   {gateCollection.traitCollection?.name}

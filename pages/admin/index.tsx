@@ -11,13 +11,13 @@ import { TraitsList } from "@/features/admin/traits/traits-list";
 import { HuntsList } from "@/features/admin/hunts/hunts-list";
 import { UsersList } from "@/features/admin/users/users-list";
 import { LootBoxesList } from "@/features/admin/loot-boxes/loot-boxes-list";
-import { KeysList } from "@/features/admin/keys/keys-list";
 import { VampiresList } from "@/features/admin/vampires/vampires-list";
 import { CommunitiesList } from "@/features/admin/communities/communities-list";
 import { NftCollectionssList } from "@/features/admin/nft-collections/nfts-collection-list";
 import Link from "next/link";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { NotAdminBlocker } from "@/features/admin/not-admin-blocker";
+import { ToolsList } from "@/features/admin/tools/tools-list";
 
 const primaryTabs: ITab[] = [
   {
@@ -33,8 +33,8 @@ const primaryTabs: ITab[] = [
     value: "creatures",
   },
   {
-    name: "Users & NFTs",
-    value: "users-nfts",
+    name: "Users & Tools",
+    value: "users-tools",
   },
 ];
 
@@ -67,11 +67,6 @@ const itemsTabs: ITab[] = [
     value: "traits",
     parent: "items",
   },
-  {
-    name: "Tokens",
-    value: "tokens",
-    parent: "items",
-  },
 ];
 
 const huntTabs: ITab[] = [
@@ -85,27 +80,18 @@ const huntTabs: ITab[] = [
     value: "loot-boxes",
     parent: "hunting",
   },
-  {
-    name: "Keys",
-    value: "keys",
-    parent: "hunting",
-  },
 ];
 
 const communityTabs: ITab[] = [
   {
     name: "Users",
     value: "users",
+    parent: "users-tools",
   },
   {
-    name: "Communities",
-    value: "communities",
-    parent: "users-nfts",
-  },
-  {
-    name: "Nft Collections",
-    value: "nft-collections",
-    parent: "users-nfts",
+    name: "Tools",
+    value: "tools",
+    parent: "users-tools",
   },
 ];
 
@@ -160,8 +146,6 @@ const Admin: NextPage = () => {
 
   const getCreateLink = () => {
     switch (activeSubTab.value) {
-      case "tokens":
-        return "/admin/token/create";
       case "items":
         return "/admin/item/create";
       default:
@@ -213,7 +197,7 @@ const Admin: NextPage = () => {
             handleSetTab={(tab) => handleSetSubTab(tab)}
           />
         )}
-        {activeTab.value === "users-nfts" && (
+        {activeTab.value === "users-tools" && (
           <Tabs
             tabs={communityTabs}
             activeTab={activeSubTab}
@@ -225,7 +209,6 @@ const Admin: NextPage = () => {
       {/* Hunting */}
       {activeSubTab.value === "hunts" && <HuntsList />}
       {activeSubTab.value === "loot-boxes" && <LootBoxesList />}
-      {activeSubTab.value === "keys" && <KeysList />}
 
       {/* Creatures */}
       {activeSubTab.value === "vampires" && <VampiresList />}
@@ -233,22 +216,19 @@ const Admin: NextPage = () => {
       {activeSubTab.value === "pets" && <div>Pets</div>}
 
       {/* Items */}
-      {activeSubTab.value === "tokens" && <TokensList />}
       {activeSubTab.value === "items" && <ItemsList />}
       {activeSubTab.value === "traits" && <TraitsList />}
 
       {/* Users/NFTs */}
       {activeSubTab.value === "users" && <UsersList />}
-      {activeSubTab.value === "communities" && <CommunitiesList />}
-      {activeSubTab.value === "nft-collections" && <NftCollectionssList />}
-      {activeSubTab.value === "tokens" ||
-        (activeSubTab.value === "items" && (
-          <Link href={getCreateLink()}>
-            <button className="bottom-4 right-4">
-              <PlusCircleIcon className="w-12 h-12 absolute bottom-8 right-16 text-stone-300 hover:text-stone-900 hover:bg-stone-300 rounded-full bg-stone-900 shadow-deep hover:shadow-deep-float" />
-            </button>
-          </Link>
-        ))}
+      {activeSubTab.value === "tools" && <ToolsList />}
+      {activeSubTab.value === "items" && (
+        <Link href={getCreateLink()}>
+          <button className="bottom-4 right-4">
+            <PlusCircleIcon className="w-12 h-12 absolute bottom-8 right-16 text-stone-300 hover:text-stone-900 hover:bg-stone-300 rounded-full bg-stone-900 shadow-deep hover:shadow-deep-float" />
+          </button>
+        </Link>
+      )}
     </ContentWrapper>
   );
 };

@@ -1,6 +1,7 @@
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
 import CountdownTimer from "@/features/countdown/coundown-timer";
 import { Creature } from "@/features/creatures/creature-list";
+import { useAdmin } from "@/hooks/admin";
 import { useDebugMode } from "@/hooks/debug-mode";
 import {
   getCreatureActiveInstance,
@@ -8,6 +9,7 @@ import {
 } from "@/utils/creatures";
 import classNames from "classnames";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export const CreatureListItem = ({
@@ -22,6 +24,7 @@ export const CreatureListItem = ({
   activity?: Hunt;
 }) => {
   const { isDebugMode } = useDebugMode();
+  const { isAdmin } = useAdmin();
   const [activityInstance, setActivityInstance] =
     useState<Creature["mainCharacterActivityInstances"][0]>();
 
@@ -29,7 +32,13 @@ export const CreatureListItem = ({
     if (!activity) return;
     getCreaturesNotInActivity([creature], activity)[0];
     setActivityInstance(getCreatureActiveInstance(creature));
-  }, [activity, creature, creature.mainCharacterActivityInstances]);
+  }, [
+    activity,
+    creature,
+    creature.mainCharacterActivityInstances,
+    isAdmin,
+    isDebugMode,
+  ]);
 
   return (
     <>
@@ -63,18 +72,18 @@ export const CreatureListItem = ({
       </div>
       {!!isDebugMode && (
         <div className="p-2">
-          {/* <Link
+          <Link
             className="underline mb-2 text-center"
             href={`/profile/${creature.id}`}
           >
             Profile page
-          </Link> */}
-          {/* {creature.traitInstances.map(({ id, value, trait }) => (
+          </Link>
+          {creature.traitInstances.map(({ id, value, trait }) => (
             <div key={id} className="flex w-full justify-between">
               <div>{trait.name}</div>
               <div>{value}</div>
             </div>
-          ))} */}
+          ))}
           <div className="flex flex-col w-full justify-between">
             <div className="font-bold">Mint:</div>
             <div className="break-all">{creature.token.mintAddress}</div>

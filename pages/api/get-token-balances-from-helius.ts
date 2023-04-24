@@ -1,4 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { NoopResponse } from "@/pages/api/add-account";
 import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -7,10 +8,11 @@ type TokenBalance = {
   mint: string;
   amount: number;
   decimals: number;
-}
+};
 
 type Data =
   | TokenBalance[]
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -19,7 +21,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { walletAddress, mintAddresses } = req.body;
+  const { walletAddress, mintAddresses, noop } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   if (!walletAddress || !process.env.HELIUS_API_KEY) {
     res.status(500).json({ error: "Required fields not set" });
@@ -30,10 +37,12 @@ export default async function handler(
     `https://api.helius.xyz/v0/addresses/${walletAddress}/balances?api-key=${process.env.HELIUS_API_KEY}`
   );
 
-  let {tokens: balances}: {tokens: TokenBalance[]} = data;
+  let { tokens: balances }: { tokens: TokenBalance[] } = data;
 
   if (mintAddresses && mintAddresses.length > 0) {
-    balances = balances.filter((balance) => mintAddresses.includes(balance.mint));
+    balances = balances.filter((balance) =>
+      mintAddresses.includes(balance.mint)
+    );
   }
 
   console.log("~~balances: ", balances);

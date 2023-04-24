@@ -1,7 +1,7 @@
 import { RarityBadge } from "@/features/UI/badges/rarity-badge";
 import { ImageWithFallback } from "@/features/UI/image-with-fallback";
 import { TableRow } from "@/features/UI/tables/table-row";
-import { GiftIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, GiftIcon } from "@heroicons/react/24/outline";
 
 import Link from "next/link";
 
@@ -99,12 +99,20 @@ export const LootBoxesListItem = ({ lootBox }: { lootBox: LootBox }) => {
         </div>
       </div>
       <div className="flex flex-grow"></div>
-      <Link
-        className="bg-stone-800 text-stone-300 px-4 py-2 rounded-lg uppercase text-sm my-4"
-        href={`/admin/loot-box/${lootBox.id}`}
-      >
-        Manage
-      </Link>
+      <div className="flex space-x-2 items-center">
+        <Link
+          className="bg-stone-800 text-stone-300 px-4 rounded-lg uppercase text-sm my-4"
+          href={`/loot-box/${lootBox.id}`}
+        >
+          <EyeIcon className="h-6 w-6" />
+        </Link>
+        <Link
+          className="bg-stone-800 text-stone-300 px-4 py-2 rounded-lg uppercase text-sm my-4"
+          href={`/admin/loot-box/${lootBox.id}`}
+        >
+          Manage
+        </Link>
+      </div>
     </TableRow>
   );
 };

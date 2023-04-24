@@ -6,13 +6,14 @@ import { REMOVE_PRIMARY_WALLET } from "@/graphql/mutations/remove-primary-wallet
 import { REMOVE_USER } from "@/graphql/mutations/remove-user";
 import { REMOVE_WALLET } from "@/graphql/mutations/remove-wallet";
 import { GET_USER_BY_ID } from "@/graphql/queries/get-user-by-id";
-import { Account } from "@/pages/api/add-account";
+import { Account, NoopResponse } from "@/pages/api/add-account";
 import { Wallet } from "@/pages/me";
 import { Payout } from "@/pages/profile/[id]";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data =
   | any
+  | NoopResponse
   | {
       error: unknown;
     };
@@ -21,7 +22,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { id } = req.body;
+  const { id, noop } = req.body;
+
+  if (noop)
+    return res.status(200).json({
+      noop: true,
+    });
 
   if (!id) {
     res.status(500).json({ error: "Required fields not set" });
