@@ -52,6 +52,8 @@ export default async function handler(
 
   console.log(responses);
 
+  manager.detach();
+
   res.status(200).json({
     success: true,
     endpoints:
