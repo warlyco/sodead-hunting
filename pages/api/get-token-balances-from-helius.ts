@@ -26,6 +26,7 @@ export default async function handler(
   if (noop)
     return res.status(200).json({
       noop: true,
+      endpoint: "get-token-balances-from-helius",
     });
 
   if (!walletAddress || !process.env.HELIUS_API_KEY) {

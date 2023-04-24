@@ -22,6 +22,7 @@ export default async function handler(
   if (noop)
     return res.status(200).json({
       noop: true,
+      endpoint: "add-hunt",
     });
 
   if (!huntId || !mainCharacterIds) {

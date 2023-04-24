@@ -29,6 +29,7 @@ export type Account = {
 
 export type NoopResponse = {
   noop: true;
+  endpoint: string;
 };
 
 export type UserAndAccountResponse = {
@@ -62,6 +63,7 @@ export default async function handler(
   if (noop)
     return res.status(200).json({
       noop: true,
+      endpoint: "add-account",
     });
 
   console.log({

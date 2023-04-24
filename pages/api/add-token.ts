@@ -30,6 +30,7 @@ export default async function handler(
   if (noop)
     return res.status(200).json({
       noop: true,
+      endpoint: "add-token",
     });
 
   if (!mintAddress || !process.env.HELIUS_API_KEY) {

@@ -25,6 +25,7 @@ export default async function handler(
   if (noop)
     return res.status(200).json({
       noop: true,
+      endpoint: "bind-item-to-token",
     });
 
   if (!itemId || !mintAddress) {

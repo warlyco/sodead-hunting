@@ -2,6 +2,7 @@
 import { BASE_URL } from "@/constants/constants";
 import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
+const { ConcurrencyManager } = require("axios-concurrency");
 
 type Data = {
   success: boolean;
@@ -18,6 +19,7 @@ const endpoints = [
   "bind-item-to-token",
   "enable-disable-activity",
   "enable-disable-loot-box",
+  "get-nft-listings-by-wallet-address",
   "get-token-balances-from-helius",
   "get-token-metadata-from-helius",
   "get-tx-info-from-helius",
@@ -34,21 +36,27 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const pokedEndpoints = [];
-  for (let endpoint of endpoints) {
-    const url = `${BASE_URL}/api/${endpoint}`;
-    const { data } = await axios.post(url, { noop: true });
-    if (data.noop) {
-      pokedEndpoints.push(url);
-    }
-  }
-  if (endpoints.length !== pokedEndpoints.length) {
-    res.status(500).json({
-      success: false,
-      message: "Not all endpoints could be poked",
-      endpoints: pokedEndpoints,
-    });
-    return;
-  }
-  res.status(200).json({ success: true, endpoints: pokedEndpoints });
+  const api = axios.create({
+    baseURL: `${BASE_URL}/api/`,
+  });
+
+  const manager = ConcurrencyManager(api, 20);
+
+  const responses: any = await Promise.all(
+    endpoints.map((endpoint) =>
+      api.post(endpoint, {
+        noop: true,
+      })
+    )
+  );
+
+  console.log(responses);
+
+  res.status(200).json({
+    success: true,
+    endpoints:
+      responses.map(
+        (response: { data: { endpoint: string } }) => response?.data?.endpoint
+      ) || [],
+  });
 }

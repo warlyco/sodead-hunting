@@ -27,6 +27,7 @@ export default async function handler(
   if (noop)
     return res.status(200).json({
       noop: true,
+      endpoint: "remove-user",
     });
 
   if (!id) {

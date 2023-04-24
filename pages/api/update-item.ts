@@ -21,6 +21,7 @@ export default async function handler(
   if (noop)
     return res.status(200).json({
       noop: true,
+      endpoint: "update-item",
     });
 
   if (!id || !(tokenMintAddress && nftMintAddress)) {

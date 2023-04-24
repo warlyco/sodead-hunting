@@ -18,7 +18,7 @@ export const ToolsList = () => {
   const pokeEndpoints = async () => {
     setIsPoking(true);
     const { data } = await axios.get("/api/poke-endpoints");
-    showToast({ primaryMessage: data?.message || "Endpoint poked" });
+    showToast({ primaryMessage: data?.message || "Endpoints poked" });
     setIsPoking(false);
   };
 

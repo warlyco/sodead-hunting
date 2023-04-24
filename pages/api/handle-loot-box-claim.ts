@@ -69,6 +69,7 @@ export default async function handler(
   if (noop)
     return res.status(200).json({
       noop: true,
+      endpoint: "handle-loot-box-claim",
     });
 
   if (!burnTxAddress || !lootBoxId || !process.env.REWARD_PRIVATE_KEY) {
