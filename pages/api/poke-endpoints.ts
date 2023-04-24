@@ -32,6 +32,10 @@ const endpoints = [
   "update-item",
 ];
 
+const getEndpoints = (responses: { data: { endpoint: string } }[]) => {
+  return responses.map((response) => response?.data?.endpoint) || [];
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
@@ -40,25 +44,44 @@ export default async function handler(
     baseURL: `${BASE_URL}/api/`,
   });
 
-  const manager = ConcurrencyManager(api, 20);
+  const { shouldFetchConcurrently = true } = req.body;
 
-  const responses: any = await Promise.all(
-    endpoints.map((endpoint) =>
-      api.post(endpoint, {
-        noop: true,
-      })
-    )
-  );
+  let responses = [];
+  let manager;
 
-  console.log(responses);
+  if (shouldFetchConcurrently) {
+    const manager = ConcurrencyManager(api, 20);
 
-  manager.detach();
+    responses = await Promise.all(
+      endpoints.map((endpoint) =>
+        api.post(endpoint, {
+          noop: true,
+        })
+      )
+    );
+
+    console.log(responses);
+  } else {
+    for (let endpoint of endpoints) {
+      const url = `${BASE_URL}/api/${endpoint}`;
+      const response = await axios.post(url, { noop: true });
+      responses.push(response);
+    }
+  }
+
+  if (endpoints.length !== responses.length) {
+    res.status(500).json({
+      success: false,
+      message: "Only some endpoints were poked",
+      endpoints: getEndpoints(responses),
+    });
+    return;
+  }
+
+  if (manager) manager!.detach();
 
   res.status(200).json({
     success: true,
-    endpoints:
-      responses.map(
-        (response: { data: { endpoint: string } }) => response?.data?.endpoint
-      ) || [],
+    endpoints: getEndpoints(responses),
   });
 }

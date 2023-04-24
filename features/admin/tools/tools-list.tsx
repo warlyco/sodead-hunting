@@ -15,9 +15,15 @@ export const ToolsList = () => {
   const { isDebugMode, setIsDebugMode } = useDebugMode();
   const [isPoking, setIsPoking] = useState(false);
 
-  const pokeEndpoints = async () => {
+  const pokeEndpoints = async ({
+    shouldFetchConcurrently,
+  }: {
+    shouldFetchConcurrently: boolean;
+  }) => {
     setIsPoking(true);
-    const { data } = await axios.get("/api/poke-endpoints");
+    const { data } = await axios.post("/api/poke-endpoints", {
+      shouldFetchConcurrently,
+    });
     showToast({ primaryMessage: data?.message || "Endpoints poked" });
     setIsPoking(false);
   };
@@ -39,12 +45,20 @@ export const ToolsList = () => {
         Add creature
       </Link>
       <button
-        onClick={() => pokeEndpoints()}
+        onClick={() => pokeEndpoints({ shouldFetchConcurrently: true })}
         className="p-3 rounded-2xl bg-stone-900 flex items-center justify-center w-full text-stone-300 text-xl"
         disabled={isPoking}
       >
         <HandRaisedIcon className="w-6 h-6 mr-2" />
-        {isPoking ? "Poking..." : "Poke endpoints"}
+        {isPoking ? "Poking..." : "Poke endpoints (Concurrently)"}
+      </button>
+      <button
+        onClick={() => pokeEndpoints({ shouldFetchConcurrently: false })}
+        className="p-3 rounded-2xl bg-stone-900 flex items-center justify-center w-full text-stone-300 text-xl"
+        disabled={isPoking}
+      >
+        <HandRaisedIcon className="w-6 h-6 mr-2" />
+        {isPoking ? "Poking..." : "Poke endpoints (Sequentially)"}
       </button>
     </Panel>
   );
