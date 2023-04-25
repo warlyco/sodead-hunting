@@ -5,6 +5,7 @@ import { client } from "@/graphql/backend-client";
 import { UPDATE_CREATURE } from "@/graphql/mutations/update-creature";
 import { GET_CREATURE_BY_ID } from "@/graphql/queries/get-creature-by-id";
 import { getHashForTraitCombination } from "@/utils/nfts/get-hash-for-trait-combination";
+import { getTraitsFromTraitInstances } from "@/utils/nfts/get-traits-from-trait-instances";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
@@ -57,7 +58,7 @@ export default async function handler(
       id: creature.id,
       setInput: {
         traitCombinationHash: await getHashForTraitCombination(
-          creature.traitInstances
+          getTraitsFromTraitInstances(creature.traitInstances)
         ),
       },
     },

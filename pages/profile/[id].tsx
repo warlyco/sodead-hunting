@@ -9,6 +9,7 @@ import { useUser } from "@/hooks/user";
 import { formatDateTime } from "@/utils/date-time";
 import { getAbbreviatedAddress } from "@/utils/formatting";
 import { getHashForTraitCombination } from "@/utils/nfts/get-hash-for-trait-combination";
+import { getTraitsFromTraitInstances } from "@/utils/nfts/get-traits-from-trait-instances";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { CheckBadgeIcon } from "@heroicons/react/24/outline";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -94,15 +95,8 @@ const ProfilePage: NextPage = () => {
       console.log({ sodead_creatures_by_pk });
       setCreature(sodead_creatures_by_pk);
       // setTraits(sodead_creatures_by_pk?.traitInstances || []);
-      const traits: ModeledTrait[] = sodead_creatures_by_pk.traitInstances.map(
-        ({ id, value, trait }) => {
-          console.log({ id, trait, value });
-          return {
-            id,
-            name: trait.name,
-            value,
-          };
-        }
+      const traits: ModeledTrait[] = getTraitsFromTraitInstances(
+        sodead_creatures_by_pk?.traitInstances
       );
       verifyTraitCombination(traits);
       setTraits(traits);
