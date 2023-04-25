@@ -76,6 +76,7 @@ export default function FetchPage() {
       showToast({
         primaryMessage: data?.message,
       });
+
       formik.setFieldValue("mintAddress", "");
     } catch (error) {
       console.log(error);
@@ -96,7 +97,7 @@ export default function FetchPage() {
     onSubmit: async ({ mintAddress }) => {
       setIsLoading(true);
       setMintAddress(mintAddress);
-      await fetchCollection(mintAddress);
+      // await fetchCollection(mintAddress);
     },
   });
 

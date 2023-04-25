@@ -17,10 +17,15 @@ export type Trait = {
   value: string;
 };
 
+type CreaturesResponse = {
+  creatures?: Creature[];
+  success: boolean;
+  message: string;
+};
+
 type Data =
-  | Creature[]
+  | CreaturesResponse
   | NoopResponse
-  | { success: boolean; message: string }
   | {
       error: unknown;
     };
@@ -86,8 +91,8 @@ export default async function handler(
       });
 
       // TODO add trait hash
-
       traits.forEach(async (trait: Trait) => {
+        console.log("```````````trait: ", trait);
         const { sodead_traits }: { sodead_traits: Trait[] } =
           await client.request({
             document: GET_TRAIT_BY_NAME,
@@ -95,8 +100,10 @@ export default async function handler(
               name: trait.name,
             },
           });
+        console.log("```````````sodead_traits: ", sodead_traits);
 
         const traitId = sodead_traits[0].id;
+        console.log("```````````traitId: ", traitId);
         const {
           insert_sodead_traitInstances_one,
         }: { insert_sodead_traitInstances_one: Data } = await client.request({
@@ -107,6 +114,10 @@ export default async function handler(
             value: trait.value,
           },
         });
+        console.log(
+          "```````````insert_sodead_traitInstances_one: ",
+          insert_sodead_traitInstances_one
+        );
       });
 
       console.log("Token added: ", {
@@ -129,5 +140,7 @@ export default async function handler(
     return;
   }
 
-  res.status(200).json({ success: true, message: "Creature added" });
+  res
+    .status(200)
+    .json({ success: true, message: "Creature added", creatures: response });
 }

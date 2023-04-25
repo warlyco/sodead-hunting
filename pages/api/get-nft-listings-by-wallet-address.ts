@@ -53,7 +53,7 @@ export default async function handler(
       {
         query: {
           accounts: [walletAddress],
-          types: ["NFT_LISTING"],
+          types: ["NFT_LISTING", "NFT_SALE"],
           startTime: startTimeNumber,
           nftCollectionFilters: {
             firstVerifiedCreator: firstVerifiedCreators,

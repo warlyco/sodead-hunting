@@ -22,33 +22,36 @@ export const ToolsList = () => {
   const [start, setStart] = useState(0);
   const [end, setEnd] = useState(2000);
 
-  const [getAllCreatures, { data: creatures }] = useLazyQuery(GET_VAMPIRES, {
-    fetchPolicy: "cache-and-network",
-    async onCompleted({
-      sodead_creatures: creatures,
-    }: {
-      sodead_creatures: Creature[];
-    }) {
-      const creaturesToProcess = creatures.slice(start, end);
+  const [getAllCreatures, { data: creatures }] = useLazyQuery(
+    GET_VAMPIRES_WITHOUT_TRAIT_HASH,
+    {
+      fetchPolicy: "cache-and-network",
+      async onCompleted({
+        sodead_creatures: creatures,
+      }: {
+        sodead_creatures: Creature[];
+      }) {
+        const creaturesToProcess = creatures.slice(start, end);
 
-      for (const creature of creaturesToProcess) {
-        console.log(`processing ${creature}`);
-        const { data } = await axios.post(
-          `${BASE_URL}/api/add-trait-combination-hash-to-creature`,
-          {
-            creatureId: creature.id,
-          }
-        );
+        for (const creature of creaturesToProcess) {
+          console.log(`processing ${creature}`);
+          const { data } = await axios.post(
+            `${BASE_URL}/api/add-trait-combination-hash-to-creature`,
+            {
+              creatureId: creature.id,
+            }
+          );
 
-        console.log(data);
-      }
+          console.log(data);
+        }
 
-      showToast({
-        primaryMessage: "Trait hashes added",
-        secondaryMessage: `${creaturesToProcess.length} creatures processed`,
-      });
-    },
-  });
+        showToast({
+          primaryMessage: "Trait hashes added",
+          secondaryMessage: `${creaturesToProcess.length} creatures processed`,
+        });
+      },
+    }
+  );
 
   const pokeEndpoints = async ({
     shouldFetchConcurrently,
@@ -69,7 +72,7 @@ export const ToolsList = () => {
 
   return (
     <Panel className="space-y-4">
-      {/* <div className="flex items-center px-4">
+      <div className="flex items-center px-4">
         <div className="mr-2"># of hashes to fetch:</div>
         <input
           type="text"
@@ -86,7 +89,7 @@ export const ToolsList = () => {
         className="p-3 rounded-2xl bg-stone-900 flex items-center justify-center w-full text-stone-300 text-xl"
       >
         <div>Add trait hashes</div>
-      </button> */}
+      </button>
       <button
         onClick={() => setIsDebugMode(!isDebugMode)}
         className="p-3 rounded-2xl bg-stone-900 flex items-center justify-center w-full text-stone-300 text-xl"
