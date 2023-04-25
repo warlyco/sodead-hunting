@@ -1,6 +1,5 @@
 import { client } from "@/graphql/backend-client";
 import { GET_TRAIT_COMBINATION_HASHES } from "@/graphql/queries/get-trait-combination-hashes";
-import { GET_TRAIT_INSTANCES_BY_CREATURE_VIA_NFT_COLLECTION_ID } from "@/graphql/queries/get-trait-instances-by-creature-via-nft-collection-id";
 import { NoopResponse } from "@/pages/api/add-account";
 import { ModeledTrait } from "@/pages/profile/[id]";
 import { getHashForTraitCombination } from "@/utils/nfts/get-hash-for-trait-combination";

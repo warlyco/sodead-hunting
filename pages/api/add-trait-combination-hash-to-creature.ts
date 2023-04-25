@@ -1,5 +1,4 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-const crypto = require("crypto").webcrypto;
+const crypto = globalThis.crypto;
 import { Creature } from "@/features/creatures/creature-list";
 import { client } from "@/graphql/backend-client";
 import { UPDATE_CREATURE } from "@/graphql/mutations/update-creature";
