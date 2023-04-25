@@ -1,4 +1,4 @@
-const crypto = globalThis.crypto;
+const crypto = require("crypto").webcrypto;
 import { Creature } from "@/features/creatures/creature-list";
 import { client } from "@/graphql/backend-client";
 import { UPDATE_CREATURE } from "@/graphql/mutations/update-creature";
