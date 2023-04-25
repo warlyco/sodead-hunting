@@ -1,3 +1,4 @@
+import { BASE_URL } from "@/constants/constants";
 import { ContentWrapper } from "@/features/UI/content-wrapper";
 import Spinner from "@/features/UI/spinner";
 import { Creature } from "@/features/creatures/creature-list";
@@ -5,12 +6,13 @@ import { GET_CREATURE_BY_ID } from "@/graphql/queries/get-creature-by-id";
 import { GET_CREATURE_BY_TOKEN_MINT_ADDRESS } from "@/graphql/queries/get-creature-by-token-mint-address";
 import { GET_PAYOUTS_BY_CREATURE_ID } from "@/graphql/queries/get-payouts-by-creature-id";
 import { useUser } from "@/hooks/user";
-import { Trait } from "@/pages/api/add-creatures-from-nfts";
 import { formatDateTime } from "@/utils/date-time";
 import { getAbbreviatedAddress } from "@/utils/formatting";
 import { getHashForTraitCombination } from "@/utils/nfts/get-hash-for-trait-combination";
 import { useLazyQuery, useQuery } from "@apollo/client";
+import { CheckBadgeIcon } from "@heroicons/react/24/outline";
 import { useWallet } from "@solana/wallet-adapter-react";
+import axios from "axios";
 import { NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -48,6 +50,12 @@ export type Payout = {
   };
 };
 
+export type ModeledTrait = {
+  id: string;
+  name: string;
+  value: string;
+};
+
 const ProfilePage: NextPage = () => {
   const wallet = useWallet();
   const { user, loadingUser } = useUser();
@@ -55,10 +63,22 @@ const ProfilePage: NextPage = () => {
   const { id } = router.query;
   const [creature, setCreature] = useState<Creature | null>(null);
   const [payouts, setPayouts] = useState<Payout[] | null>(null);
-  const [traits, setTraits] = useState<Trait[]>([]);
+  const [traits, setTraits] = useState<ModeledTrait[] | null>(null);
   const [traitCombinationHash, setTraitCombinationHash] = useState<
     string | null
   >(null);
+  const [isVerifiedTraitHash, setIsVerifiedTraitHash] =
+    useState<boolean>(false);
+
+  const verifyTraitCombination = async (traits: ModeledTrait[]) => {
+    const { data } = await axios.post(
+      `${BASE_URL}/api/trait-combination-exists`,
+      {
+        combinations: traits,
+      }
+    );
+    setIsVerifiedTraitHash(data?.exists);
+  };
 
   const { loading } = useQuery(GET_CREATURE_BY_ID, {
     variables: {
@@ -66,13 +86,32 @@ const ProfilePage: NextPage = () => {
     },
     skip: !id,
     fetchPolicy: "network-only",
-    onCompleted: async ({ sodead_creatures_by_pk }) => {
+    onCompleted: async ({
+      sodead_creatures_by_pk,
+    }: {
+      sodead_creatures_by_pk: Creature;
+    }) => {
       console.log({ sodead_creatures_by_pk });
       setCreature(sodead_creatures_by_pk);
-      setTraits(sodead_creatures_by_pk?.traitInstances || []);
+      // setTraits(sodead_creatures_by_pk?.traitInstances || []);
+      const traits: ModeledTrait[] = sodead_creatures_by_pk.traitInstances.map(
+        ({ id, value, trait }) => {
+          console.log({ id, trait, value });
+          return {
+            id,
+            name: trait.name,
+            value,
+          };
+        }
+      );
+      verifyTraitCombination(traits);
+      setTraits(traits);
 
       setTraitCombinationHash(
-        await getHashForTraitCombination(sodead_creatures_by_pk?.traitInstances)
+        creature?.traitCombinationHash || ""
+        // (await getHashForTraitCombination(
+        //   sodead_creatures_by_pk?.traitInstances
+        // ))
       );
     },
   });
@@ -164,11 +203,16 @@ const ProfilePage: NextPage = () => {
           </a>
         </div>
         <div className="flex flex-wrap w-full justify-between mb-16 max-w-xs text-2xl font-strange-dreams">
-          <div>Trait Hash</div>
-          <div className="break-all">
-            {!!traitCombinationHash &&
-              getAbbreviatedAddress(traitCombinationHash)}
+          <div>Trait Hash:</div>
+          <div className="break-all mb-2">
+            {getAbbreviatedAddress(creature.traitCombinationHash || "")}
           </div>
+          {!!isVerifiedTraitHash && (
+            <div className="flex w-full items-center space-x-2">
+              <CheckBadgeIcon className="w-6 h-6 text-green-500" />
+              <div>Verified</div>
+            </div>
+          )}
         </div>
       </div>
       <div className="w-full md:w-1/2">
@@ -176,12 +220,13 @@ const ProfilePage: NextPage = () => {
           <h2 className="text-3xl font-strange-dreams text-center mb-8 tracking-wider">
             Traits
           </h2>
-          {creature.traitInstances.map(({ id, value, trait }) => (
-            <div key={id} className="flex w-full justify-between">
-              <div>{trait.name}</div>
-              <div>{value}</div>
-            </div>
-          ))}
+          {!!traits &&
+            traits.map(({ id, value, name }) => (
+              <div key={id} className="flex w-full justify-between">
+                <div>{name}</div>
+                <div>{value}</div>
+              </div>
+            ))}
           <h2 className="text-3xl font-strange-dreams text-center mb-4 tracking-wider mt-8">
             Payouts
           </h2>

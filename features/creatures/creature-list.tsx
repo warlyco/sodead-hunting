@@ -1,7 +1,6 @@
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
 import { CreatureListItem } from "@/features/creatures/creature-list-item";
 import Spinner from "@/features/UI/spinner";
-import classNames from "classnames";
 
 export type Creature = {
   id: string;
@@ -19,6 +18,7 @@ export type Creature = {
       name: string;
     };
   }[];
+  traitCombinationHash?: string;
   mainCharacterActivityInstances: {
     id: string;
     startTime: string;

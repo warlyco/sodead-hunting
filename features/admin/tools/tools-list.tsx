@@ -10,10 +10,45 @@ import Link from "next/link";
 import axios from "axios";
 import showToast from "@/features/toasts/show-toast";
 import { useState } from "react";
+import { useLazyQuery } from "@apollo/client";
+import { GET_VAMPIRES } from "@/graphql/queries/get-vampires";
+import { Creature } from "@/features/creatures/creature-list";
+import { BASE_URL } from "@/constants/constants";
+import { GET_VAMPIRES_WITHOUT_TRAIT_HASH } from "@/graphql/queries/get-vampires-without-trait-hash";
 
 export const ToolsList = () => {
   const { isDebugMode, setIsDebugMode } = useDebugMode();
   const [isPoking, setIsPoking] = useState(false);
+  const [start, setStart] = useState(0);
+  const [end, setEnd] = useState(2000);
+
+  const [getAllCreatures, { data: creatures }] = useLazyQuery(GET_VAMPIRES, {
+    fetchPolicy: "cache-and-network",
+    async onCompleted({
+      sodead_creatures: creatures,
+    }: {
+      sodead_creatures: Creature[];
+    }) {
+      const creaturesToProcess = creatures.slice(start, end);
+
+      for (const creature of creaturesToProcess) {
+        console.log(`processing ${creature}`);
+        const { data } = await axios.post(
+          `${BASE_URL}/api/add-trait-combination-hash-to-creature`,
+          {
+            creatureId: creature.id,
+          }
+        );
+
+        console.log(data);
+      }
+
+      showToast({
+        primaryMessage: "Trait hashes added",
+        secondaryMessage: `${creaturesToProcess.length} creatures processed`,
+      });
+    },
+  });
 
   const pokeEndpoints = async ({
     shouldFetchConcurrently,
@@ -28,8 +63,30 @@ export const ToolsList = () => {
     setIsPoking(false);
   };
 
+  const addTraitHashes = async () => {
+    await getAllCreatures();
+  };
+
   return (
     <Panel className="space-y-4">
+      {/* <div className="flex items-center px-4">
+        <div className="mr-2"># of hashes to fetch:</div>
+        <input
+          type="text"
+          className="p-3 rounded-2xl bg-stone-900 flex items-center justify-center w-full text-stone-300 text-xl"
+          placeholder="End"
+          value={end}
+          onChange={(event) => {
+            setEnd(Number((event.target as HTMLInputElement).value));
+          }}
+        />
+      </div>
+      <button
+        onClick={addTraitHashes}
+        className="p-3 rounded-2xl bg-stone-900 flex items-center justify-center w-full text-stone-300 text-xl"
+      >
+        <div>Add trait hashes</div>
+      </button> */}
       <button
         onClick={() => setIsDebugMode(!isDebugMode)}
         className="p-3 rounded-2xl bg-stone-900 flex items-center justify-center w-full text-stone-300 text-xl"

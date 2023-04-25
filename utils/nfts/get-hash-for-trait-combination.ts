@@ -1,8 +1,8 @@
-export const getHashForTraitCombination = async (
-  traits: { key: string; value: string }[]
-) => {
+import { ModeledTrait } from "@/pages/profile/[id]";
+
+export const getHashForTraitCombination = async (traits: ModeledTrait[]) => {
   const traitValues = traits.map(({ value }) => value).sort();
-  const traitKeys = traits.map(({ key }) => key).sort();
+  const traitKeys = traits.map(({ name }) => name).sort();
   const traitValuesString = traitValues.join("");
   const traitKeysString = traitKeys.join("");
   const hash = await crypto.subtle.digest(

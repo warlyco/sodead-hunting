@@ -85,6 +85,8 @@ export default async function handler(
         },
       });
 
+      // TODO add trait hash
+
       traits.forEach(async (trait: Trait) => {
         const { sodead_traits }: { sodead_traits: Trait[] } =
           await client.request({

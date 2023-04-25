@@ -14,6 +14,7 @@ export const GET_CREATURE_BY_ID = gql`
         name
         id
       }
+      traitCombinationHash
       mainCharacterActivityInstances {
         id
         payoutId
