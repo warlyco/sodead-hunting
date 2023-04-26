@@ -27,6 +27,8 @@ export const fetchNftsWithMetadata = async (
   return new Promise(async (resolve, reject) => {
     let nftsWithMetadata: ModeledNftMetadata[] = [];
 
+    console.log("fetching nfts", nfts);
+
     // @ts-ignore
     for (const [i, nft] of nfts.entries()) {
       console.log("nft", nft?.mintAddress?.toString());

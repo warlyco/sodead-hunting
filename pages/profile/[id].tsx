@@ -1,4 +1,5 @@
 import { BASE_URL } from "@/constants/constants";
+import { PrimaryButton } from "@/features/UI/buttons/primary-button";
 import { ContentWrapper } from "@/features/UI/content-wrapper";
 import Spinner from "@/features/UI/spinner";
 import { Creature } from "@/features/creatures/creature-list";
@@ -52,7 +53,7 @@ export type Payout = {
 };
 
 export type ModeledTrait = {
-  id: string;
+  id?: string;
   name: string;
   value: string;
 };
@@ -70,6 +71,7 @@ const ProfilePage: NextPage = () => {
   >(null);
   const [isVerifiedTraitHash, setIsVerifiedTraitHash] =
     useState<boolean>(false);
+  const [isUpdatingCreature, setIsUpdatingCreature] = useState<boolean>(false);
 
   const verifyTraitCombination = async (traits: ModeledTrait[]) => {
     const { data } = await axios.post(
@@ -81,7 +83,7 @@ const ProfilePage: NextPage = () => {
     setIsVerifiedTraitHash(data?.exists);
   };
 
-  const { loading } = useQuery(GET_CREATURE_BY_ID, {
+  const { loading, refetch } = useQuery(GET_CREATURE_BY_ID, {
     variables: {
       id,
     },
@@ -94,6 +96,7 @@ const ProfilePage: NextPage = () => {
     }) => {
       console.log({ sodead_creatures_by_pk });
       setCreature(sodead_creatures_by_pk);
+      setIsUpdatingCreature(false);
       // setTraits(sodead_creatures_by_pk?.traitInstances || []);
       const traits: ModeledTrait[] = getTraitsFromTraitInstances(
         sodead_creatures_by_pk?.traitInstances
@@ -140,6 +143,22 @@ const ProfilePage: NextPage = () => {
       setPayouts(sodead_payouts);
     },
   });
+
+  const updateCreature = async () => {
+    setIsUpdatingCreature(true);
+    console.log({ creature });
+
+    const { data } = await axios.post(
+      `${BASE_URL}/api/update-creature-by-mint-address`,
+      {
+        mintAddress: creature?.token.mintAddress,
+      }
+    );
+    setTimeout(() => {
+      refetch();
+    }, 100);
+    console.log({ data });
+  };
 
   if (loading || loadingUser || payoutsLoading)
     return (
@@ -207,6 +226,9 @@ const ProfilePage: NextPage = () => {
               <div>Verified</div>
             </div>
           )}
+          <PrimaryButton className="flex mt-4" onClick={updateCreature}>
+            {isUpdatingCreature ? <Spinner /> : "Update Creature"}
+          </PrimaryButton>
         </div>
       </div>
       <div className="w-full md:w-1/2">
