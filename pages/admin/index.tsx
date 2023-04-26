@@ -84,13 +84,13 @@ const huntTabs: ITab[] = [
 
 const communityTabs: ITab[] = [
   {
-    name: "Users",
-    value: "users",
+    name: "Tools",
+    value: "tools",
     parent: "users-tools",
   },
   {
-    name: "Tools",
-    value: "tools",
+    name: "Users",
+    value: "users",
     parent: "users-tools",
   },
 ];

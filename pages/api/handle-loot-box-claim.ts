@@ -30,6 +30,8 @@ import { Wallet } from "@/pages/me";
 import { GET_WALLET_BY_ADDRESS } from "@/graphql/queries/get-wallet-by-address";
 import { ADD_LOOTBOX_ITEM_PAYOUT } from "@/graphql/mutations/add-lootbox-item-payout";
 import { NoopResponse } from "@/pages/api/add-account";
+import { LOG_ERROR } from "@/graphql/mutations/log-error";
+import { logError } from "@/utils/log-error";
 
 const getWeightedRandomReward = (items: any[], weights: any[]) => {
   var i;
@@ -270,7 +272,21 @@ export default async function handler(
       ...insert_sodead_payouts_one,
       reward: childRewardMintAddress ? childReward : randomReward,
     });
-  } catch (error) {
+  } catch (error: any) {
+    try {
+      logError({
+        error: {
+          code: error?.response?.status || 0,
+          message: error?.message,
+          rawError: JSON.stringify(error),
+        },
+        walletId,
+        burnTxAddress,
+      });
+    } catch (error) {
+      console.log("error logging error", error);
+    }
+
     console.log(error);
     res.status(500).json({ error });
   }

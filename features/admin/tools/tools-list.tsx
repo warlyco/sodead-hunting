@@ -15,12 +15,17 @@ import { GET_VAMPIRES } from "@/graphql/queries/get-vampires";
 import { Creature } from "@/features/creatures/creature-list";
 import { BASE_URL } from "@/constants/constants";
 import { GET_VAMPIRES_WITHOUT_TRAIT_HASH } from "@/graphql/queries/get-vampires-without-trait-hash";
+import { ErrorInstance } from "@/utils/log-error";
+import { useUser } from "@/hooks/user";
+import { WarningAmber } from "@mui/icons-material";
 
 export const ToolsList = () => {
   const { isDebugMode, setIsDebugMode } = useDebugMode();
   const [isPoking, setIsPoking] = useState(false);
   const [start, setStart] = useState(0);
   const [end, setEnd] = useState(2000);
+  const { user } = useUser();
+  const [isLoggingTestError, setIsLoggingTestError] = useState(false);
 
   const [getAllCreatures, { data: creatures }] = useLazyQuery(
     GET_VAMPIRES_WITHOUT_TRAIT_HASH,
@@ -52,6 +57,21 @@ export const ToolsList = () => {
       },
     }
   );
+
+  const logTestError = async () => {
+    setIsLoggingTestError(true);
+    await axios.post("/api/test-error", {
+      error: {
+        code: 500,
+        message: "test error",
+        rawError: JSON.stringify({ test: "test" }),
+      } as ErrorInstance,
+      walletId: user?.primaryWallet?.id || user?.wallets?.[0]?.id,
+      burnTxAddress: "test",
+    });
+    showToast({ primaryMessage: "Test error logged" });
+    setIsLoggingTestError(false);
+  };
 
   const pokeEndpoints = async ({
     shouldFetchConcurrently,
@@ -96,6 +116,13 @@ export const ToolsList = () => {
       >
         <BugAntIcon className="w-6 h-6 mr-2" />
         <div>{isDebugMode ? "Disable" : "Enable"} Debug Mode</div>
+      </button>
+      <button
+        onClick={logTestError}
+        className="p-3 rounded-2xl bg-stone-900 flex items-center justify-center w-full text-stone-300 text-xl"
+      >
+        <WarningAmber className="w-6 h-6 mr-2" />
+        {isLoggingTestError ? "Logging..." : "Log test error"}
       </button>
       <Link
         href="/admin/fetch"
