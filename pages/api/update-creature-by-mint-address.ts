@@ -165,12 +165,15 @@ export default async function handler(
       },
     });
 
-    response = { update_sodead_creatures_by_pk };
+    response = update_sodead_creatures_by_pk;
     console.log("TOKEN UPDATED", update_sodead_tokens_by_pk);
   } catch (error) {
     console.log("```````````FAIL error: ", error);
     res.status(500).json({ error });
   }
 
-  res.status(200).json(response);
+  res.status(200).json({
+    message: "Successfully updated creature",
+    creature: response,
+  });
 }
