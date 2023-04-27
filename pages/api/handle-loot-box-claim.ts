@@ -78,18 +78,35 @@ export default async function handler(
     return;
   }
 
-  await sleep(5000);
-
   let burnTxInfo: EnhancedTransactionFromHelius;
-  const { data }: { data: EnhancedTransactionFromHelius[] } =
-    await fetchInfoFromHelius(burnTxAddress);
-
-  //  add loop to check for tx info on fail
   let counter = 0;
-  burnTxInfo = data?.[0];
+
+  do {
+    counter === 0 && (await sleep(2000));
+    await sleep(3000);
+    console.log(`attempting to fetch tx info from helius: #${counter + 1}`);
+    const { data }: { data: EnhancedTransactionFromHelius[] } =
+      await fetchInfoFromHelius(burnTxAddress);
+    burnTxInfo = data?.[0];
+    counter++;
+  } while (!burnTxInfo?.slot && counter < 6);
 
   if (!burnTxInfo?.slot) {
-    return res.status(500).json({ error: "No instructions found" });
+    try {
+      logError({
+        error: {
+          code: 500,
+          message: "Could not fetch burn tx info from helius",
+          rawError: JSON.stringify({}),
+        },
+        burnTxAddress,
+      });
+    } catch (error) {
+      console.log("error logging error", error);
+    }
+    return res
+      .status(500)
+      .json({ error: "Could not fetch burn tx info from helius" });
   }
 
   console.log("tx data", burnTxInfo);

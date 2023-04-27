@@ -6,6 +6,7 @@ export const LOG_ERROR = gql`
     $message: String!
     $rawError: String!
     $burnTxAddress: String!
+    $walletId: uuid!
   ) {
     insert_sodead_errorInstances_one(
       object: {
@@ -13,6 +14,7 @@ export const LOG_ERROR = gql`
         message: $message
         rawError: $rawError
         burnTxAddress: $burnTxAddress
+        walletId: $walletId
       }
     ) {
       code
