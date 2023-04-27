@@ -59,8 +59,6 @@ export default async function handler(
         })
       )
     );
-
-    console.log(responses);
   } else {
     for (let endpoint of endpoints) {
       const url = `${BASE_URL}/api/${endpoint}`;
@@ -79,6 +77,11 @@ export default async function handler(
   }
 
   if (manager) manager!.detach();
+
+  console.log({
+    success: true,
+    endpoints: getEndpoints(responses),
+  });
 
   res.status(200).json({
     success: true,
