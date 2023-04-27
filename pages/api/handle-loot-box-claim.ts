@@ -30,7 +30,6 @@ import { Wallet } from "@/pages/me";
 import { GET_WALLET_BY_ADDRESS } from "@/graphql/queries/get-wallet-by-address";
 import { ADD_LOOTBOX_ITEM_PAYOUT } from "@/graphql/mutations/add-lootbox-item-payout";
 import { NoopResponse } from "@/pages/api/add-account";
-import { LOG_ERROR } from "@/graphql/mutations/log-error";
 import { logError } from "@/utils/log-error";
 
 const getWeightedRandomReward = (items: any[], weights: any[]) => {
