@@ -67,7 +67,7 @@ const HuntDetailPage: NextPage = () => {
         if (!hunt || !publicKey) return;
 
         setEligibleCreatures(filterIneligibleCreatures(creatures));
-        const creaturesInActivity = getCreaturesInActivity(creatures, hunt);
+        let creaturesInActivity = getCreaturesInActivity(creatures, hunt);
         console.log({ creaturesInActivity });
 
         // check if listed, invalidate
@@ -100,8 +100,10 @@ const HuntDetailPage: NextPage = () => {
           );
           console.log({ data, earliestStartTime });
 
-          if (data?.nfts?.length) {
-            const mainCharacterMintAddresses = data.nfts.map(
+          const listings = data?.nfts ?? [];
+
+          if (listings.length) {
+            const mainCharacterMintAddresses = listings.map(
               ({ mint }: { mint: string }) => mint
             );
 
@@ -115,6 +117,13 @@ const HuntDetailPage: NextPage = () => {
               .filter((id: string) => id);
 
             console.log({ mainCharacterIds });
+
+            creaturesInActivity = creaturesInActivity.filter((creature) => {
+              const isListed = mainCharacterMintAddresses.includes(
+                creature.token.mintAddress
+              );
+              return !isListed;
+            });
 
             if (!mainCharacterIds.length) {
               setCreaturesInActivity(creaturesInActivity);
@@ -262,6 +271,8 @@ const HuntDetailPage: NextPage = () => {
 
     setIsLoading(true);
 
+    await getCreaturesByTokenMintAddress();
+
     try {
       const { data }: { data: RemoveFromHuntResponse } = await axios.post(
         `${BASE_URL}/api/remove-from-hunt`,
@@ -304,6 +315,7 @@ const HuntDetailPage: NextPage = () => {
     creaturesInActivity,
     eligibleCreatures,
     fetchCollection,
+    getCreaturesByTokenMintAddress,
     hunt,
     publicKey,
     selectedActivityCompleteCreatures,
