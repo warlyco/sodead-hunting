@@ -58,7 +58,8 @@ export type Payout = {
 
 export type ModeledTrait = {
   id?: string;
-  name: string;
+  name?: string;
+  trait_type?: string;
   value: string;
 };
 
@@ -253,6 +254,7 @@ const ProfilePage: NextPage = () => {
             Traits
           </h2>
           {!!traits &&
+            // @ts-ignore
             traits.map(({ id, value, name }) => (
               <div key={id} className="flex w-full justify-between">
                 <div>{name}</div>

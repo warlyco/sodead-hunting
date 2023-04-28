@@ -51,8 +51,21 @@ export default async function handler(
     return;
   }
 
+  let mappedCombinations;
+
+  if (combinations[0]?.trait_type) {
+    mappedCombinations = combinations.map(({ trait_type, value }) => ({
+      name: trait_type,
+      value,
+    }));
+  } else {
+    mappedCombinations = combinations;
+  }
+
+  console.log({ mappedCombinations });
+
   const incomingCombinationHash = await getHashForTraitCombination(
-    combinations
+    mappedCombinations
   );
 
   console.log({ incomingCombinationHash });

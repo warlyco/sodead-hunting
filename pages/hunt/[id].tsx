@@ -148,6 +148,7 @@ const HuntDetailPage: NextPage = () => {
             });
           }
           setCreaturesInActivity(creaturesInActivity);
+          setEligibleCreatures(filterIneligibleCreatures(creatures));
         }
         setIsLoading(false);
       },
