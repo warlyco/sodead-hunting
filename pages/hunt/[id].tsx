@@ -55,6 +55,7 @@ const HuntDetailPage: NextPage = () => {
     selectedActivityCompleteCreatures,
     setSelectedActivityCompleteCreatures,
   ] = useState<Creature[]>([]);
+  const [isSubmitDebounced, setIsSubmitDebounced] = useState(false);
 
   const [getCreaturesByTokenMintAddress, { loading: creaturesLoading }] =
     useLazyQuery(GET_CREATURES_BY_TOKEN_MINT_ADDRESSES, {
@@ -281,6 +282,13 @@ const HuntDetailPage: NextPage = () => {
     [hunt]
   );
 
+  const debounceSubmitButton = useCallback(() => {
+    setIsSubmitDebounced(true);
+    setTimeout(() => {
+      setIsSubmitDebounced(false);
+    }, 10000);
+  }, []);
+
   const fetchCollection = useCallback(async () => {
     if (!publicKey || !hunt) return;
     setIsLoading(true);
@@ -317,6 +325,7 @@ const HuntDetailPage: NextPage = () => {
     if (!publicKey || !hunt) return;
 
     setIsLoading(true);
+    debounceSubmitButton();
 
     // To do: refetch on-chain data before claim
 
@@ -525,7 +534,9 @@ const HuntDetailPage: NextPage = () => {
                 isSubmitting={false}
                 onClick={removeFromHunt}
                 disabled={
-                  !selectedActivityCompleteCreatures.length || isLoading
+                  !selectedActivityCompleteCreatures.length ||
+                  isLoading ||
+                  isSubmitDebounced
                 }
               >
                 Claim Rewards
