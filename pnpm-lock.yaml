@@ -64,9 +64,6 @@ dependencies:
   '@types/react-dom':
     specifier: 18.0.11
     version: 18.0.11
-  '@vercel/edge':
-    specifier: ^0.3.4
-    version: 0.3.4
   antd:
     specifier: ^5.3.0
     version: 5.3.0(react-dom@18.2.0)(react@18.2.0)
@@ -4817,10 +4814,6 @@ packages:
     dependencies:
       '@typescript-eslint/types': 5.57.1
       eslint-visitor-keys: 3.4.0
-    dev: false
-
-  /@vercel/edge@0.3.4:
-    resolution: {integrity: sha512-dFU+yAUDQRwpuRGxRDlEO1LMq0y1LGsBgkyryQWe4w15/Fy2/lCnpvdIoAhHl3QvIGAxCLHzwRHsqfLRdpxgJQ==}
     dev: false
 
   /@wallet-standard/app@1.0.1:
