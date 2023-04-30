@@ -52,7 +52,10 @@ export default async function handler(
 
   const existingWallet = sodead_wallets?.[0];
 
-  console.log("if wallet has a user and an account, user is created");
+  console.log("if wallet has a user and an account, user is created", {
+    userId: existingWallet?.user?.id,
+    accounts: existingWallet?.user?.accounts,
+  });
 
   if (existingWallet?.user?.id && existingWallet?.user?.accounts?.length) {
     res.status(200).json(existingWallet);
