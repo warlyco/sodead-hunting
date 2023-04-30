@@ -5,7 +5,7 @@ import Spinner from "@/features/UI/spinner";
 import { GET_ACTIVE_HUNTS } from "@/graphql/queries/get-active-hunts";
 import { useQuery } from "@apollo/client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const ActiveHuntsList = () => {
   const [hunts, setHunts] = useState<Hunt[] | null>(null);
@@ -23,7 +23,7 @@ export const ActiveHuntsList = () => {
       </h1>
       <div className="flex w-full max-w-6xl just m-auto flex-wrap space-y-10 pb-16 px-2 md:px-6 5xl:px-0">
         {loading && (
-          <div className="w-full flex justify-center">
+          <div className="w-full flex justify-center mt-8">
             <Spinner />
           </div>
         )}

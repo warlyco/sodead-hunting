@@ -1,5 +1,5 @@
+import { ContentWrapperYAxisCenteredContent } from "@/features/UI/content-wrapper-y-axis-centered-content";
 import { ImageWithFallback } from "@/features/UI/image-with-fallback";
-import { useUser } from "@/hooks/user";
 import { useWallet } from "@solana/wallet-adapter-react";
 import Link from "next/link";
 
@@ -7,7 +7,7 @@ export const UserWithoutAccountBlocker = () => {
   const { publicKey } = useWallet();
 
   return (
-    <div className="flex flex-col items-center">
+    <ContentWrapperYAxisCenteredContent>
       <ImageWithFallback
         className="mb-8"
         src="/images/sodead-logo.png"
@@ -26,6 +26,6 @@ export const UserWithoutAccountBlocker = () => {
           <>Connect your wallet to continue</>
         )}
       </div>
-    </div>
+    </ContentWrapperYAxisCenteredContent>
   );
 };

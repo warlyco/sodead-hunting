@@ -16,33 +16,34 @@ export const ActiveLootBoxes = () => {
     },
   });
 
-  if (loading)
-    return (
-      <div className="flex justify-center">
-        <Spinner />
-      </div>
-    );
-
   return (
     <>
       <h1 className="text-5xl mb-12 text-center font-strange-dreams tracking-wider">
         Active Loot Boxes
       </h1>
       <div className="flex w-full max-w-6xl just m-auto flex-wrap">
-        {!!lootBoxes &&
-          lootBoxes?.map((lootBox) => (
-            <Link
-              href={`/loot-box/${lootBox.id}`}
-              key={lootBox.id}
-              className="w-full md:w-1/3 p-4 flex justify-center"
-            >
-              <Card imageUrl={lootBox.imageUrl}>
-                <div className="text-3xl font-strange-dreams tracking-widest">
-                  {lootBox.name}
-                </div>
-              </Card>
-            </Link>
-          ))}
+        {loading ? (
+          <div className="flex w-full justify-center">
+            <Spinner />
+          </div>
+        ) : (
+          <>
+            {!!lootBoxes &&
+              lootBoxes?.map((lootBox) => (
+                <Link
+                  href={`/loot-box/${lootBox.id}`}
+                  key={lootBox.id}
+                  className="w-full md:w-1/3 p-4 flex justify-center"
+                >
+                  <Card imageUrl={lootBox.imageUrl}>
+                    <div className="text-3xl font-strange-dreams tracking-widest">
+                      {lootBox.name}
+                    </div>
+                  </Card>
+                </Link>
+              ))}
+          </>
+        )}
       </div>
     </>
   );
