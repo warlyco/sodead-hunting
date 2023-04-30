@@ -19,7 +19,7 @@ const endpoints = [
   "bind-item-to-token",
   "enable-disable-activity",
   "enable-disable-loot-box",
-  "get-nft-listings-by-wallet-address",
+  "get-nft-listings-and-sales-by-wallet-address",
   "get-token-balances-from-helius",
   "get-token-metadata-from-helius",
   "get-tx-info-from-helius",
