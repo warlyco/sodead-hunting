@@ -37,8 +37,6 @@ export const fetchNftsWithMetadata = async (
         console.log("No nft for", { i, nft });
         continue;
       }
-      // continue;
-      // debugger;
 
       const nftWithMetadata = await metaplex.nfts().load({ metadata: nft });
 

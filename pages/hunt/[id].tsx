@@ -21,10 +21,13 @@ import { BASE_URL } from "@/constants/constants";
 import showToast from "@/features/toasts/show-toast";
 import {
   getCreaturesInActivity,
+  getCreaturesListedWhileInActivity,
   getCreaturesNotInActivity,
+  getCreaturesSoldWhileInActivity,
 } from "@/utils/creatures";
 import dayjs from "dayjs";
 import { RemoveFromHuntResponse } from "@/pages/api/remove-from-hunt";
+import { NftEventFromHelius } from "@/pages/api/get-nft-listings-and-sales-by-wallet-address";
 
 const HuntDetailPage: NextPage = () => {
   const { user, loadingUser, setUser } = useUser();
@@ -74,6 +77,7 @@ const HuntDetailPage: NextPage = () => {
         if (creaturesInActivity?.length) {
           // find earliest start time
           let earliestStartTime;
+          let latestStartTime;
           for (let creature of creaturesInActivity) {
             const activityInstanceStartTime =
               creature.mainCharacterActivityInstances.find(
@@ -86,65 +90,95 @@ const HuntDetailPage: NextPage = () => {
             ) {
               earliestStartTime = activityInstanceStartTime;
             }
+
+            if (
+              !latestStartTime ||
+              activityInstanceStartTime > latestStartTime
+            ) {
+              latestStartTime = activityInstanceStartTime;
+            }
           }
 
           if (!earliestStartTime) return;
-          const startTime = dayjs(earliestStartTime).unix();
 
           const { data } = await axios.post(
-            `${BASE_URL}/api/get-nft-listings-by-wallet-address`,
+            `${BASE_URL}/api/get-nft-listings-and-sales-by-wallet-address`,
             {
               walletAddress: publicKey?.toString(),
-              startTime,
+              startTime: dayjs(earliestStartTime).unix(),
             }
           );
-          console.log({ data, earliestStartTime });
 
-          const listings = data?.nfts ?? [];
+          const {
+            listings,
+            cancelledListings,
+            sales,
+          }: {
+            listings: NftEventFromHelius[];
+            sales: NftEventFromHelius[];
+            cancelledListings: NftEventFromHelius[];
+          } = data;
+          data;
 
-          if (listings.length) {
-            const mainCharacterMintAddresses = listings.map(
-              ({ mint }: { mint: string }) => mint
+          if (listings.length || sales.length) {
+            const creaturesListedWhileInActivity =
+              getCreaturesListedWhileInActivity(
+                listings,
+                cancelledListings,
+                creatures,
+                hunt
+              );
+
+            const creaturesSoldWhileInActivity =
+              getCreaturesSoldWhileInActivity(
+                sales,
+                creatures,
+                hunt,
+                publicKey.toString()
+              );
+
+            console.log(
+              creaturesListedWhileInActivity,
+              creaturesSoldWhileInActivity
             );
 
-            const mainCharacterIds = mainCharacterMintAddresses
-              .map((mintAddress: string) => {
-                const creature = creaturesInActivity.find(
-                  (c) => c.token.mintAddress === mintAddress
-                );
-                return creature?.id;
-              })
-              .filter((id: string) => id);
-
-            console.log({ mainCharacterIds });
-
-            creaturesInActivity = creaturesInActivity.filter((creature) => {
-              const isListed = mainCharacterMintAddresses.includes(
-                creature.token.mintAddress
-              );
-              return !isListed;
-            });
-
-            if (!mainCharacterIds.length) {
+            if (
+              !creaturesListedWhileInActivity.length &&
+              !creaturesSoldWhileInActivity.length
+            ) {
               setCreaturesInActivity(creaturesInActivity);
               setIsLoading(false);
               return;
             }
 
+            const creaturesToInvalidate = [
+              ...creaturesListedWhileInActivity,
+              ...creaturesSoldWhileInActivity,
+            ];
+
             await axios.post(`${BASE_URL}/api/remove-from-hunt`, {
               huntId: hunt.id,
-              mainCharacterIds,
+              mainCharacterIds: creaturesToInvalidate.map(({ id }) => id),
               walletAddress: publicKey.toString(),
               shouldInvalidate: true,
             });
-            const numberOfInvalidated = mainCharacterIds.length;
+
+            const numberOfInvalidated = creaturesToInvalidate.length;
+
             showToast({
               primaryMessage: "Invalidation",
               secondaryMessage: `
                 ${numberOfInvalidated} ${
                 numberOfInvalidated === 1 ? "Vamp" : "Vamps"
-              } removed from hunt due to being listed on the marketplace.
+              } removed from hunt due to being listed or sold during hunt.
               `,
+            });
+
+            // remove from activity
+            creaturesInActivity = creaturesInActivity.filter((creature) => {
+              return !creaturesToInvalidate.find(
+                ({ id }) => id === creature.id
+              );
             });
           }
           setCreaturesInActivity(creaturesInActivity);

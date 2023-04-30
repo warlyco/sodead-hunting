@@ -35,3 +35,5 @@ export const convertSecondsToDaysAndHoursAndMinutesString = (
     convertSecondsToDaysAndHoursAndMinutes(seconds);
   return days > 0 ? `${days} days` : `${hours} hours ${minutes} minutes`;
 };
+
+export const formatDateTimeToUnix = (date: number) => dayjs.unix(date);
