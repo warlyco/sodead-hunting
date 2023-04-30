@@ -40,6 +40,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
+  const ip = req.socket.localAddress;
+
+  console.log(`Poking endpoints from ${ip}`);
   const api = axios.create({
     baseURL: `${BASE_URL}/api/`,
   });

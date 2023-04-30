@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 export const GET_USERS = gql`
   query GET_USERS {
-    sodead_users(order_by: { accounts_aggregate: { count: desc } }) {
+    sodead_users(order_by: { createdAt: desc }) {
       id
       name
       email
@@ -27,6 +27,11 @@ export const GET_USERS = gql`
         email
       }
       imageUrl
+    }
+    sodead_users_aggregate {
+      aggregate {
+        count
+      }
     }
   }
 `;
