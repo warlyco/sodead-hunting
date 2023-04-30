@@ -368,6 +368,7 @@ const HuntDetailPage: NextPage = () => {
     }
   }, [
     creaturesInActivity,
+    debounceSubmitButton,
     eligibleCreatures,
     fetchCollection,
     getCreaturesByTokenMintAddress,
@@ -547,7 +548,11 @@ const HuntDetailPage: NextPage = () => {
               creatures={creaturesInActivity}
               isLoading={isLoading}
               selectedCreatures={selectedActivityCompleteCreatures}
-              setSelectedCreatures={setSelectedActivityCompleteCreatures}
+              setSelectedCreatures={
+                isSubmitDebounced
+                  ? () => {}
+                  : setSelectedActivityCompleteCreatures
+              }
             />
           </div>
         </div>
