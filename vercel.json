@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/poke-endpoints",
-      "schedule": "*/20 * * * *"
+      "schedule": "*/10 * * * *"
     }
   ]
 }

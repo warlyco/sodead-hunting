@@ -10,6 +10,7 @@ import { GET_WALLET_BY_ADDRESS } from "@/graphql/queries/get-wallet-by-address";
 import { User } from "@/features/admin/users/users-list-item";
 import { BIND_WALLET_TO_USER } from "@/graphql/mutations/bind-wallet-to-user";
 import { NoopResponse, UserAndAccountResponse } from "@/pages/api/add-account";
+import { logError } from "@/utils/log-error";
 
 export type UserAndWalletResponse = {
   wallet: Wallet;
@@ -110,12 +111,12 @@ export default async function handler(
     const { data: userAndAccount }: { data: UserAndAccountResponse } =
       await axios.post(`${BASE_URL}/api/add-account`, {
         imageUrl: discordUser?.avatar
-          ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
-          : null,
-        email: discordUser.email,
+          ? `https://cdn.discordapp.com/avatars/${discordUser?.id}/${discordUser?.avatar}.png`
+          : "",
+        email: discordUser?.email || "",
         providerId: "eea4c92e-4ac4-4203-8c19-cba7f7b8d4f6", // Discord
-        providerAccountId: discordUser.id,
-        username: `${discordUser.username}#${discordUser.discriminator}`,
+        providerAccountId: discordUser?.id || "",
+        username: `${discordUser?.username}#${discordUser?.discriminator}`,
         userId: newUser.id,
         accessToken,
         tokenType,
@@ -127,7 +128,7 @@ export default async function handler(
     try {
       axios.post(`${BASE_URL}/api/remove-user`, { id: newUser.id });
     } catch (error) {
-      return res.status(500).json({ error: "Error binding wallet to user" });
+      return res.status(500).json({ error: "Error adding Discord account" });
     }
 
     let returnMessage = "Error adding account";

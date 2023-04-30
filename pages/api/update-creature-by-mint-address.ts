@@ -46,7 +46,6 @@ export default async function handler(
   let response = {};
 
   const failedUpdates = [];
-  const successfulUpdates = [];
 
   const connection = new Connection(RPC_ENDPOINT);
   const metaplex = Metaplex.make(connection);
@@ -129,7 +128,7 @@ export default async function handler(
       },
     });
 
-    traits.forEach(async (trait: Trait) => {
+    for (const trait of traits) {
       const { sodead_traits }: { sodead_traits: Trait[] } =
         await client.request({
           document: GET_TRAIT_BY_NAME,
@@ -149,7 +148,7 @@ export default async function handler(
           value: trait.value,
         },
       });
-    });
+    }
 
     const {
       update_sodead_tokens_by_pk,
