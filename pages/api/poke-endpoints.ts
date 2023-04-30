@@ -8,6 +8,7 @@ type Data = {
   success: boolean;
   message?: string;
   endpoints: string[];
+  ip?: string;
 };
 
 const endpoints = [
@@ -88,6 +89,7 @@ export default async function handler(
 
   res.status(200).json({
     success: true,
+    ip,
     endpoints: getEndpoints(responses),
   });
 }
