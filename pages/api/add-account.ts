@@ -49,6 +49,13 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
+  logError({
+    error: {
+      code: 2,
+      message: "Attempting to save Discord account info",
+      rawError: JSON.stringify(req.body),
+    },
+  });
   const {
     accessToken,
     tokenType,
@@ -78,6 +85,14 @@ export default async function handler(
     userId,
   });
 
+  logError({
+    error: {
+      code: 3,
+      message: "Attempting to save Discord account info",
+      rawError: JSON.stringify(req.body),
+    },
+  });
+
   if (!imageUrl || !email || !providerId || !providerAccountId || !username) {
     logError({
       error: {
@@ -103,12 +118,28 @@ export default async function handler(
     accessToken,
   };
 
+  logError({
+    error: {
+      code: 4,
+      message: "Attempting to save Discord account info",
+      rawError: JSON.stringify(req.body),
+    },
+  });
+
   try {
     const {
       insert_sodead_accounts_one,
     }: { insert_sodead_accounts_one: Account } = await client.request({
       document: ADD_ACCOUNT,
       variables,
+    });
+
+    logError({
+      error: {
+        code: 5,
+        message: "Attempting to save Discord account info",
+        rawError: JSON.stringify(req.body),
+      },
     });
 
     const { update_sodead_users_by_pk }: { update_sodead_users_by_pk: User } =
@@ -123,6 +154,14 @@ export default async function handler(
           },
         },
       });
+
+    logError({
+      error: {
+        code: 6,
+        message: "Attempting to save Discord account info",
+        rawError: JSON.stringify(req.body),
+      },
+    });
 
     console.log("insert_sodead_accounts_one: ", insert_sodead_accounts_one);
 

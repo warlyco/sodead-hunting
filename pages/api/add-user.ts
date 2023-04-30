@@ -108,6 +108,15 @@ export default async function handler(
 
   // create account entry
   try {
+    logError({
+      error: {
+        code: 1,
+        message: "Attempting to save Discord account info",
+        rawError: JSON.stringify({
+          discordUser,
+        }),
+      },
+    });
     const { data: userAndAccount }: { data: UserAndAccountResponse } =
       await axios.post(`${BASE_URL}/api/add-account`, {
         imageUrl: discordUser?.avatar
@@ -125,6 +134,16 @@ export default async function handler(
 
     res.status(200).json({ wallet, user: userAndAccount?.user });
   } catch (error: any) {
+    logError({
+      error: {
+        code: 500,
+        message: "Could not save Discord account info",
+        rawError: JSON.stringify({
+          error: error?.response?.data?.error,
+          discordUser,
+        }),
+      },
+    });
     try {
       axios.post(`${BASE_URL}/api/remove-user`, { id: newUser.id });
     } catch (error) {
