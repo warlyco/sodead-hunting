@@ -4,18 +4,29 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useUser } from "@/hooks/user";
 import { UserWithoutAccountBlocker } from "@/features/UI/user-without-account-blocker";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Spinner from "@/features/UI/spinner";
+import { useRouter } from "next/router";
+import { ContentWrapper } from "@/features/UI/content-wrapper";
+import { ContentWrapperYAxisCenteredContent } from "@/features/UI/content-wrapper-y-axis-centered-content";
 
 const Home: NextPage = () => {
   const { publicKey } = useWallet();
   const { user, setUser } = useUser();
+  const [isLoaded, setIsLoaded] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
+    if (!isLoaded) {
+      setTimeout(() => {
+        setIsLoaded(true);
+      }, 500);
+    }
     if (user && !publicKey) {
       setUser(null);
     }
     if (publicKey && user?.accounts?.length) {
-      window.location.href = "/hunt/active";
+      router.push("/hunt/active");
     }
   });
 
@@ -47,17 +58,27 @@ const Home: NextPage = () => {
         <meta name="theme-color" content="#000" />
       </Head>
       <>
-        {publicKey && user?.accounts?.length ? (
-          <Image
-            className="h-64 w-64"
-            src="/images/sodead-logo.png"
-            alt="SoDead Logo"
-            height={300}
-            width={300}
-          />
-        ) : (
-          <UserWithoutAccountBlocker />
-        )}
+        <ContentWrapper>
+          {isLoaded ? (
+            <>
+              {publicKey && user?.accounts?.length ? (
+                <Image
+                  className="h-64 w-64"
+                  src="/images/sodead-logo.png"
+                  alt="SoDead Logo"
+                  height={300}
+                  width={300}
+                />
+              ) : (
+                <UserWithoutAccountBlocker />
+              )}
+            </>
+          ) : (
+            <ContentWrapperYAxisCenteredContent>
+              <Spinner />
+            </ContentWrapperYAxisCenteredContent>
+          )}
+        </ContentWrapper>
       </>
     </>
   );

@@ -23,39 +23,28 @@ const App: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-  const router = useRouter();
-  const [isCentered, setIsCentered] = useState(false);
   return (
-    useEffect(() => {
-      if (router.pathname === "/" || router.pathname === "/me") {
-        setIsCentered(true);
-      } else {
-        setIsCentered(false);
-      }
-    }, [router, router.pathname, setIsCentered]),
-    (
-      // <SessionProvider session={session}>
-      <ContextProvider>
-        <style jsx global>{`
-          :root {
-            /* ... */
-            --font-strange-dreams: ${strangeDream.style.fontFamily};
-          }
-        `}</style>
-        <DebugModeProvider>
-          <AdminProvider>
-            <UserProvider>
-              <FoucGuard />
-              <MainLayout centered={isCentered}>
-                <NextNProgress color="#b90811" />
-                <SharedHead />
-                <Component {...pageProps} />
-              </MainLayout>
-            </UserProvider>
-          </AdminProvider>
-        </DebugModeProvider>
-      </ContextProvider>
-    )
+    // <SessionProvider session={session}>
+    <ContextProvider>
+      <style jsx global>{`
+        :root {
+          /* ... */
+          --font-strange-dreams: ${strangeDream.style.fontFamily};
+        }
+      `}</style>
+      <DebugModeProvider>
+        <AdminProvider>
+          <UserProvider>
+            <FoucGuard />
+            <MainLayout>
+              <NextNProgress color="#b90811" />
+              <SharedHead />
+              <Component {...pageProps} />
+            </MainLayout>
+          </UserProvider>
+        </AdminProvider>
+      </DebugModeProvider>
+    </ContextProvider>
     // </SessionProvider>
   );
 };

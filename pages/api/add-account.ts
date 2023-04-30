@@ -3,6 +3,7 @@ import { User } from "@/features/admin/users/users-list-item";
 import { client } from "@/graphql/backend-client";
 import { ADD_ACCOUNT } from "@/graphql/mutations/add-account";
 import { UPDATE_USER } from "@/graphql/mutations/update-user";
+import { logError } from "@metaplex-foundation/js";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -78,6 +79,15 @@ export default async function handler(
   });
 
   if (!imageUrl || !email || !providerId || !providerAccountId || !username) {
+    logError({
+      error: {
+        code: 500,
+        message: "Could not save Discord account info",
+        rawError: JSON.stringify({
+          discordUser: req.body,
+        }),
+      },
+    });
     res.status(500).json({ error: "Required fields not set" });
     return;
   }
@@ -121,6 +131,16 @@ export default async function handler(
       user: update_sodead_users_by_pk,
     });
   } catch (error) {
+    logError({
+      error: {
+        code: 500,
+        message: "Could not save Discord account info",
+        rawError: JSON.stringify({
+          error,
+          discordUser: req.body,
+        }),
+      },
+    });
     res.status(500).json({ error });
   }
 }

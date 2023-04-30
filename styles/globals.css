@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400&display=swap");
 
 .wallet-adapter-button.wallet-adapter-button-trigger {
   @apply flex items-center bg-stone-900 whitespace-nowrap text-stone-300 font-bold uppercase hover:bg-red-900 h-12 rounded-2xl px-3 py-2 !important;
@@ -10,5 +10,9 @@
 
 body {
   @apply bg-stone-900 text-stone-300;
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
+}
+
+.h-app {
+  height: calc(100vh - 5rem);
 }

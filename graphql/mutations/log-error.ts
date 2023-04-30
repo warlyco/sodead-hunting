@@ -5,7 +5,7 @@ export const LOG_ERROR = gql`
     $code: Int!
     $message: String!
     $rawError: String!
-    $burnTxAddress: String!
+    $burnTxAddress: String = ""
   ) {
     insert_sodead_errorInstances_one(
       object: {
