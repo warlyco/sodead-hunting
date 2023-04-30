@@ -28,9 +28,11 @@ import {
 import dayjs from "dayjs";
 import { RemoveFromHuntResponse } from "@/pages/api/remove-from-hunt";
 import { NftEventFromHelius } from "@/pages/api/get-nft-listings-and-sales-by-wallet-address";
+import { useAdmin } from "@/hooks/admin";
 
 const HuntDetailPage: NextPage = () => {
   const { user, loadingUser, setUser } = useUser();
+  const { isAdmin } = useAdmin();
   const { publicKey } = useWallet();
   const { connection } = useConnection();
   const [isLoading, setIsLoading] = useState(false);
@@ -147,6 +149,7 @@ const HuntDetailPage: NextPage = () => {
               !creaturesSoldWhileInActivity.length
             ) {
               setCreaturesInActivity(creaturesInActivity);
+              console.log(1);
               setIsLoading(false);
               return;
             }
@@ -180,11 +183,22 @@ const HuntDetailPage: NextPage = () => {
                 ({ id }) => id === creature.id
               );
             });
+            setCreaturesInActivity(creaturesInActivity);
+            setEligibleCreatures(filterIneligibleCreatures(creatures));
+            console.log(4);
+            setIsLoading(false);
+          } else {
+            setCreaturesInActivity(creaturesInActivity);
+            setEligibleCreatures(filterIneligibleCreatures(creatures));
+            console.log(3);
+            setIsLoading(false);
           }
+        } else {
           setCreaturesInActivity(creaturesInActivity);
           setEligibleCreatures(filterIneligibleCreatures(creatures));
+          console.log(2);
+          setIsLoading(false);
         }
-        setIsLoading(false);
       },
     });
 
@@ -263,8 +277,6 @@ const HuntDetailPage: NextPage = () => {
         ),
         hunt
       );
-
-      // return getCreaturesNotInActivity(eligibleCreatures, hunt);
     },
     [hunt]
   );
@@ -306,7 +318,7 @@ const HuntDetailPage: NextPage = () => {
 
     setIsLoading(true);
 
-    await getCreaturesByTokenMintAddress();
+    // To do: refetch on-chain data before claim
 
     try {
       const { data }: { data: RemoveFromHuntResponse } = await axios.post(
@@ -329,6 +341,7 @@ const HuntDetailPage: NextPage = () => {
           title: "View Transaction",
         },
       });
+      await getCreaturesByTokenMintAddress();
       setCreaturesInActivity(
         creaturesInActivity.filter(
           ({ id }) =>
@@ -340,12 +353,10 @@ const HuntDetailPage: NextPage = () => {
         ...selectedActivityCompleteCreatures,
       ]);
       setSelectedActivityCompleteCreatures([]);
-      fetchCollection();
+      await fetchCollection();
     } catch (error) {
       console.log(error);
     }
-
-    setIsLoading(false);
   }, [
     creaturesInActivity,
     eligibleCreatures,
@@ -420,7 +431,7 @@ const HuntDetailPage: NextPage = () => {
       </ContentWrapper>
     );
 
-  if (!!hunt?.id && !hunt?.isActive) {
+  if (!!hunt?.id && !hunt?.isActive && !isAdmin) {
     return (
       <ContentWrapper className="flex flex-col items-center">
         <div className="pt-48">No hunt found</div>

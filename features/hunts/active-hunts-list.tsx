@@ -3,14 +3,17 @@ import { HuntDetailsInfoBox } from "@/features/hunts/hunt-details-info-box";
 import { SecondaryButton } from "@/features/UI/buttons/secondary-button";
 import Spinner from "@/features/UI/spinner";
 import { GET_ACTIVE_HUNTS } from "@/graphql/queries/get-active-hunts";
+import { GET_HUNTS } from "@/graphql/queries/get-hunts";
+import { useAdmin } from "@/hooks/admin";
 import { useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export const ActiveHuntsList = () => {
   const [hunts, setHunts] = useState<Hunt[] | null>(null);
+  const { isAdmin } = useAdmin();
 
-  const { loading } = useQuery(GET_ACTIVE_HUNTS, {
+  const { loading } = useQuery(isAdmin ? GET_HUNTS : GET_ACTIVE_HUNTS, {
     onCompleted: ({ sodead_activities }) => {
       setHunts(sodead_activities);
     },
