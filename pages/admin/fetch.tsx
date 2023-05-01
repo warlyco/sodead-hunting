@@ -97,7 +97,7 @@ export default function FetchPage() {
     onSubmit: async ({ mintAddress }) => {
       setIsLoading(true);
       setMintAddress(mintAddress);
-      // await fetchCollection(mintAddress);
+      await fetchCollection(mintAddress);
     },
   });
 
