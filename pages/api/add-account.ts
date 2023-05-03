@@ -93,7 +93,7 @@ export default async function handler(
     },
   });
 
-  if (!imageUrl || !email || !providerId || !providerAccountId || !username) {
+  if (!imageUrl || !providerId || !providerAccountId || !username) {
     logError({
       error: {
         code: 500,

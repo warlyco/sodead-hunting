@@ -120,15 +120,20 @@ export default async function handler(
         }),
       },
     });
+    const username =
+      discordUser?.username?.length && discordUser?.discriminator?.length
+        ? `${discordUser?.username}#${discordUser?.discriminator}`
+        : discordUser?.username || discordUser?.discriminator || "N/A";
+
     const { data: userAndAccount }: { data: UserAndAccountResponse } =
       await axios.post(`${BASE_URL}/api/add-account`, {
         imageUrl: discordUser?.avatar
           ? `https://cdn.discordapp.com/avatars/${discordUser?.id}/${discordUser?.avatar}.png`
-          : "",
-        email: discordUser?.email || "",
+          : "https://hungint.sodead.xyz/images/default-avatar.png",
+        email: discordUser?.email || "N/A",
         providerId: "eea4c92e-4ac4-4203-8c19-cba7f7b8d4f6", // Discord
-        providerAccountId: discordUser?.id || "",
-        username: `${discordUser?.username}#${discordUser?.discriminator}`,
+        providerAccountId: discordUser?.id || "N/A",
+        username,
         userId: newUser.id,
         accessToken,
         tokenType,
