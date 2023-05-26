@@ -1,20 +1,48 @@
+import { BASE_URL, REWARD_WALLET_ADDRESS } from "@/constants/constants";
 import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
-import { Fragment, useEffect, useState } from "react";
+import { TokenBalance } from "@/pages/api/get-token-balances-from-helius";
+import axios from "axios";
+import { Fragment, useCallback, useEffect, useState } from "react";
 
 export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
   const [rewardCollections, setRewardCollections] = useState<
     LootBox["rewardCollections"]
   >([]);
+  const [isFetchingTokenBalances, setIsFetchingTokenBalances] =
+    useState<boolean>(false);
+  const [lootBoxTokenBalances, setLootBoxTokenBalances] = useState<
+    TokenBalance[]
+  >([]);
+
+  const getLootBoxTokenBalances = useCallback(async () => {
+    setIsFetchingTokenBalances(true);
+    const { data } = await axios.post(
+      `${BASE_URL}/api/get-token-balances-from-helius`,
+      {
+        walletAddress: REWARD_WALLET_ADDRESS,
+      }
+    );
+    setLootBoxTokenBalances(data);
+    setIsFetchingTokenBalances(false);
+  }, [setIsFetchingTokenBalances, setLootBoxTokenBalances]);
+
+  const getItemBalance = (mintAddress: string) => {
+    if (!lootBoxTokenBalances?.length) return;
+    return lootBoxTokenBalances.find(({ mint }) => mint === mintAddress)
+      ?.amount;
+  };
+
   useEffect(() => {
     const { rewardCollections } = lootBox;
     if (!rewardCollections) return;
+    if (!lootBoxTokenBalances?.length) getLootBoxTokenBalances();
     const sortedRewards = [...rewardCollections].sort((a, b) => {
       if (!a.payoutChance) return 1;
       if (!b.payoutChance) return -1;
       return b.payoutChance - a.payoutChance;
     });
     setRewardCollections(sortedRewards);
-  }, [lootBox]);
+  }, [getLootBoxTokenBalances, lootBox, lootBoxTokenBalances?.length]);
 
   return (
     <div className="w-full">
@@ -67,12 +95,21 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
                                   key={itemCollection?.id}
                                   className="mb-2 rounded-lg lg:text-right"
                                 >
-                                  <div>
-                                    {itemCollection?.name.replace("1", "")}
-                                  </div>
+                                  {!!getItemBalance(
+                                    itemCollection.item.token.mintAddress
+                                  ) && (
+                                    <div>
+                                      {itemCollection?.name.replace("1", "")}
+                                      <div className="text-red-500">
+                                        {getItemBalance(
+                                          itemCollection.item.token.mintAddress
+                                        )}
+                                        x Remaining
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
                               )}
-                              {JSON.stringify(hashListCollection)}
                               {!!hashListCollection?.id && (
                                 <div
                                   key={hashListCollection?.id}

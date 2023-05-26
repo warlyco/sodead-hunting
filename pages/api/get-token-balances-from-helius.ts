@@ -3,7 +3,7 @@ import { NoopResponse } from "@/pages/api/add-account";
 import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-type TokenBalance = {
+export type TokenBalance = {
   tokenAccount: string;
   mint: string;
   amount: number;
