@@ -3,7 +3,7 @@ import { User } from "@/features/admin/users/users-list-item";
 import { client } from "@/graphql/backend-client";
 import { ADD_ACCOUNT } from "@/graphql/mutations/add-account";
 import { UPDATE_USER } from "@/graphql/mutations/update-user";
-import { logError } from "@metaplex-foundation/js";
+import { logError } from "@/utils/log-error";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 

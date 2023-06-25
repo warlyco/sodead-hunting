@@ -1,9 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { BASE_URL, RPC_ENDPOINT } from "@/constants/constants";
 import {
-  ItemCollection,
-  LootBox,
-} from "@/features/admin/loot-boxes/loot-box-list-item";
+  BASE_URL,
+  REWARD_WALLET_ADDRESS,
+  RPC_ENDPOINT,
+} from "@/constants/constants";
+import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
 import { client } from "@/graphql/backend-client";
 import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
 import { Payout } from "@/pages/profile/[id]";
@@ -31,6 +32,7 @@ import { GET_WALLET_BY_ADDRESS } from "@/graphql/queries/get-wallet-by-address";
 import { ADD_LOOTBOX_ITEM_PAYOUT } from "@/graphql/mutations/add-lootbox-item-payout";
 import { NoopResponse } from "@/pages/api/add-account";
 import { logError } from "@/utils/log-error";
+import { TokenBalance } from "@/pages/api/get-token-balances-from-helius";
 
 const getWeightedRandomReward = (items: any[], weights: any[]) => {
   var i;
@@ -146,12 +148,30 @@ export default async function handler(
     return;
   }
 
+  // get inventory and filter out OOS items
+  const { data: tokenBalances }: { data: TokenBalance[] } = await axios.post(
+    `${BASE_URL}/api/get-token-balances-from-helius`,
+    {
+      walletAddress: REWARD_WALLET_ADDRESS,
+    }
+  );
+
+  const rewardsInStock = rewards.filter((reward) => {
+    const tokenBalance = tokenBalances?.find(
+      (tokenBalance) => tokenBalance.mint === reward.item?.token?.mintAddress
+    );
+    // TODO: Adjust for decimals when not using SFTs
+    if (!tokenBalance?.amount) return false;
+    return tokenBalance.amount >= reward.amount;
+  });
+
   let randomReward = getWeightedRandomReward(
-    rewards,
+    rewardsInStock,
     rewards.map((reward) => reward.payoutChance)
   );
 
-  console.log("possible rewards", rewards);
+  console.log("all possible rewards", rewards);
+  console.log("rewards in stock", rewardsInStock);
 
   if (!randomReward) {
     res.status(400).json({ error: "No reward found" });
