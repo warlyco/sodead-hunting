@@ -1,6 +1,7 @@
 import { BASE_URL, REWARD_WALLET_ADDRESS } from "@/constants/constants";
 import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
 import { TokenBalance } from "@/pages/api/get-token-balances-from-helius";
+import { formatNumberWithCommas } from "@/utils/formatting";
 import axios from "axios";
 import { Fragment, useCallback, useEffect, useState } from "react";
 
@@ -28,8 +29,11 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
 
   const getItemBalance = (mintAddress: string) => {
     if (!lootBoxTokenBalances?.length) return;
-    return lootBoxTokenBalances.find(({ mint }) => mint === mintAddress)
-      ?.amount;
+    const token = lootBoxTokenBalances.find(({ mint }) => mint === mintAddress);
+    if (!token) return 0;
+    const { decimals, amount } = token;
+    if (decimals === 0) return amount;
+    return formatNumberWithCommas(amount / 10 ** decimals);
   };
 
   useEffect(() => {
@@ -63,12 +67,20 @@ export const LootBoxRewards = ({ lootBox }: { lootBox: LootBox }) => {
             i
           ) => (
             <Fragment key={itemCollection?.id}>
-              <div className="flex flex-wrap w-full flex-1 justify-between rounded-lg p-2">
+              <div className="flex w-full flex-1 justify-between rounded-lg p-2">
                 {/* Top level name */}
                 {!!itemCollection?.name && (
                   <>
-                    <div className="font-bold">{itemCollection?.name}</div>
-                    <div>{!!payoutChance && payoutChance * 100}%</div>
+                    <div className="lg:w-2/5 font-bold">
+                      {itemCollection?.name}
+                    </div>
+                    <div className="text-red-500 lg:w-2/5">
+                      {getItemBalance(itemCollection.item.token.mintAddress)}x
+                      Remaining
+                    </div>
+                    <div className="lg:w-1/5 text-right">
+                      {!!payoutChance && payoutChance * 100}%
+                    </div>
                   </>
                 )}
                 {!!hashListCollection?.id && (
