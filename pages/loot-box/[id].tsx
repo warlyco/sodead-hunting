@@ -1,4 +1,8 @@
-import { BASE_URL, BURNING_WALLET_ADDRESS } from "@/constants/constants";
+import {
+  BASE_URL,
+  BURNING_WALLET_ADDRESS,
+  REWARD_WALLET_ADDRESS,
+} from "@/constants/constants";
 import { LootBox } from "@/features/admin/loot-boxes/loot-box-list-item";
 import { LootBoxRewards } from "@/features/loot-boxes/loot-box-rewards-list";
 import showToast from "@/features/toasts/show-toast";
@@ -13,18 +17,14 @@ import { GET_LOOT_BOX_BY_ID } from "@/graphql/queries/get-loot-box-by-id";
 import { GET_LOOT_BOX_PAYOUTS_BY_WALLET_ADDRESS } from "@/graphql/queries/get-loot-box-payouts-by-wallet-address";
 import { useAdmin } from "@/hooks/admin";
 import { useUser } from "@/hooks/user";
+import { TokenBalance } from "@/pages/api/get-token-balances-from-helius";
 import { Payout } from "@/pages/profile/[id]";
 import { formatDateTime } from "@/utils/date-time";
 import { fetchNftsByHashList } from "@/utils/nfts/fetch-nfts-by-hash-list";
 import { executeTransaction } from "@/utils/transactions/execute-transaction";
 import { useMutation, useQuery } from "@apollo/client";
-import { Metaplex } from "@metaplex-foundation/js";
 import {
-  createAssociatedTokenAccountInstruction,
   createBurnCheckedInstruction,
-  createCloseAccountInstruction,
-  createTransferInstruction,
-  getAccount,
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
@@ -181,40 +181,6 @@ const LootBoxDetailPage: NextPage = () => {
       new PublicKey(mintAddress),
       wallet.publicKey
     );
-
-    // const toTokenAccountAddress = await getAssociatedTokenAddress(
-    //   new PublicKey(mintAddress),
-    //   new PublicKey(BURNING_WALLET_ADDRESS)
-    // );
-
-    // const associatedDestinationTokenAddr = await getAssociatedTokenAddress(
-    //   new PublicKey(mintAddress),
-    //   new PublicKey(BURNING_WALLET_ADDRESS)
-    // );
-
-    // const receiverAccount = await connection.getAccountInfo(
-    //   associatedDestinationTokenAddr
-    // );
-
-    // if (!receiverAccount) {
-    //   instructions.push(
-    //     createAssociatedTokenAccountInstruction(
-    //       wallet.publicKey,
-    //       associatedDestinationTokenAddr,
-    //       new PublicKey(BURNING_WALLET_ADDRESS),
-    //       new PublicKey(mintAddress)
-    //     )
-    //   );
-    // }
-
-    // instructions.push(
-    //   createTransferInstruction(
-    //     fromTokenAccountAddress,
-    //     toTokenAccountAddress,
-    //     wallet.publicKey,
-    //     costAmount
-    //   )
-    // );
 
     instructions.push(
       createBurnCheckedInstruction(
