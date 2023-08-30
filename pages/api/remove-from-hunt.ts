@@ -1,4 +1,5 @@
-import { RPC_ENDPOINT } from "@/constants/constants";
+import { BASE_URL, RPC_ENDPOINT } from "@/constants/constants";
+import collectionHashList from "@/features/hashlist/sodead-full-collection.json";
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
 import { client } from "@/graphql/backend-client";
 import { ADD_ITEM_PAYOUT } from "@/graphql/mutations/add-item-payout";
@@ -7,6 +8,7 @@ import { INVALIDATE_FROM_HUNT } from "@/graphql/mutations/invalidate-from-hunt";
 import { REMOVE_FROM_HUNT } from "@/graphql/mutations/remove-from-hunt";
 import { GET_HUNT_BY_ID } from "@/graphql/queries/get-hunt-by-id";
 import { NoopResponse } from "@/pages/api/add-account";
+import { fetchNftsByHashList } from "@/utils/nfts/fetch-nfts-by-hash-list";
 import { PublicKey } from "@metaplex-foundation/js";
 import {
   createAssociatedTokenAccountInstruction,
@@ -22,6 +24,17 @@ import {
 } from "@solana/web3.js";
 import base58 from "bs58";
 import type { NextApiRequest, NextApiResponse } from "next";
+import {
+  getCreaturesInActivity,
+  getCreaturesListedWhileInActivity,
+  getCreaturesSoldWhileInActivity,
+  getCreaturesWithActivityInstances,
+} from "@/utils/creatures";
+import { GET_CREATURES_BY_TOKEN_MINT_ADDRESSES } from "@/graphql/queries/get-creatures-by-token-mint-addresses";
+import { Creature } from "@/features/creatures/creature-list";
+import axios from "axios";
+import dayjs from "dayjs";
+import { NftEventFromHelius } from "@/pages/api/get-nft-listings-and-sales-by-wallet-address";
 
 export type RemoveFromHuntResponse = {
   rewardTxAddress: string;
@@ -43,6 +56,7 @@ type Data =
   | RemoveFromHuntResponse
   | InvalidationResponse
   | NoopResponse
+  | any
   | {
       error: unknown;
     };
@@ -51,13 +65,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const {
-    huntId,
-    mainCharacterIds,
-    walletAddress,
-    shouldInvalidate = false,
-    noop,
-  } = req.body;
+  const { huntId, walletAddress, shouldInvalidate = false, noop } = req.body;
 
   if (noop)
     return res.status(200).json({
@@ -65,46 +73,128 @@ export default async function handler(
       endpoint: "remove-from-hunt",
     });
 
-  if (
-    !huntId ||
-    !mainCharacterIds?.length ||
-    !process.env.REWARD_PRIVATE_KEY ||
-    !walletAddress
-  ) {
+  if (!huntId || !process.env.REWARD_PRIVATE_KEY || !walletAddress) {
     res.status(500).json({ error: "Required fields not set" });
     return;
   }
 
-  if (shouldInvalidate) {
-    for (const mainCharacterId of mainCharacterIds) {
-      const {
-        update_sodead_activityInstances,
-      }: { update_sodead_activityInstances: any } = await client.request({
-        document: INVALIDATE_FROM_HUNT,
-        variables: {
-          activityId: huntId,
-          mainCharacterId,
-        },
-      });
-    }
-    return res.status(200).json({
-      success: true,
+  // get characters by holder in hunt
+  const { sodead_activities_by_pk: hunt }: { sodead_activities_by_pk: Hunt } =
+    await client.request({
+      document: GET_HUNT_BY_ID,
+      variables: {
+        id: huntId,
+      },
     });
+
+  const connection = new Connection(RPC_ENDPOINT);
+
+  const nftsWithoutDetails = await fetchNftsByHashList({
+    publicKey: new PublicKey(walletAddress),
+    hashList: collectionHashList,
+    connection,
+    withDetails: false,
+  });
+
+  const mintAddresses = [
+    ...nftsWithoutDetails.map(({ mintAddress }) => mintAddress),
+  ];
+
+  const { sodead_creatures: creatures }: { sodead_creatures: Creature[] } =
+    await client.request({
+      document: GET_CREATURES_BY_TOKEN_MINT_ADDRESSES,
+      variables: {
+        mintAddresses,
+      },
+    });
+
+  let creaturesInActivity = getCreaturesInActivity(creatures, hunt);
+
+  const creaturesWithCompleteActivityInstances =
+    getCreaturesWithActivityInstances(creaturesInActivity, huntId, true);
+
+  let mainCharacterIds: String[] = creaturesWithCompleteActivityInstances.map(
+    ({ id }) => id
+  );
+
+  const earliestStartTime = creaturesWithCompleteActivityInstances
+    .map(({ activityInstance }) => activityInstance?.startTime)
+    .sort((a, b) => {
+      return new Date(a).getTime() - new Date(b).getTime();
+    })?.[0];
+
+  const { data } = await axios.post(
+    `${BASE_URL}/api/get-nft-listings-and-sales-by-wallet-address`,
+    {
+      walletAddress,
+      startTime: dayjs(earliestStartTime).unix(),
+    }
+  );
+
+  const {
+    listings,
+    cancelledListings,
+    sales,
+  }: {
+    listings: NftEventFromHelius[];
+    sales: NftEventFromHelius[];
+    cancelledListings: NftEventFromHelius[];
+  } = data;
+
+  let creaturesToInvalidate: Creature[] = [];
+
+  if (listings.length || sales.length) {
+    const creaturesListedWhileInActivity = getCreaturesListedWhileInActivity(
+      listings,
+      cancelledListings,
+      creatures,
+      hunt
+    );
+
+    const creaturesSoldWhileInActivity = getCreaturesSoldWhileInActivity(
+      sales,
+      creatures,
+      hunt,
+      walletAddress
+    );
+
+    if (
+      creaturesListedWhileInActivity.length ||
+      creaturesSoldWhileInActivity.length
+    ) {
+      creaturesToInvalidate = [
+        ...creaturesListedWhileInActivity,
+        ...creaturesSoldWhileInActivity,
+      ];
+
+      const idsToInvalidate = creaturesToInvalidate.map(({ id }) => id);
+
+      // remove from activity
+      creaturesInActivity = creaturesInActivity.filter((creature) => {
+        return !creaturesToInvalidate.find(({ id }) => id === creature.id);
+      });
+
+      mainCharacterIds = creaturesInActivity.map(({ id }) => id);
+
+      for (const mainCharacterId of idsToInvalidate) {
+        const {
+          update_sodead_activityInstances,
+        }: { update_sodead_activityInstances: any } = await client.request({
+          document: INVALIDATE_FROM_HUNT,
+          variables: {
+            activityId: huntId,
+            mainCharacterId,
+          },
+        });
+      }
+    }
   }
 
   let rewardTxAddress: string | undefined;
 
   // send reward
   try {
-    const { sodead_activities_by_pk }: { sodead_activities_by_pk: Hunt } =
-      await client.request({
-        document: GET_HUNT_BY_ID,
-        variables: {
-          id: huntId,
-        },
-      });
-
-    const { rewardCollections } = sodead_activities_by_pk;
+    const { rewardCollections } = hunt;
     const { itemCollection } = rewardCollections?.[0];
 
     if (!itemCollection) {
@@ -118,10 +208,9 @@ export default async function handler(
     }
 
     const removalsCount = mainCharacterIds.length;
-    const connection = new Connection(RPC_ENDPOINT);
 
     const rewardKeypair = Keypair.fromSecretKey(
-      base58.decode(process.env.REWARD_PRIVATE_KEY)
+      base58.decode(process.env.REWARD_PRIVATE_KEY!)
     );
     const rewardPublicKey = new PublicKey(rewardKeypair.publicKey.toString());
 

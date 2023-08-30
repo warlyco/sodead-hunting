@@ -1,6 +1,7 @@
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
 import { CreatureListItem } from "@/features/creatures/creature-list-item";
 import Spinner from "@/features/UI/spinner";
+import classNames from "classnames";
 
 export type Creature = {
   id: string;
@@ -39,6 +40,7 @@ export const CreatureList = ({
   selectedCreatures,
   setSelectedCreatures,
   activity,
+  isSelectEnabled = true,
 }: {
   creatures: Creature[] | null;
   isLoading: boolean;
@@ -46,6 +48,7 @@ export const CreatureList = ({
   selectedCreatures?: Creature[];
   setSelectedCreatures?: (creatures: Creature[]) => void;
   activity?: Hunt;
+  isSelectEnabled?: boolean;
 }) => {
   const selectCreature = (creature: Creature) => {
     if (!setSelectedCreatures || !selectedCreatures) return;
@@ -86,9 +89,12 @@ export const CreatureList = ({
           {!!creatures?.length ? (
             creatures.map((creature) => (
               <div
-                onClick={() => selectCreature(creature)}
+                onClick={() => isSelectEnabled && selectCreature(creature)}
                 key={creature.id}
-                className="w-full sm:w-1/2 md:w-1/3 p-2 cursor-pointer hover:scale-[1.04] transition-all duration-300"
+                className={classNames(
+                  "w-full sm:w-1/2 md:w-1/3 p-2 transition-all duration-300",
+                  isSelectEnabled && "cursor-pointer hover:scale-[1.04] "
+                )}
               >
                 <CreatureListItem
                   activity={activity}

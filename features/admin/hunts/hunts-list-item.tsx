@@ -77,7 +77,7 @@ export type Hunt = {
       };
     };
     id: string;
-  };
+  }[];
 };
 
 export const HuntsListItem = ({ hunt }: { hunt: Hunt }) => {

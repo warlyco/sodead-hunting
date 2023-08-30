@@ -24,6 +24,7 @@ import {
   getCreaturesListedWhileInActivity,
   getCreaturesNotInActivity,
   getCreaturesSoldWhileInActivity,
+  getCreaturesWithActivityInstances,
 } from "@/utils/creatures";
 import dayjs from "dayjs";
 import { RemoveFromHuntResponse } from "@/pages/api/remove-from-hunt";
@@ -56,6 +57,20 @@ const HuntDetailPage: NextPage = () => {
     setSelectedActivityCompleteCreatures,
   ] = useState<Creature[]>([]);
   const [isSubmitDebounced, setIsSubmitDebounced] = useState(false);
+  const [hasSomeCompleted, setHasSomeCompleted] = useState(false);
+
+  useEffect(() => {
+    // if id is not a string
+    if (typeof id !== "string") return;
+
+    const completedCreatures = getCreaturesWithActivityInstances(
+      creaturesInActivity,
+      id,
+      true
+    );
+
+    setHasSomeCompleted(!!completedCreatures.length);
+  }, [creaturesInActivity, id]);
 
   const [getCreaturesByTokenMintAddress, { loading: creaturesLoading }] =
     useLazyQuery(GET_CREATURES_BY_TOKEN_MINT_ADDRESSES, {
@@ -76,130 +91,9 @@ const HuntDetailPage: NextPage = () => {
         let creaturesInActivity = getCreaturesInActivity(creatures, hunt);
         console.log({ creaturesInActivity });
 
-        // check if listed, invalidate
-        if (creaturesInActivity?.length) {
-          // find earliest start time
-          let earliestStartTime;
-          let latestStartTime;
-          for (let creature of creaturesInActivity) {
-            const activityInstanceStartTime =
-              creature.mainCharacterActivityInstances.find(
-                ({ isComplete }) => !isComplete
-              )?.startTime || 0;
-
-            if (
-              !earliestStartTime ||
-              activityInstanceStartTime < earliestStartTime
-            ) {
-              earliestStartTime = activityInstanceStartTime;
-            }
-
-            if (
-              !latestStartTime ||
-              activityInstanceStartTime > latestStartTime
-            ) {
-              latestStartTime = activityInstanceStartTime;
-            }
-          }
-
-          if (!earliestStartTime) return;
-
-          const { data } = await axios.post(
-            `${BASE_URL}/api/get-nft-listings-and-sales-by-wallet-address`,
-            {
-              walletAddress: publicKey?.toString(),
-              startTime: dayjs(earliestStartTime).unix(),
-            }
-          );
-
-          const {
-            listings,
-            cancelledListings,
-            sales,
-          }: {
-            listings: NftEventFromHelius[];
-            sales: NftEventFromHelius[];
-            cancelledListings: NftEventFromHelius[];
-          } = data;
-          data;
-
-          if (listings.length || sales.length) {
-            const creaturesListedWhileInActivity =
-              getCreaturesListedWhileInActivity(
-                listings,
-                cancelledListings,
-                creatures,
-                hunt
-              );
-
-            const creaturesSoldWhileInActivity =
-              getCreaturesSoldWhileInActivity(
-                sales,
-                creatures,
-                hunt,
-                publicKey.toString()
-              );
-
-            console.log(
-              creaturesListedWhileInActivity,
-              creaturesSoldWhileInActivity
-            );
-
-            if (
-              !creaturesListedWhileInActivity.length &&
-              !creaturesSoldWhileInActivity.length
-            ) {
-              setCreaturesInActivity(creaturesInActivity);
-              console.log(1);
-              setIsLoading(false);
-              return;
-            }
-
-            const creaturesToInvalidate = [
-              ...creaturesListedWhileInActivity,
-              ...creaturesSoldWhileInActivity,
-            ];
-
-            await axios.post(`${BASE_URL}/api/remove-from-hunt`, {
-              huntId: hunt.id,
-              mainCharacterIds: creaturesToInvalidate.map(({ id }) => id),
-              walletAddress: publicKey.toString(),
-              shouldInvalidate: true,
-            });
-
-            const numberOfInvalidated = creaturesToInvalidate.length;
-
-            showToast({
-              primaryMessage: "Invalidation",
-              secondaryMessage: `
-                ${numberOfInvalidated} ${
-                numberOfInvalidated === 1 ? "Vamp" : "Vamps"
-              } removed from hunt due to being listed or sold during hunt.
-              `,
-            });
-
-            // remove from activity
-            creaturesInActivity = creaturesInActivity.filter((creature) => {
-              return !creaturesToInvalidate.find(
-                ({ id }) => id === creature.id
-              );
-            });
-            setCreaturesInActivity(creaturesInActivity);
-            setEligibleCreatures(filterIneligibleCreatures(creatures));
-            console.log(4);
-            setIsLoading(false);
-          } else {
-            setCreaturesInActivity(creaturesInActivity);
-            setEligibleCreatures(filterIneligibleCreatures(creatures));
-            console.log(3);
-            setIsLoading(false);
-          }
-        } else {
-          setCreaturesInActivity(creaturesInActivity);
-          setEligibleCreatures(filterIneligibleCreatures(creatures));
-          console.log(2);
-          setIsLoading(false);
-        }
+        setCreaturesInActivity(creaturesInActivity);
+        setEligibleCreatures(filterIneligibleCreatures(creatures));
+        setIsLoading(false);
       },
     });
 
@@ -293,7 +187,7 @@ const HuntDetailPage: NextPage = () => {
     if (!publicKey || !hunt) return;
     setIsLoading(true);
 
-    const nftsWithoutDetailsOne = await fetchNftsByHashList({
+    const nftsWithoutDetails = await fetchNftsByHashList({
       publicKey,
       hashList: collectionHashList,
       connection,
@@ -302,7 +196,7 @@ const HuntDetailPage: NextPage = () => {
     });
 
     const mintAddresses = [
-      ...nftsWithoutDetailsOne.map(({ mintAddress }) => mintAddress),
+      ...nftsWithoutDetails.map(({ mintAddress }) => mintAddress),
     ];
 
     setCreatureMintAddresses(mintAddresses);
@@ -327,16 +221,11 @@ const HuntDetailPage: NextPage = () => {
     setIsLoading(true);
     debounceSubmitButton();
 
-    // To do: refetch on-chain data before claim
-
     try {
       const { data }: { data: RemoveFromHuntResponse } = await axios.post(
         `${BASE_URL}/api/remove-from-hunt`,
         {
           huntId: hunt.id,
-          mainCharacterIds: selectedActivityCompleteCreatures.map(
-            ({ id }) => id
-          ),
           walletAddress: publicKey.toString(),
         }
       );
@@ -534,11 +423,7 @@ const HuntDetailPage: NextPage = () => {
               <SubmitButton
                 isSubmitting={false}
                 onClick={removeFromHunt}
-                disabled={
-                  !selectedActivityCompleteCreatures.length ||
-                  isLoading ||
-                  isSubmitDebounced
-                }
+                disabled={isLoading || isSubmitDebounced || !hasSomeCompleted}
               >
                 Claim Rewards
               </SubmitButton>
@@ -548,6 +433,7 @@ const HuntDetailPage: NextPage = () => {
               creatures={creaturesInActivity}
               isLoading={isLoading}
               selectedCreatures={selectedActivityCompleteCreatures}
+              isSelectEnabled={false}
               setSelectedCreatures={
                 isSubmitDebounced
                   ? () => {}
