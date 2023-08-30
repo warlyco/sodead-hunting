@@ -1,3 +1,6 @@
+if (1==1)
+  return;
+
 import { RPC_ENDPOINT } from "@/constants/constants";
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
 import { client } from "@/graphql/backend-client";
@@ -59,8 +62,6 @@ export default async function handler(
     noop,
   } = req.body;
 
-  if (1==1)
-    return;
   
   if (noop)
     return res.status(200).json({
