@@ -1,5 +1,12 @@
-if (1==1)
-  return;
+function check() 
+{
+  return false;
+}
+
+const isOkay = check();
+if(!isOkay) { 
+    throw new Error('Not OKAY');
+}
 
 import { RPC_ENDPOINT } from "@/constants/constants";
 import { Hunt } from "@/features/admin/hunts/hunts-list-item";
