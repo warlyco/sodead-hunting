@@ -59,6 +59,9 @@ export default async function handler(
     noop,
   } = req.body;
 
+  if (1==1)
+    return;
+  
   if (noop)
     return res.status(200).json({
       noop: true,
