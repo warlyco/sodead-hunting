@@ -29,6 +29,9 @@ const LoginWithDiscord = ({ user }: { user?: User }) => {
       href =
         "https://discord.com/api/oauth2/authorize?client_id=1084345711786721300&redirect_uri=https%3A%2F%2Fhunting.sodead.xyz%2Fdiscord-redirect&response_type=code&scope=identify%20guilds%20email&response_type=token";
       break;
+    case "preview":
+      href =
+        "https://discord.com/api/oauth2/authorize?client_id=1084345711786721300&redirect_uri=https%3A%2F%2Fpreview-hunting.sodead.xyz%2Fdiscord-redirect&response_type=code&scope=identify%20guilds%20email&response_type=token";
     case "local":
     default:
       href =
