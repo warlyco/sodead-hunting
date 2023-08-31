@@ -329,6 +329,17 @@ export default async function handler(
         variables,
       });
 
+    const { update_sodead_users }: { update_sodead_users: User[] } =
+      await client.request({
+        document: UPDATE_USER,
+        variables: {
+          id: user.id,
+          setInput: {
+            claimingTimeStampLootbox: null,
+          },
+        },
+      });
+
     res.status(200).json({
       ...insert_sodead_payouts_one,
       reward: childRewardMintAddress ? childReward : randomReward,
