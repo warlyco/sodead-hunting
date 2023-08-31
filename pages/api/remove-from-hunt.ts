@@ -225,17 +225,22 @@ export default async function handler(
       throw new Error("No user found");
     }
 
-    // check if claimingTimeStamp is set and less than 2 min ago
+    // check if claimingTimeStamp is set and less than 1 min ago
     if (user.claimingTimeStampHunt) {
+      console.log(
+        "existing claimingTimeStampHunt: ",
+        dayjs(user.claimingTimeStampHunt).format("YYYY-MM-DD HH:mm:ss")
+      );
       const claimingTimeStamp = new Date(user.claimingTimeStampHunt).getTime();
-      const twoMinutesAgo = new Date().getTime() - 2 * 60 * 1000;
+      const oneMinuteAgo = new Date().getTime() - 1 * 60 * 1000;
 
-      const claimingTimeStampUnderTwoMinutesAgo =
-        claimingTimeStamp > twoMinutesAgo;
+      const lessThanOneMinuteAgo = claimingTimeStamp > oneMinuteAgo;
 
-      if (claimingTimeStampUnderTwoMinutesAgo) {
+      if (lessThanOneMinuteAgo) {
         throw new Error("Claiming timestamp is under two minutes ago");
       }
+    } else {
+      console.log("existing claimingTimeStampHunt: null");
     }
 
     // save claimingTimeStamp to disallow double claims
@@ -249,6 +254,13 @@ export default async function handler(
           },
         },
       });
+
+    console.log(
+      "updated claimingTimeStampHunt: ",
+      dayjs(update_sodead_users[0].claimingTimeStampHunt).format(
+        "YYYY-MM-DD HH:mm:ss"
+      )
+    );
 
     const removalsCount = mainCharacterIds.length;
 
@@ -319,10 +331,8 @@ export default async function handler(
 
     let document;
     if (item.id) {
-      console.log("item payout");
       document = ADD_ITEM_PAYOUT;
     } else {
-      console.log("non-item payout");
       document = ADD_PAYOUT;
     }
 
@@ -340,8 +350,6 @@ export default async function handler(
       };
     }
 
-    console.log({ variables });
-
     const { insert_sodead_payouts_one }: { insert_sodead_payouts_one: any } =
       await client.request({
         document,
@@ -350,12 +358,6 @@ export default async function handler(
 
     try {
       for (const mainCharacterId of mainCharacterIds) {
-        console.log({
-          activityId: huntId,
-          mainCharacterId,
-          payoutId: insert_sodead_payouts_one.id,
-        });
-
         const {
           update_sodead_activityInstances,
         }: { update_sodead_activityInstances: any } = await client.request({

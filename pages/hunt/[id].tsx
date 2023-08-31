@@ -254,6 +254,11 @@ const HuntDetailPage: NextPage = () => {
       await fetchCollection();
     } catch (error) {
       console.log(error);
+      showToast({
+        primaryMessage: "Something went wrong",
+        secondaryMessage: "Please try again in a few minutes.",
+      });
+      setIsLoading(false);
     }
   }, [
     creaturesInActivity,
