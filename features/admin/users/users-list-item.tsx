@@ -16,6 +16,8 @@ export type User = {
   id: string;
   name: string;
   email: string;
+  claimingTimeStampHunt: string;
+  claimingTimeStampLootbox: string;
   createdAt: string;
   wallets: {
     id: string;

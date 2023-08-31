@@ -31,6 +31,9 @@ import { GET_WALLET_BY_ADDRESS } from "@/graphql/queries/get-wallet-by-address";
 import { ADD_LOOTBOX_ITEM_PAYOUT } from "@/graphql/mutations/add-lootbox-item-payout";
 import { NoopResponse } from "@/pages/api/add-account";
 import { logError } from "@/utils/log-error";
+import { User } from "@/features/admin/users/users-list-item";
+import { GET_USER_BY_WALLET_ADDRESS } from "@/graphql/queries/get-user-by-wallet-address";
+import { UPDATE_USER } from "@/graphql/mutations/update-user";
 
 const getWeightedRandomReward = (items: any[], weights: any[]) => {
   var i;
@@ -170,6 +173,48 @@ export default async function handler(
     childReward = itemCollection;
   }
 
+  const userWalletAddress = burnTxInfo?.feePayer;
+
+  // get user by wallet address
+  const { sodead_users: users }: { sodead_users: User[] } =
+    await client.request({
+      document: GET_USER_BY_WALLET_ADDRESS,
+      variables: {
+        address: userWalletAddress,
+      },
+    });
+
+  const user = users?.[0];
+
+  if (!user) {
+    throw new Error("No user found");
+  }
+
+  // check if claimingTimeStamp is set and less than 2 min ago
+  if (user.claimingTimeStampLootbox) {
+    const claimingTimeStamp = new Date(user.claimingTimeStampLootbox).getTime();
+    const twoMinutesAgo = new Date().getTime() - 2 * 60 * 1000;
+
+    const claimingTimeStampUnderTwoMinutesAgo =
+      claimingTimeStamp > twoMinutesAgo;
+
+    if (claimingTimeStampUnderTwoMinutesAgo) {
+      throw new Error("Claiming timestamp is under two minutes ago");
+    }
+  }
+
+  // save claimingTimeStamp to disallow double claims
+  const { update_sodead_users }: { update_sodead_users: User[] } =
+    await client.request({
+      document: UPDATE_USER,
+      variables: {
+        id: user.id,
+        setInput: {
+          claimingTimeStampLootbox: new Date().toISOString(),
+        },
+      },
+    });
+
   const childRewardMintAddress = childReward?.item?.token?.mintAddress;
   const randomRewardMintAddress = randomReward?.item?.token?.mintAddress;
 
@@ -187,7 +232,7 @@ export default async function handler(
   let rewardAmount = randomReward?.amount || 1;
 
   let rewardTxAddress: string;
-  const fromUserAccount = new PublicKey(burnTxInfo?.feePayer);
+  const fromUserAccount = new PublicKey(userWalletAddress);
 
   const fromTokenAccountAddress = await getAssociatedTokenAddress(
     rewardMintAddress,

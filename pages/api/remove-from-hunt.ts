@@ -35,6 +35,9 @@ import { Creature } from "@/features/creatures/creature-list";
 import axios from "axios";
 import dayjs from "dayjs";
 import { NftEventFromHelius } from "@/pages/api/get-nft-listings-and-sales-by-wallet-address";
+import { UPDATE_USER } from "@/graphql/mutations/update-user";
+import { User } from "@/features/admin/users/users-list-item";
+import { GET_USER_BY_WALLET_ADDRESS } from "@/graphql/queries/get-user-by-wallet-address";
 
 export type RemoveFromHuntResponse = {
   rewardTxAddress: string;
@@ -206,6 +209,46 @@ export default async function handler(
     if (!item?.token?.mintAddress) {
       throw new Error("No reward found");
     }
+
+    // get user by wallet address
+    const { sodead_users: users }: { sodead_users: User[] } =
+      await client.request({
+        document: GET_USER_BY_WALLET_ADDRESS,
+        variables: {
+          address: walletAddress,
+        },
+      });
+
+    const user = users?.[0];
+
+    if (!user) {
+      throw new Error("No user found");
+    }
+
+    // check if claimingTimeStamp is set and less than 2 min ago
+    if (user.claimingTimeStampHunt) {
+      const claimingTimeStamp = new Date(user.claimingTimeStampHunt).getTime();
+      const twoMinutesAgo = new Date().getTime() - 2 * 60 * 1000;
+
+      const claimingTimeStampUnderTwoMinutesAgo =
+        claimingTimeStamp > twoMinutesAgo;
+
+      if (claimingTimeStampUnderTwoMinutesAgo) {
+        throw new Error("Claiming timestamp is under two minutes ago");
+      }
+    }
+
+    // save claimingTimeStamp to disallow double claims
+    const { update_sodead_users }: { update_sodead_users: User[] } =
+      await client.request({
+        document: UPDATE_USER,
+        variables: {
+          id: user.id,
+          setInput: {
+            claimingTimeStampHunt: new Date().toISOString(),
+          },
+        },
+      });
 
     const removalsCount = mainCharacterIds.length;
 
