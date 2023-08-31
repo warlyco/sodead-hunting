@@ -244,7 +244,7 @@ export default async function handler(
     }
 
     // save claimingTimeStamp to disallow double claims
-    const { update_sodead_users }: { update_sodead_users: User[] } =
+    const { update_sodead_users: updatedUser }: { update_sodead_users: User } =
       await client.request({
         document: UPDATE_USER,
         variables: {
@@ -255,11 +255,11 @@ export default async function handler(
         },
       });
 
+    console.log("updated user: ", updatedUser);
+
     console.log(
       "updated claimingTimeStampHunt: ",
-      dayjs(update_sodead_users[0].claimingTimeStampHunt).format(
-        "YYYY-MM-DD HH:mm:ss"
-      )
+      dayjs(updatedUser.claimingTimeStampHunt).format("YYYY-MM-DD HH:mm:ss")
     );
 
     const removalsCount = mainCharacterIds.length;
@@ -377,17 +377,16 @@ export default async function handler(
 
     console.log("rewardTxAddress", rewardTxAddress, insert_sodead_payouts_one);
 
-    const {
-      update_sodead_users: updatedUser,
-    }: { update_sodead_users: User[] } = await client.request({
-      document: UPDATE_USER,
-      variables: {
-        id: user.id,
-        setInput: {
-          claimingTimeStampLootbox: null,
+    const { update_sodead_users }: { update_sodead_users: User[] } =
+      await client.request({
+        document: UPDATE_USER,
+        variables: {
+          id: user.id,
+          setInput: {
+            claimingTimeStampLootbox: null,
+          },
         },
-      },
-    });
+      });
 
     res.status(200).json({
       rewardTxAddress: rewardTxAddress,
