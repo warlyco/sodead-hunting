@@ -244,16 +244,17 @@ export default async function handler(
     }
 
     // save claimingTimeStamp to disallow double claims
-    const { update_sodead_users: updatedUser }: { update_sodead_users: User } =
-      await client.request({
-        document: UPDATE_USER,
-        variables: {
-          id: user.id,
-          setInput: {
-            claimingTimeStampHunt: new Date().toISOString(),
-          },
+    const {
+      update_sodead_users_by_pk: updatedUser,
+    }: { update_sodead_users_by_pk: User } = await client.request({
+      document: UPDATE_USER,
+      variables: {
+        id: user.id,
+        setInput: {
+          claimingTimeStampHunt: new Date().toISOString(),
         },
-      });
+      },
+    });
 
     console.log("updated user: ", updatedUser);
 
