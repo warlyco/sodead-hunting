@@ -144,27 +144,21 @@ export const getCreaturesSoldWhileInActivity = (
 
 export const getCreaturesWithActivityInstances = (
   creatures: Creature[],
-  huntId: string,
-  isComplete?: boolean
+  huntId: string
 ) => {
   return creatures.map((creature) => {
     let instances = creature.mainCharacterActivityInstances?.filter(
       (activityInstance) => activityInstance.activity.id === huntId
     );
 
-    if (isComplete) {
-      instances = instances.filter(
-        (activityInstance) => activityInstance.isComplete
-      );
-    }
-
     const activityInstance = instances.sort((a, b) => {
-      return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+      return new Date(b.startTime).getTime() - new Date(a.startTime).getTime();
     })?.[0];
 
     return {
       ...creature,
       activityInstance,
+      isComplete: activityInstance?.isComplete,
     };
   });
 };

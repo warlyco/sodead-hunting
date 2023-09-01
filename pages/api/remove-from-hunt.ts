@@ -113,14 +113,35 @@ export default async function handler(
 
   let creaturesInActivity = getCreaturesInActivity(creatures, hunt);
 
-  const creaturesWithCompleteActivityInstances =
-    getCreaturesWithActivityInstances(creaturesInActivity, huntId, true);
+  const creaturesWithActivityInstances = getCreaturesWithActivityInstances(
+    creaturesInActivity,
+    huntId
+  );
 
-  let mainCharacterIds: String[] = creaturesWithCompleteActivityInstances.map(
+  console.log({
+    creaturesWithActivityInstancesCount: creaturesWithActivityInstances.length,
+    creaturesWithActivityInstances,
+  });
+
+  const unclaimedCreatures = creaturesWithActivityInstances.filter(
+    ({ isComplete }) => !isComplete
+  );
+
+  const completedAndUnclaimedCreatures = unclaimedCreatures.filter(
+    ({ activityInstance }) => {
+      return dayjs(activityInstance?.endTime).isBefore(dayjs());
+    }
+  );
+
+  let mainCharacterIds: String[] = completedAndUnclaimedCreatures.map(
     ({ id }) => id
   );
 
-  const earliestStartTime = creaturesWithCompleteActivityInstances
+  console.log({
+    completedAndUnclaimedCreaturesCount: completedAndUnclaimedCreatures.length,
+  });
+
+  const earliestStartTime = completedAndUnclaimedCreatures
     .map(({ activityInstance }) => activityInstance?.startTime)
     .sort((a, b) => {
       return new Date(a).getTime() - new Date(b).getTime();
@@ -150,13 +171,13 @@ export default async function handler(
     const creaturesListedWhileInActivity = getCreaturesListedWhileInActivity(
       listings,
       cancelledListings,
-      creatures,
+      completedAndUnclaimedCreatures,
       hunt
     );
 
     const creaturesSoldWhileInActivity = getCreaturesSoldWhileInActivity(
       sales,
-      creatures,
+      completedAndUnclaimedCreatures,
       hunt,
       walletAddress
     );
@@ -172,12 +193,14 @@ export default async function handler(
 
       const idsToInvalidate = creaturesToInvalidate.map(({ id }) => id);
 
-      // remove from activity
-      creaturesInActivity = creaturesInActivity.filter((creature) => {
-        return !creaturesToInvalidate.find(({ id }) => id === creature.id);
-      });
+      console.log("Found listings or sales, invalidating", idsToInvalidate);
 
-      mainCharacterIds = creaturesInActivity.map(({ id }) => id);
+      // remove from activity
+      mainCharacterIds = completedAndUnclaimedCreatures
+        .filter((creature) => {
+          return !creaturesToInvalidate.find(({ id }) => id === creature.id);
+        })
+        .map(({ id }) => id);
 
       for (const mainCharacterId of idsToInvalidate) {
         const {
@@ -194,6 +217,14 @@ export default async function handler(
   }
 
   let rewardTxAddress: string | undefined;
+  const removalsCount = mainCharacterIds.length;
+
+  if (!removalsCount) {
+    res.status(500).json({
+      error: "No removals",
+    });
+    return;
+  }
 
   // send reward
   try {
@@ -237,7 +268,11 @@ export default async function handler(
       const lessThanOneMinuteAgo = claimingTimeStamp > oneMinuteAgo;
 
       if (lessThanOneMinuteAgo) {
-        throw new Error("Claiming timestamp is under two minutes ago");
+        res
+          .status(500)
+          .json({
+            error: "Claim already in progress, try again in a few minutes",
+          });
       }
     } else {
       console.log("existing claimingTimeStampHunt: null");
@@ -256,14 +291,10 @@ export default async function handler(
       },
     });
 
-    console.log("updated user: ", updatedUser);
-
     console.log(
       "updated claimingTimeStampHunt: ",
-      dayjs(updatedUser.claimingTimeStampHunt).format("YYYY-MM-DD HH:mm:ss")
+      dayjs(updatedUser?.claimingTimeStampHunt).format("YYYY-MM-DD HH:mm:ss")
     );
-
-    const removalsCount = mainCharacterIds.length;
 
     const rewardKeypair = Keypair.fromSecretKey(
       base58.decode(process.env.REWARD_PRIVATE_KEY!)
@@ -358,6 +389,7 @@ export default async function handler(
       });
 
     try {
+      console.log("Removing from hunt", mainCharacterIds);
       for (const mainCharacterId of mainCharacterIds) {
         const {
           update_sodead_activityInstances,
@@ -376,15 +408,15 @@ export default async function handler(
       res.status(500).json({ error });
     }
 
-    console.log("rewardTxAddress", rewardTxAddress, insert_sodead_payouts_one);
+    console.log("rewardTxAddress", rewardTxAddress);
 
-    const { update_sodead_users }: { update_sodead_users: User[] } =
+    const { update_sodead_users_by_pk }: { update_sodead_users_by_pk: User[] } =
       await client.request({
         document: UPDATE_USER,
         variables: {
           id: user.id,
           setInput: {
-            claimingTimeStampLootbox: null,
+            claimingTimeStampHunt: null,
           },
         },
       });

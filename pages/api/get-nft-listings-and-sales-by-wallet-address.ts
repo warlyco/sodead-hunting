@@ -114,7 +114,6 @@ export default async function handler(
   }
 
   const startTimeNumber = Number(startTime);
-  console.log("~~startTimeNumber: ", startTimeNumber);
 
   try {
     const { data } = await axios.post(
@@ -151,7 +150,6 @@ export default async function handler(
       sortedEvents.filter((event: any) => event.type === "NFT_CANCEL_LISTING")
     );
 
-    console.log("~~data: ", { sales, listings, cancelledListings });
     res.status(200).json({ sales, listings, cancelledListings });
   } catch (error) {
     console.log("~~error: ", error);

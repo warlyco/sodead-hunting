@@ -30,6 +30,7 @@ import dayjs from "dayjs";
 import { RemoveFromHuntResponse } from "@/pages/api/remove-from-hunt";
 import { NftEventFromHelius } from "@/pages/api/get-nft-listings-and-sales-by-wallet-address";
 import { useAdmin } from "@/hooks/admin";
+import { type } from "os";
 
 const HuntDetailPage: NextPage = () => {
   const { user, loadingUser, setUser } = useUser();
@@ -63,13 +64,22 @@ const HuntDetailPage: NextPage = () => {
     // if id is not a string
     if (typeof id !== "string") return;
 
-    const completedCreatures = getCreaturesWithActivityInstances(
+    const creaturesWithActivityInstances = getCreaturesWithActivityInstances(
       creaturesInActivity,
-      id,
-      true
+      id
     );
 
-    setHasSomeCompleted(!!completedCreatures.length);
+    const unclaimedCreatures = creaturesWithActivityInstances.filter(
+      ({ isComplete }) => !isComplete
+    );
+
+    const completedAndUnclaimedCreatures = unclaimedCreatures.filter(
+      ({ activityInstance }) => {
+        return dayjs(activityInstance?.endTime).isBefore(dayjs());
+      }
+    );
+
+    setHasSomeCompleted(!!completedAndUnclaimedCreatures.length);
   }, [creaturesInActivity, id]);
 
   const [getCreaturesByTokenMintAddress, { loading: creaturesLoading }] =
@@ -252,11 +262,19 @@ const HuntDetailPage: NextPage = () => {
       ]);
       setSelectedActivityCompleteCreatures([]);
       await fetchCollection();
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      let errorText =
+        typeof error?.response?.data?.error === "string"
+          ? error.response.data.error
+          : "Please try again in a few minutes.";
+
+      if (error?.response?.data?.error === "No removals") {
+        errorText = "You have no rewards to claim.";
+      }
       showToast({
         primaryMessage: "Something went wrong",
-        secondaryMessage: "Please try again in a few minutes.",
+        secondaryMessage: errorText,
       });
       setIsLoading(false);
     }

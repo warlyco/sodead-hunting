@@ -38,8 +38,6 @@ export const fetchNftsByHashList = async ({
         (nft) => hashList.indexOf(nft.mintAddress.toString()) > -1
       );
 
-      console.log("nftCollection", nftCollection);
-
       if (!nftCollection.length) {
         setIsLoading && setIsLoading(false);
         setHasBeenFetched && setHasBeenFetched(true);

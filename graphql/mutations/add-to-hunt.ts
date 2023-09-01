@@ -6,6 +6,7 @@ export const ADD_TO_HUNT = gql`
     $mainCharacterId: uuid!
     $startTime: timestamptz!
     $endTime: timestamptz!
+    $isComplete: Boolean!
   ) {
     insert_sodead_activityInstances_one(
       object: {
@@ -13,6 +14,7 @@ export const ADD_TO_HUNT = gql`
         mainCharacterId: $mainCharacterId
         startTime: $startTime
         endTime: $endTime
+        isComplete: $isComplete
       }
     ) {
       id

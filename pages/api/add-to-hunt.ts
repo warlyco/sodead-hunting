@@ -61,6 +61,7 @@ export default async function handler(
           mainCharacterId,
           startTime: new Date().toISOString(),
           endTime,
+          isComplete: false,
         },
       });
       additions.push(insert_sodead_activityInstances_one);
