@@ -99,7 +99,6 @@ const HuntDetailPage: NextPage = () => {
 
         setEligibleCreatures(filterIneligibleCreatures(creatures));
         let creaturesInActivity = getCreaturesInActivity(creatures, hunt);
-        console.log({ creaturesInActivity });
 
         setCreaturesInActivity(creaturesInActivity);
         setEligibleCreatures(filterIneligibleCreatures(creatures));
@@ -173,8 +172,6 @@ const HuntDetailPage: NextPage = () => {
             ({ activity }) => activity.id !== hunt.id
           )
         );
-
-      console.log({ creaturesActiveInOtherActivity });
 
       return getCreaturesNotInActivity(
         eligibleCreatures.filter(
@@ -263,7 +260,6 @@ const HuntDetailPage: NextPage = () => {
       setSelectedActivityCompleteCreatures([]);
       await fetchCollection();
     } catch (error: any) {
-      console.log(error);
       let errorText =
         typeof error?.response?.data?.error === "string"
           ? error.response.data.error
@@ -313,7 +309,12 @@ const HuntDetailPage: NextPage = () => {
       setSelectedCreatures([]);
       await fetchCollection();
     } catch (error) {
-      console.log(error);
+      showToast({
+        primaryMessage:
+          "There was an problem sending your vampires on the hunt.",
+        secondaryMessage: "Please try again in a few minutes.",
+      });
+      setIsLoading(false);
     }
   }, [
     publicKey,
