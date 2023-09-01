@@ -268,11 +268,9 @@ export default async function handler(
       const lessThanOneMinuteAgo = claimingTimeStamp > oneMinuteAgo;
 
       if (lessThanOneMinuteAgo) {
-        res
-          .status(500)
-          .json({
-            error: "Claim already in progress, try again in a few minutes",
-          });
+        res.status(500).json({
+          error: "Claim already in progress, try again in a few minutes",
+        });
       }
     } else {
       console.log("existing claimingTimeStampHunt: null");
