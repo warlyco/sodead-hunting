@@ -28,9 +28,7 @@ import {
 } from "@/utils/creatures";
 import dayjs from "dayjs";
 import { RemoveFromHuntResponse } from "@/pages/api/remove-from-hunt";
-import { NftEventFromHelius } from "@/pages/api/get-nft-listings-and-sales-by-wallet-address";
 import { useAdmin } from "@/hooks/admin";
-import { type } from "os";
 
 const HuntDetailPage: NextPage = () => {
   const { user, loadingUser, setUser } = useUser();
